@@ -7,6 +7,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { ChevronLeft } from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
+
+type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
+  dental_records: Database['public']['Tables']['dental_records']['Row'][];
+};
 
 const PatientDetails = () => {
   const navigate = useNavigate();
@@ -35,7 +40,7 @@ const PatientDetails = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as PatientWithRecords;
     },
   });
 
@@ -72,7 +77,7 @@ const PatientDetails = () => {
           <Card className="mb-6">
             <CardHeader className="flex flex-row items-center gap-4">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={patient.avatar_url} alt={`${patient.first_name} ${patient.last_name}`} />
+                <AvatarImage src={patient.avatar_url || ''} alt={`${patient.first_name} ${patient.last_name}`} />
                 <AvatarFallback>{patient.first_name[0]}{patient.last_name[0]}</AvatarFallback>
               </Avatar>
               <div>
@@ -92,7 +97,7 @@ const PatientDetails = () => {
                 <div>
                   <h3 className="font-semibold mb-2">Medical History</h3>
                   <div className="flex flex-wrap gap-2">
-                    {patient.medical_history.map((condition: string, index: number) => (
+                    {patient.medical_history?.map((condition, index) => (
                       <span
                         key={index}
                         className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm"
@@ -106,7 +111,7 @@ const PatientDetails = () => {
                 <div>
                   <h3 className="font-semibold mb-2">Dental Records</h3>
                   <div className="space-y-4">
-                    {patient.dental_records.map((record: any) => (
+                    {patient.dental_records?.map((record) => (
                       <Card key={record.id}>
                         <CardHeader>
                           <CardTitle className="text-lg">

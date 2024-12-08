@@ -6,6 +6,9 @@ import { toast } from "sonner";
 import { PatientCard } from "@/components/PatientCard";
 import { PatientFilter } from "@/components/PatientFilter";
 import { useQuery } from "@tanstack/react-query";
+import type { Database } from "@/integrations/supabase/types";
+
+type Patient = Database['public']['Tables']['patients']['Row'];
 
 const Index = () => {
   const navigate = useNavigate();
@@ -41,7 +44,7 @@ const Index = () => {
       const { data, error } = await query;
 
       if (error) throw error;
-      return data;
+      return data as Patient[];
     },
   });
 

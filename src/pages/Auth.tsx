@@ -1,11 +1,11 @@
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { Auth as SupabaseAuth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-const AuthPage = () => {
+const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,66 +15,53 @@ const AuthPage = () => {
       }
     });
 
-    // Handle auth state changes
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN') {
-        toast.success('Successfully signed in!');
-      } else if (event === 'SIGNED_OUT') {
-        toast.success('Successfully signed out!');
-      } else if (event === 'USER_UPDATED') {
-        toast.success('Successfully updated profile!');
-      }
-    });
-
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const handleError = (error: any) => {
+    if (error.message.includes("rate_limit")) {
+      toast.error("Please wait 15 seconds before trying again");
+    } else {
+      toast.error(error.message);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">DentaFile</h1>
-          <p className="text-gray-600">Sign in or create an account</p>
-        </div>
-        <Auth
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-white rounded-lg shadow p-8">
+        <h1 className="text-2xl font-bold text-center mb-6">DentaFile</h1>
+        <SupabaseAuth 
           supabaseClient={supabase}
           appearance={{
             theme: ThemeSupa,
             style: {
               button: {
-                background: '#4F46E5',
+                background: 'rgb(59 130 246)',
                 color: 'white',
-                borderRadius: '0.375rem',
+                borderRadius: '0.5rem',
               },
               anchor: {
-                color: '#4F46E5',
+                color: 'rgb(59 130 246)',
               },
             },
           }}
           localization={{
             variables: {
+              sign_in: {
+                email_label: 'Email address',
+                password_label: 'Password',
+              },
               sign_up: {
                 email_label: 'Email address',
-                password_label: 'Create a password',
-                button_label: 'Create account',
-                loading_button_label: 'Creating account...',
-                social_provider_text: 'Sign up with {{provider}}',
-                link_text: "Don't have an account? Sign up",
-                confirmation_text: 'Check your email for the confirmation link',
+                password_label: 'Password',
               },
             },
           }}
-          onError={(error) => {
-            if (error.message.includes('rate_limit')) {
-              toast.error('Please wait 15 seconds before trying again');
-            } else {
-              toast.error(error.message);
-            }
-          }}
+          providers={[]}
         />
       </div>
     </div>
   );
 };
 
-export default AuthPage;
+export default Auth;
