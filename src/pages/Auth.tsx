@@ -26,17 +26,6 @@ const Auth = () => {
     };
   }, [navigate]);
 
-  const handleError = (error: Error) => {
-    console.error('Auth error:', error);
-    if (error.message.includes("rate_limit")) {
-      toast.error("Please wait 15 seconds before trying again");
-    } else if (error.message.includes("refresh_token_not_found")) {
-      toast.error("Session expired. Please sign in again.");
-    } else {
-      toast.error(error.message);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow p-8">
@@ -69,7 +58,6 @@ const Auth = () => {
             },
           }}
           providers={[]}
-          onError={handleError}
         />
       </div>
     </div>
