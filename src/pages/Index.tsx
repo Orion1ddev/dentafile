@@ -14,9 +14,6 @@ type Patient = Database['public']['Tables']['patients']['Row'];
 const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedGender, setSelectedGender] = useState("all");
-  const [selectedDisease, setSelectedDisease] = useState("all");
-  const [visitOrder, setVisitOrder] = useState("latest");
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -29,7 +26,7 @@ const Index = () => {
   }, [navigate]);
 
   const { data: patients, isLoading, error } = useQuery({
-    queryKey: ['patients', searchQuery, selectedGender, selectedDisease, visitOrder],
+    queryKey: ['patients', searchQuery],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
@@ -38,18 +35,10 @@ const Index = () => {
         .from('patients')
         .select('*, dental_records(*)')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: visitOrder === 'oldest' });
+        .order('created_at', { ascending: false });
 
       if (searchQuery) {
         query = query.or(`first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%`);
-      }
-
-      if (selectedGender !== 'all') {
-        query = query.eq('gender', selectedGender);
-      }
-
-      if (selectedDisease !== 'all') {
-        query = query.contains('medical_history', [selectedDisease]);
       }
 
       const { data, error } = await query;
@@ -91,12 +80,6 @@ const Index = () => {
           <PatientFilter
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            selectedGender={selectedGender}
-            onGenderChange={setSelectedGender}
-            selectedDisease={selectedDisease}
-            onDiseaseChange={setSelectedDisease}
-            visitOrder={visitOrder}
-            onVisitOrderChange={setVisitOrder}
           />
 
           {isLoading ? (
