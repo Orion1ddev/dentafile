@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
-import { ChevronLeft, Pencil } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { DentalRecordFormDialog } from "@/components/DentalRecordFormDialog";
 import { PatientFormDialog } from "@/components/PatientFormDialog";
+import { DentalRecordEditDialog } from "@/components/DentalRecordEditDialog";
 
 type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
   dental_records: Database['public']['Tables']['dental_records']['Row'][];
@@ -90,62 +91,43 @@ const PatientDetails = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold mb-2">Medical History</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {patient.medical_history?.map((condition, index) => (
-                      <span
-                        key={index}
-                        className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm"
-                      >
-                        {condition}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-2">Dental Records</h3>
-                  <div className="space-y-4">
-                    {patient.dental_records?.map((record) => (
-                      <Card key={record.id}>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                          <CardTitle className="text-lg">
-                            Visit: {format(new Date(record.visit_date), 'MMMM d, yyyy')}
-                          </CardTitle>
-                          <Button variant="outline" size="sm" className="ml-auto">
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Edit Record
-                          </Button>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <div>
-                              <p><strong>Diagnosis:</strong> {record.diagnosis || 'N/A'}</p>
-                              <p><strong>Treatment:</strong> {record.treatment || 'N/A'}</p>
-                              <p><strong>Notes:</strong> {record.notes || 'N/A'}</p>
-                            </div>
-                            {record.images && record.images.length > 0 && (
-                              <div>
-                                <h4 className="font-semibold mb-2">Photos</h4>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                  {record.images.map((image, index) => (
-                                    <img
-                                      key={index}
-                                      src={image}
-                                      alt={`Dental record ${index + 1}`}
-                                      className="rounded-lg object-cover w-full aspect-square"
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                            )}
+              <div>
+                <h3 className="font-semibold mb-2">Dental Records</h3>
+                <div className="space-y-4">
+                  {patient.dental_records?.map((record) => (
+                    <Card key={record.id}>
+                      <CardHeader className="flex flex-row items-center justify-between">
+                        <CardTitle className="text-lg">
+                          Visit: {format(new Date(record.visit_date), 'MMMM d, yyyy')}
+                        </CardTitle>
+                        <DentalRecordEditDialog record={record} patientId={patient.id} />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          <div>
+                            <p><strong>Diagnosis:</strong> {record.diagnosis || 'N/A'}</p>
+                            <p><strong>Treatment:</strong> {record.treatment || 'N/A'}</p>
+                            <p><strong>Notes:</strong> {record.notes || 'N/A'}</p>
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                          {record.images && record.images.length > 0 && (
+                            <div>
+                              <h4 className="font-semibold mb-2">Photos</h4>
+                              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                {record.images.map((image, index) => (
+                                  <img
+                                    key={index}
+                                    src={image}
+                                    alt={`Dental record ${index + 1}`}
+                                    className="rounded-lg object-cover w-full aspect-square"
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </div>
             </CardContent>
