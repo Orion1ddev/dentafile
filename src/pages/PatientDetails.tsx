@@ -3,12 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Pencil } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { DentalRecordFormDialog } from "@/components/DentalRecordFormDialog";
+import { PatientFormDialog } from "@/components/PatientFormDialog";
 
 type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
   dental_records: Database['public']['Tables']['dental_records']['Row'][];
@@ -69,7 +69,8 @@ const PatientDetails = () => {
               </Button>
               <h1 className="text-2xl font-bold text-gray-900">Patient Details</h1>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
+              <PatientFormDialog patient={patient} mode="edit" />
               <DentalRecordFormDialog patientId={patient.id} />
             </div>
           </div>
@@ -79,21 +80,13 @@ const PatientDetails = () => {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 sm:px-0">
           <Card className="mb-6">
-            <CardHeader className="flex flex-row items-center gap-4">
-              <Avatar className="h-24 w-24">
-                <AvatarImage src={patient.avatar_url || ''} alt={`${patient.first_name} ${patient.last_name}`} />
-                <AvatarFallback>{patient.first_name[0]}{patient.last_name[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle className="text-2xl">
-                  {patient.first_name} {patient.last_name}
-                </CardTitle>
-                <p className="text-muted-foreground">
-                  Born: {format(new Date(patient.date_of_birth), 'MMMM d, yyyy')}
-                </p>
-                <p className="text-muted-foreground">
-                  Contact: {patient.phone || 'N/A'} • {patient.email || 'N/A'}
-                </p>
+            <CardHeader>
+              <CardTitle className="text-2xl">
+                {patient.first_name} {patient.last_name}
+              </CardTitle>
+              <div className="text-muted-foreground">
+                <p>Born: {format(new Date(patient.date_of_birth), 'MMMM d, yyyy')}</p>
+                <p>Contact: {patient.phone || 'N/A'} • {patient.email || 'N/A'}</p>
               </div>
             </CardHeader>
             <CardContent>
@@ -117,10 +110,14 @@ const PatientDetails = () => {
                   <div className="space-y-4">
                     {patient.dental_records?.map((record) => (
                       <Card key={record.id}>
-                        <CardHeader>
+                        <CardHeader className="flex flex-row items-center justify-between">
                           <CardTitle className="text-lg">
                             Visit: {format(new Date(record.visit_date), 'MMMM d, yyyy')}
                           </CardTitle>
+                          <Button variant="outline" size="sm" className="ml-auto">
+                            <Pencil className="h-4 w-4 mr-2" />
+                            Edit Record
+                          </Button>
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-4">
