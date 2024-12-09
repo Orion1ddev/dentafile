@@ -52,20 +52,26 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
         return;
       }
 
-      // Check if profile exists, if not create it
-      const { data: profile } = await supabase
+      // Check if profile exists
+      const { data: profiles, error: profileError } = await supabase
         .from('profiles')
         .select('id')
-        .eq('id', user.id)
-        .single();
+        .eq('id', user.id);
 
-      if (!profile) {
-        const { error: profileError } = await supabase
+      if (profileError) {
+        console.error('Profile fetch error:', profileError);
+        toast.error("Error checking user profile");
+        return;
+      }
+
+      // If no profile exists, create one
+      if (!profiles || profiles.length === 0) {
+        const { error: createProfileError } = await supabase
           .from('profiles')
           .insert([{ id: user.id }]);
 
-        if (profileError) {
-          console.error('Profile creation error:', profileError);
+        if (createProfileError) {
+          console.error('Profile creation error:', createProfileError);
           toast.error("Error creating user profile");
           return;
         }
