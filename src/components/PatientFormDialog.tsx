@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface PatientFormData {
   first_name: string;
@@ -27,6 +27,7 @@ interface PatientFormDialogProps {
 export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   
   const form = useForm<PatientFormData>({
     defaultValues: mode === 'edit' && patient ? {
@@ -43,10 +44,31 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
 
   const onSubmit = async (data: PatientFormData) => {
     try {
+      // Get current user and check authentication
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error("You must be logged in to perform this action");
+        navigate('/auth');
         return;
+      }
+
+      // Check if profile exists, if not create it
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([{ id: user.id }]);
+
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+          toast.error("Error creating user profile");
+          return;
+        }
       }
 
       if (mode === 'create') {
@@ -69,6 +91,7 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
       queryClient.invalidateQueries({ queryKey: ['patients'] });
       setOpen(false);
     } catch (error: any) {
+      console.error('Operation error:', error);
       toast.error(error.message);
     }
   };
