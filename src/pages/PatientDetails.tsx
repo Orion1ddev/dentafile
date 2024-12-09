@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { ChevronLeft } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { DentalRecordFormDialog } from "@/components/DentalRecordFormDialog";
@@ -54,6 +54,17 @@ const PatientDetails = () => {
     return <div>Patient not found</div>;
   }
 
+  // Format the date for display
+  const formatDisplayDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return format(date, 'dd.MM.yyyy');
+    } catch (error) {
+      console.error('Date formatting error:', error);
+      return dateString;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow">
@@ -86,7 +97,7 @@ const PatientDetails = () => {
                 {patient.first_name} {patient.last_name}
               </CardTitle>
               <div className="text-muted-foreground">
-                <p>Born: {format(new Date(patient.date_of_birth), 'MMMM d, yyyy')}</p>
+                <p>Born: {formatDisplayDate(patient.date_of_birth)}</p>
                 <p>Contact: {patient.phone || 'N/A'} • {patient.email || 'N/A'}</p>
               </div>
             </CardHeader>
@@ -98,7 +109,7 @@ const PatientDetails = () => {
                     <Card key={record.id}>
                       <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="text-lg">
-                          Visit: {format(new Date(record.visit_date), 'MMMM d, yyyy')}
+                          Visit: {formatDisplayDate(record.visit_date)}
                         </CardTitle>
                         <DentalRecordEditDialog record={record} patientId={patient.id} />
                       </CardHeader>

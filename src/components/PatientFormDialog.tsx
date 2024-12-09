@@ -96,15 +96,16 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
         }
       }
 
-      // Format the date to dd.MM.yyyy before saving
-      const formattedDate = format(new Date(data.date_of_birth), 'dd.MM.yyyy');
+      // Parse the date from the form (yyyy-MM-dd) and format it as ISO date for the database
+      const formDate = parse(data.date_of_birth, 'yyyy-MM-dd', new Date());
+      const isoDate = format(formDate, 'yyyy-MM-dd');
 
       if (mode === 'create') {
         const { error } = await supabase
           .from('patients')
           .insert([{ 
             ...data, 
-            date_of_birth: formattedDate,
+            date_of_birth: isoDate,
             user_id: user.id 
           }]);
 
@@ -115,7 +116,7 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
           .from('patients')
           .update({ 
             ...data,
-            date_of_birth: formattedDate
+            date_of_birth: isoDate
           })
           .eq('id', patient.id);
 
