@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { PatientCard } from "@/components/PatientCard";
 import { PatientFilter } from "@/components/PatientFilter";
+import { PatientFormDialog } from "@/components/PatientFormDialog";
 import { useQuery } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -14,6 +15,8 @@ const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGender, setSelectedGender] = useState("all");
+  const [selectedDisease, setSelectedDisease] = useState("all");
+  const [visitOrder, setVisitOrder] = useState("latest");
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -26,12 +29,16 @@ const Index = () => {
   }, [navigate]);
 
   const { data: patients, isLoading, error } = useQuery({
-    queryKey: ['patients', searchQuery, selectedGender],
+    queryKey: ['patients', searchQuery, selectedGender, selectedDisease, visitOrder],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
       let query = supabase
         .from('patients')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*, dental_records(*)')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: visitOrder === 'oldest' });
 
       if (searchQuery) {
         query = query.or(`first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%`);
@@ -39,6 +46,10 @@ const Index = () => {
 
       if (selectedGender !== 'all') {
         query = query.eq('gender', selectedGender);
+      }
+
+      if (selectedDisease !== 'all') {
+        query = query.contains('medical_history', [selectedDisease]);
       }
 
       const { data, error } = await query;
@@ -65,7 +76,8 @@ const Index = () => {
             <div className="flex-shrink-0 flex items-center">
               <h1 className="text-2xl font-bold text-gray-900">DentaFile</h1>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-4">
+              <PatientFormDialog mode="create" />
               <Button onClick={handleSignOut} variant="outline">
                 Sign Out
               </Button>
@@ -81,6 +93,10 @@ const Index = () => {
             onSearchChange={setSearchQuery}
             selectedGender={selectedGender}
             onGenderChange={setSelectedGender}
+            selectedDisease={selectedDisease}
+            onDiseaseChange={setSelectedDisease}
+            visitOrder={visitOrder}
+            onVisitOrderChange={setVisitOrder}
           />
 
           {isLoading ? (
@@ -88,11 +104,15 @@ const Index = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {patients?.map((patient) => (
-                <PatientCard
-                  key={patient.id}
-                  patient={patient}
-                  onClick={() => navigate(`/patient/${patient.id}`)}
-                />
+                <div key={patient.id} className="relative">
+                  <PatientCard
+                    patient={patient}
+                    onClick={() => navigate(`/patient/${patient.id}`)}
+                  />
+                  <div className="absolute top-4 right-4">
+                    <PatientFormDialog mode="edit" patient={patient} />
+                  </div>
+                </div>
               ))}
             </div>
           )}

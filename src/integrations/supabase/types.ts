@@ -60,6 +60,7 @@ export type Database = {
           medical_history: string[] | null
           phone: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -73,6 +74,7 @@ export type Database = {
           medical_history?: string[] | null
           phone?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -86,6 +88,30 @@ export type Database = {
           medical_history?: string[] | null
           phone?: string | null
           updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patients_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
         }
         Relationships: []
       }
