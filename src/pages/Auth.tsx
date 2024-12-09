@@ -9,18 +9,29 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+    // Clear any existing session on mount
+    supabase.auth.signOut();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
         navigate("/");
+      } else if (event === 'SIGNED_OUT') {
+        // Handle sign out
+        navigate("/auth");
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
-  const handleError = (error: any) => {
+  const handleError = (error: Error) => {
+    console.error('Auth error:', error);
     if (error.message.includes("rate_limit")) {
       toast.error("Please wait 15 seconds before trying again");
+    } else if (error.message.includes("refresh_token_not_found")) {
+      toast.error("Session expired. Please sign in again.");
     } else {
       toast.error(error.message);
     }
@@ -58,6 +69,7 @@ const Auth = () => {
             },
           }}
           providers={[]}
+          onError={handleError}
         />
       </div>
     </div>
