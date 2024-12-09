@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { ChevronLeft } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
+import { DentalRecordFormDialog } from "@/components/DentalRecordFormDialog";
 
 type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
   dental_records: Database['public']['Tables']['dental_records']['Row'][];
@@ -68,6 +69,9 @@ const PatientDetails = () => {
               </Button>
               <h1 className="text-2xl font-bold text-gray-900">Patient Details</h1>
             </div>
+            <div className="flex items-center">
+              <DentalRecordFormDialog patientId={patient.id} />
+            </div>
           </div>
         </div>
       </nav>
@@ -88,7 +92,7 @@ const PatientDetails = () => {
                   Born: {format(new Date(patient.date_of_birth), 'MMMM d, yyyy')}
                 </p>
                 <p className="text-muted-foreground">
-                  Contact: {patient.phone} • {patient.email}
+                  Contact: {patient.phone || 'N/A'} • {patient.email || 'N/A'}
                 </p>
               </div>
             </CardHeader>
@@ -119,10 +123,27 @@ const PatientDetails = () => {
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <div className="space-y-2">
-                            <p><strong>Diagnosis:</strong> {record.diagnosis}</p>
-                            <p><strong>Treatment:</strong> {record.treatment}</p>
-                            <p><strong>Notes:</strong> {record.notes}</p>
+                          <div className="space-y-4">
+                            <div>
+                              <p><strong>Diagnosis:</strong> {record.diagnosis || 'N/A'}</p>
+                              <p><strong>Treatment:</strong> {record.treatment || 'N/A'}</p>
+                              <p><strong>Notes:</strong> {record.notes || 'N/A'}</p>
+                            </div>
+                            {record.images && record.images.length > 0 && (
+                              <div>
+                                <h4 className="font-semibold mb-2">Photos</h4>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                  {record.images.map((image, index) => (
+                                    <img
+                                      key={index}
+                                      src={image}
+                                      alt={`Dental record ${index + 1}`}
+                                      className="rounded-lg object-cover w-full aspect-square"
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </CardContent>
                       </Card>
