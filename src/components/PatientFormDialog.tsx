@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { format, parse } from "date-fns";
 
 interface PatientFormData {
   first_name: string;
@@ -16,7 +17,8 @@ interface PatientFormData {
   date_of_birth: string;
   gender: string;
   medical_history: string[];
-  avatar_url?: string;
+  email?: string;
+  phone?: string;
 }
 
 interface PatientFormDialogProps {
@@ -33,10 +35,11 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
     defaultValues: mode === 'edit' && patient ? {
       first_name: patient.first_name,
       last_name: patient.last_name,
-      date_of_birth: patient.date_of_birth,
+      date_of_birth: format(new Date(patient.date_of_birth), 'yyyy-MM-dd'),
       gender: patient.gender,
       medical_history: patient.medical_history || [],
-      avatar_url: patient.avatar_url,
+      email: patient.email,
+      phone: patient.phone,
     } : {
       medical_history: [],
     },
@@ -146,9 +149,17 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
               name="date_of_birth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
+                  <FormLabel>Date of Birth (DD.MM.YYYY)</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input 
+                      type="date" 
+                      {...field}
+                      onChange={(e) => {
+                        const date = new Date(e.target.value);
+                        field.onChange(format(date, 'dd.MM.yyyy'));
+                      }}
+                      value={field.value ? format(parse(field.value, 'dd.MM.yyyy', new Date()), 'yyyy-MM-dd') : ''}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -178,12 +189,25 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
             />
             <FormField
               control={form.control}
-              name="avatar_url"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Avatar URL (optional)</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input type="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input type="tel" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
