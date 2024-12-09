@@ -31,11 +31,27 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   
+  // Helper function to format date for the form
+  const formatDateForForm = (dateString: string) => {
+    try {
+      // If the date is in dd.MM.yyyy format, parse it first
+      if (dateString.includes('.')) {
+        const parsedDate = parse(dateString, 'dd.MM.yyyy', new Date());
+        return format(parsedDate, 'yyyy-MM-dd');
+      }
+      // If it's already in ISO format, just return the date part
+      return dateString.split('T')[0];
+    } catch (error) {
+      console.error('Date formatting error:', error);
+      return '';
+    }
+  };
+
   const form = useForm<PatientFormData>({
     defaultValues: mode === 'edit' && patient ? {
       first_name: patient.first_name,
       last_name: patient.last_name,
-      date_of_birth: format(new Date(patient.date_of_birth), 'yyyy-MM-dd'),
+      date_of_birth: formatDateForForm(patient.date_of_birth),
       gender: patient.gender,
       medical_history: patient.medical_history || [],
       email: patient.email,
@@ -80,17 +96,27 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
         }
       }
 
+      // Format the date to dd.MM.yyyy before saving
+      const formattedDate = format(new Date(data.date_of_birth), 'dd.MM.yyyy');
+
       if (mode === 'create') {
         const { error } = await supabase
           .from('patients')
-          .insert([{ ...data, user_id: user.id }]);
+          .insert([{ 
+            ...data, 
+            date_of_birth: formattedDate,
+            user_id: user.id 
+          }]);
 
         if (error) throw error;
         toast.success("Patient created successfully");
       } else {
         const { error } = await supabase
           .from('patients')
-          .update(data)
+          .update({ 
+            ...data,
+            date_of_birth: formattedDate
+          })
           .eq('id', patient.id);
 
         if (error) throw error;
@@ -154,11 +180,6 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
                     <Input 
                       type="date" 
                       {...field}
-                      onChange={(e) => {
-                        const date = new Date(e.target.value);
-                        field.onChange(format(date, 'dd.MM.yyyy'));
-                      }}
-                      value={field.value ? format(parse(field.value, 'dd.MM.yyyy', new Date()), 'yyyy-MM-dd') : ''}
                     />
                   </FormControl>
                   <FormMessage />
