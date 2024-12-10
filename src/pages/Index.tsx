@@ -8,23 +8,15 @@ import { PatientFilter } from "@/components/PatientFilter";
 import { PatientFormDialog } from "@/components/PatientFormDialog";
 import { useQuery } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
-import { Moon, Sun, Languages } from "lucide-react";
-import { useTheme } from "next-themes";
 import { useLanguage } from "@/stores/useLanguage";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { NavMenu } from "@/components/NavMenu";
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 
 const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const { theme, setTheme } = useTheme();
-  const { language, setLanguage, t, fetchTranslations } = useLanguage();
+  const { t, fetchTranslations } = useLanguage();
 
   useEffect(() => {
     fetchTranslations();
@@ -60,11 +52,6 @@ const Index = () => {
     },
   });
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    toast.success(t("sign_out"));
-  };
-
   if (error) {
     toast.error("Error loading patients");
   }
@@ -80,39 +67,8 @@ const Index = () => {
               </h1>
             </div>
             <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="mr-2"
-              >
-                {theme === "dark" ? (
-                  <Sun className="h-5 w-5" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
-              </Button>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Languages className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => setLanguage('en')}>
-                    English {language === 'en' && '✓'}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setLanguage('tr')}>
-                    Türkçe {language === 'tr' && '✓'}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
               <PatientFormDialog mode="create" />
-              <Button onClick={handleSignOut} variant="outline">
-                {t('sign_out')}
-              </Button>
+              <NavMenu />
             </div>
           </div>
         </div>
