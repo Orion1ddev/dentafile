@@ -8,8 +8,8 @@ import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { format, parse } from "date-fns";
-import { useLanguage } from "@/stores/useLanguage";
 
 interface PatientFormData {
   first_name: string;
@@ -30,14 +30,17 @@ interface PatientFormDialogProps {
 export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { t } = useLanguage();
+  const navigate = useNavigate();
   
+  // Helper function to format date for the form
   const formatDateForForm = (dateString: string) => {
     try {
+      // If the date is in dd.MM.yyyy format, parse it first
       if (dateString.includes('.')) {
         const parsedDate = parse(dateString, 'dd.MM.yyyy', new Date());
         return format(parsedDate, 'yyyy-MM-dd');
       }
+      // If it's already in ISO format, just return the date part
       return dateString.split('T')[0];
     } catch (error) {
       console.error('Date formatting error:', error);
@@ -61,12 +64,15 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
 
   const onSubmit = async (data: PatientFormData) => {
     try {
+      // Get current user and check authentication
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error("You must be logged in to perform this action");
+        navigate('/auth');
         return;
       }
 
+      // Check if profile exists
       const { data: profiles, error: profileError } = await supabase
         .from('profiles')
         .select('id')
@@ -78,6 +84,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
         return;
       }
 
+      // If no profile exists, create one
       if (!profiles || profiles.length === 0) {
         const { error: createProfileError } = await supabase
           .from('profiles')
@@ -90,6 +97,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
         }
       }
 
+      // Parse the date from the form (yyyy-MM-dd) and format it as ISO date for the database
       const formDate = parse(data.date_of_birth, 'yyyy-MM-dd', new Date());
       const isoDate = format(formDate, 'yyyy-MM-dd');
 
@@ -130,13 +138,13 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
       <DialogTrigger asChild>
         {trigger || (
           <Button variant={mode === 'create' ? 'default' : 'outline'}>
-            {mode === 'create' ? t('add_new_patient') : t('edit_patient')}
+            {mode === 'create' ? 'Add New Patient' : 'Edit Patient'}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? t('add_new_patient') : t('edit_patient')}</DialogTitle>
+          <DialogTitle>{mode === 'create' ? 'Add New Patient' : 'Edit Patient'}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -145,7 +153,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
               name="first_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('first_name')}</FormLabel>
+                  <FormLabel>First Name</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -158,7 +166,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
               name="last_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('last_name')}</FormLabel>
+                  <FormLabel>Last Name</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -171,7 +179,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
               name="date_of_birth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('date_of_birth')}</FormLabel>
+                  <FormLabel>Date of Birth (DD.MM.YYYY)</FormLabel>
                   <FormControl>
                     <Input 
                       type="date" 
@@ -187,17 +195,17 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('gender')}</FormLabel>
+                  <FormLabel>Gender</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t('select_gender')} />
+                        <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="male">{t('male')}</SelectItem>
-                      <SelectItem value="female">{t('female')}</SelectItem>
-                      <SelectItem value="other">{t('other')}</SelectItem>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -209,7 +217,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('email')}</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input type="email" {...field} />
                   </FormControl>
@@ -222,7 +230,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('phone')}</FormLabel>
+                  <FormLabel>Phone</FormLabel>
                   <FormControl>
                     <Input type="tel" {...field} />
                   </FormControl>
@@ -231,7 +239,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
               )}
             />
             <Button type="submit" className="w-full">
-              {mode === 'create' ? t('create_patient') : t('update_patient')}
+              {mode === 'create' ? 'Create Patient' : 'Update Patient'}
             </Button>
           </form>
         </Form>
