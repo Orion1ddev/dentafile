@@ -2,14 +2,15 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format, parse } from "date-fns";
-import { ChevronLeft } from "lucide-react";
+import { format } from "date-fns";
+import { ChevronLeft, Trash2 } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { DentalRecordFormDialog } from "@/components/DentalRecordFormDialog";
 import { PatientFormDialog } from "@/components/PatientFormDialog";
 import { DentalRecordEditDialog } from "@/components/DentalRecordEditDialog";
+import { toast } from "sonner";
 
 type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
   dental_records: Database['public']['Tables']['dental_records']['Row'][];
@@ -18,6 +19,7 @@ type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
 const PatientDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -45,6 +47,25 @@ const PatientDetails = () => {
       return data as PatientWithRecords;
     },
   });
+
+  const handleDeleteVisit = async (recordId: string) => {
+    if (!confirm('Are you sure you want to delete this visit record? This action cannot be undone.')) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from('dental_records')
+      .delete()
+      .eq('id', recordId);
+
+    if (error) {
+      toast.error('Failed to delete visit record');
+      return;
+    }
+
+    toast.success('Visit record deleted successfully');
+    queryClient.invalidateQueries({ queryKey: ['patient', id] });
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -111,7 +132,16 @@ const PatientDetails = () => {
                         <CardTitle className="text-lg">
                           Visit: {formatDisplayDate(record.visit_date)}
                         </CardTitle>
-                        <DentalRecordEditDialog record={record} patientId={patient.id} />
+                        <div className="flex items-center gap-2">
+                          <DentalRecordEditDialog record={record} patientId={patient.id} />
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            onClick={() => handleDeleteVisit(record.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-4">
