@@ -12,6 +12,7 @@ import { PatientFormDialog } from "@/components/PatientFormDialog";
 import { DentalRecordEditDialog } from "@/components/DentalRecordEditDialog";
 import { toast } from "sonner";
 import { NavMenu } from "@/components/NavMenu";
+import { useLanguage } from "@/stores/useLanguage";
 
 type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
   dental_records: Database['public']['Tables']['dental_records']['Row'][];
@@ -70,7 +71,7 @@ const PatientDetails = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>{t('loading')}</div>;
   }
 
   if (!patient) {
@@ -121,19 +122,19 @@ const PatientDetails = () => {
                 {patient.first_name} {patient.last_name}
               </CardTitle>
               <div className="text-muted-foreground">
-                <p>Born: {formatDisplayDate(patient.date_of_birth)}</p>
-                <p>Contact: {patient.phone || 'N/A'} • {patient.email || 'N/A'}</p>
+                <p>{t('born')}: {formatDisplayDate(patient.date_of_birth)}</p>
+                <p>{t('contact')}: {patient.phone || 'N/A'} • {patient.email || 'N/A'}</p>
               </div>
             </CardHeader>
             <CardContent>
               <div>
-                <h3 className="font-semibold mb-2">Dental Records</h3>
+                <h3 className="font-semibold mb-2">{t('dental_records')}</h3>
                 <div className="space-y-4">
                   {patient.dental_records?.map((record) => (
                     <Card key={record.id}>
                       <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="text-lg">
-                          Visit: {formatDisplayDate(record.visit_date)}
+                          {t('visit')}: {formatDisplayDate(record.visit_date)}
                         </CardTitle>
                         <div className="flex items-center gap-2">
                           <DentalRecordEditDialog record={record} patientId={patient.id} />
@@ -149,13 +150,13 @@ const PatientDetails = () => {
                       <CardContent>
                         <div className="space-y-4">
                           <div>
-                            <p><strong>Diagnosis:</strong> {record.diagnosis || 'N/A'}</p>
-                            <p><strong>Treatment:</strong> {record.treatment || 'N/A'}</p>
-                            <p><strong>Notes:</strong> {record.notes || 'N/A'}</p>
+                            <p><strong>{t('diagnosis')}:</strong> {record.diagnosis || 'N/A'}</p>
+                            <p><strong>{t('treatment')}:</strong> {record.treatment || 'N/A'}</p>
+                            <p><strong>{t('notes')}:</strong> {record.notes || 'N/A'}</p>
                           </div>
                           {record.images && record.images.length > 0 && (
                             <div>
-                              <h4 className="font-semibold mb-2">Photos</h4>
+                              <h4 className="font-semibold mb-2">{t('photos')}</h4>
                               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 {record.images.map((image, index) => (
                                   <img
