@@ -24,9 +24,10 @@ interface PatientFormData {
 interface PatientFormDialogProps {
   patient?: any;
   mode: 'create' | 'edit';
+  trigger?: React.ReactNode;
 }
 
-export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => {
+export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -135,9 +136,11 @@ export const PatientFormDialog = ({ patient, mode }: PatientFormDialogProps) => 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={mode === 'create' ? 'default' : 'outline'}>
-          {mode === 'create' ? 'Add New Patient' : 'Edit Patient'}
-        </Button>
+        {trigger || (
+          <Button variant={mode === 'create' ? 'default' : 'outline'}>
+            {mode === 'create' ? 'Add New Patient' : 'Edit Patient'}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
