@@ -8,28 +8,26 @@ import { PatientFilter } from "@/components/PatientFilter";
 import { PatientFormDialog } from "@/components/PatientFormDialog";
 import { useQuery } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
-import { Heart, Stethoscope, Activity, Timer } from "lucide-react";
+import { Moon, Sun, Languages } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useLanguage } from "@/stores/useLanguage";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type Patient = Database['public']['Tables']['patients']['Row'];
-
-const FloatingIcon = ({ children, delay }: { children: React.ReactNode; delay: string }) => (
-  <div 
-    className="absolute animate-float opacity-5"
-    style={{
-      animation: `float 20s infinite ${delay}`,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-    }}
-  >
-    {children}
-  </div>
-);
 
 const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const { theme, setTheme } = useTheme();
+  const { language, setLanguage, t, fetchTranslations } = useLanguage();
 
   useEffect(() => {
+    fetchTranslations();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) {
         navigate("/auth");
@@ -37,7 +35,7 @@ const Index = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, fetchTranslations]);
 
   const { data: patients, isLoading, error } = useQuery({
     queryKey: ['patients', searchQuery],
@@ -64,7 +62,7 @@ const Index = () => {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    toast.success("Signed out successfully");
+    toast.success(t("sign_out"));
   };
 
   if (error) {
@@ -72,27 +70,48 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 relative overflow-hidden">
-      {/* Floating Background Icons */}
-      <div className="fixed inset-0 pointer-events-none">
-        <FloatingIcon delay="0s"><Heart className="w-16 h-16" /></FloatingIcon>
-        <FloatingIcon delay="5s"><Stethoscope className="w-16 h-16" /></FloatingIcon>
-        <FloatingIcon delay="10s"><Activity className="w-16 h-16" /></FloatingIcon>
-        <FloatingIcon delay="15s"><Timer className="w-16 h-16" /></FloatingIcon>
-      </div>
-
-      <nav className="bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-10">
+    <div className="min-h-screen bg-background">
+      <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex-shrink-0 flex items-center">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 DentaFile
               </h1>
             </div>
             <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="mr-2"
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </Button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Languages className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setLanguage('en')}>
+                    English {language === 'en' && '✓'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLanguage('tr')}>
+                    Türkçe {language === 'tr' && '✓'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <PatientFormDialog mode="create" />
               <Button onClick={handleSignOut} variant="outline">
-                Sign Out
+                {t('sign_out')}
               </Button>
             </div>
           </div>
@@ -107,7 +126,7 @@ const Index = () => {
           />
 
           {isLoading ? (
-            <div className="text-center py-12">Loading patients...</div>
+            <div className="text-center py-12">{t('loading')}</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {patients?.map((patient) => (
