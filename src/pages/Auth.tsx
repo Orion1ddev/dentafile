@@ -9,15 +9,27 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Clear any existing session on mount
-    supabase.auth.signOut();
+    // Check current session first
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/");
+      }
+    };
+    
+    checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         navigate("/");
       } else if (event === 'SIGNED_OUT') {
-        // Handle sign out
         navigate("/auth");
+      } else if (event === 'TOKEN_REFRESHED') {
+        // Handle successful token refresh
+        console.log('Token refreshed successfully');
+      } else if (event === 'USER_UPDATED') {
+        // Handle user data update
+        console.log('User data updated');
       }
     });
 
