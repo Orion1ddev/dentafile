@@ -3,7 +3,6 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { toast } from "sonner";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -24,12 +23,6 @@ const Auth = () => {
         navigate("/");
       } else if (event === 'SIGNED_OUT') {
         navigate("/auth");
-      } else if (event === 'TOKEN_REFRESHED') {
-        // Handle successful token refresh
-        console.log('Token refreshed successfully');
-      } else if (event === 'USER_UPDATED') {
-        // Handle user data update
-        console.log('User data updated');
       }
     });
 
@@ -57,6 +50,7 @@ const Auth = () => {
               },
             },
           }}
+          providers={[]}
           localization={{
             variables: {
               sign_in: {
@@ -69,7 +63,6 @@ const Auth = () => {
               },
             },
           }}
-          providers={[]}
         />
       </div>
     </div>
