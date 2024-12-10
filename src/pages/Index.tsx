@@ -8,7 +8,7 @@ import { PatientFilter } from "@/components/PatientFilter";
 import { PatientFormDialog } from "@/components/PatientFormDialog";
 import { useQuery } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
-import { Tooth, Stethoscope, Syringe, Timer } from "lucide-react";
+import { Heart, Stethoscope, Activity, Timer } from "lucide-react";
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 
@@ -75,9 +75,9 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 relative overflow-hidden">
       {/* Floating Background Icons */}
       <div className="fixed inset-0 pointer-events-none">
-        <FloatingIcon delay="0s"><Tooth className="w-16 h-16" /></FloatingIcon>
+        <FloatingIcon delay="0s"><Heart className="w-16 h-16" /></FloatingIcon>
         <FloatingIcon delay="5s"><Stethoscope className="w-16 h-16" /></FloatingIcon>
-        <FloatingIcon delay="10s"><Syringe className="w-16 h-16" /></FloatingIcon>
+        <FloatingIcon delay="10s"><Activity className="w-16 h-16" /></FloatingIcon>
         <FloatingIcon delay="15s"><Timer className="w-16 h-16" /></FloatingIcon>
       </div>
 
