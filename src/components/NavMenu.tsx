@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useLanguage } from "@/stores/useLanguage";
-import { Moon, Sun, Languages, LogOut } from "lucide-react";
+import { Moon, Sun, Languages, LogOut, Download } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { exportPatientsToCSV } from "@/utils/exportUtils";
 
 export const NavMenu = () => {
   const { theme, setTheme } = useTheme();
@@ -20,6 +21,15 @@ export const NavMenu = () => {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     toast.success(t("sign_out"));
+  };
+
+  const handleExport = async () => {
+    try {
+      await exportPatientsToCSV();
+      toast.success(t("export_success"));
+    } catch (error: any) {
+      toast.error(error.message || t("export_error"));
+    }
   };
 
   return (
@@ -39,6 +49,10 @@ export const NavMenu = () => {
             <Moon className="mr-2 h-4 w-4" />
           )}
           {theme === "dark" ? t("light_mode") : t("dark_mode")}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleExport}>
+          <Download className="mr-2 h-4 w-4" />
+          {t("export_data")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setLanguage("en")}>
           <Languages className="mr-2 h-4 w-4" />
