@@ -3,7 +3,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Tooth } from "lucide-react";
+import { Stethoscope } from "lucide-react";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const Auth = () => {
       <div className="w-1/2 bg-blue-600 p-12 text-white flex flex-col justify-center">
         <div className="max-w-lg mx-auto">
           <div className="flex items-center gap-2 mb-8">
-            <Tooth className="h-8 w-8" />
+            <Stethoscope className="h-8 w-8" />
             <h1 className="text-3xl font-bold">DentaFile</h1>
           </div>
           <h2 className="text-2xl font-semibold mb-6">
@@ -91,7 +91,6 @@ const Auth = () => {
             }}
             providers={[]}
             view={view}
-            onViewChange={({ view }) => setView(view as 'sign_in' | 'sign_up')}
             localization={{
               variables: {
                 sign_in: {
