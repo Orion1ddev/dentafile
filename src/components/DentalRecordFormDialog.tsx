@@ -8,8 +8,6 @@ import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { uploadToImgBB } from "@/utils/imgbb";
-import { useLanguage } from "@/stores/useLanguage";
 
 interface DentalRecordFormData {
   visit_date: string;
@@ -27,7 +25,6 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState(false);
-  const { t } = useLanguage();
   
   const form = useForm<DentalRecordFormData>({
     defaultValues: {
@@ -48,18 +45,29 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
       const uploadedUrls: string[] = [];
       
       for (const file of files) {
-        try {
-          const url = await uploadToImgBB(file);
-          uploadedUrls.push(url);
-          toast.success(`${file.name} uploaded successfully`);
-        } catch (error) {
-          console.error('Upload error:', error);
+        const fileExt = file.name.split('.').pop();
+        const filePath = `${patientId}/${crypto.randomUUID()}.${fileExt}`;
+        
+        const { error: uploadError, data } = await supabase.storage
+          .from('dental_photos')
+          .upload(filePath, file);
+
+        if (uploadError) {
           toast.error(`Error uploading ${file.name}`);
+          console.error(uploadError);
+          continue;
         }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('dental_photos')
+          .getPublicUrl(filePath);
+
+        uploadedUrls.push(publicUrl);
       }
 
       const currentImages = form.getValues('images') || [];
       form.setValue('images', [...currentImages, ...uploadedUrls]);
+      toast.success('Files uploaded successfully');
     } catch (error) {
       console.error('Upload error:', error);
       toast.error('Error uploading files');
@@ -83,7 +91,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
 
       if (error) throw error;
       
-      toast.success(t('record_added'));
+      toast.success("Record added successfully");
       queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
       setOpen(false);
     } catch (error: any) {
@@ -95,11 +103,11 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>{t('add_dental_record')}</Button>
+        <Button>Add Dental Record</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{t('add_dental_record')}</DialogTitle>
+          <DialogTitle>Add Dental Record</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -108,7 +116,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
               name="visit_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('visit_date')}</FormLabel>
+                  <FormLabel>Visit Date</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
                   </FormControl>
@@ -121,7 +129,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
               name="diagnosis"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('diagnosis')}</FormLabel>
+                  <FormLabel>Diagnosis</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
@@ -134,7 +142,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
               name="treatment"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('treatment')}</FormLabel>
+                  <FormLabel>Treatment</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
@@ -147,7 +155,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('notes')}</FormLabel>
+                  <FormLabel>Notes</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
@@ -156,7 +164,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
               )}
             />
             <FormItem>
-              <FormLabel>{t('photos')}</FormLabel>
+              <FormLabel>Photos</FormLabel>
               <FormControl>
                 <Input 
                   type="file" 
@@ -169,7 +177,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
               <FormMessage />
             </FormItem>
             <Button type="submit" className="w-full" disabled={uploading}>
-              {t('add_record')}
+              Add Record
             </Button>
           </form>
         </Form>
