@@ -16,10 +16,14 @@ import {
 const Auth = () => {
   const navigate = useNavigate();
   const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_in');
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage, t, fetchTranslations } = useLanguage();
+
+  // Fetch translations immediately on component mount
+  useEffect(() => {
+    fetchTranslations();
+  }, []);
 
   useEffect(() => {
-    // Check current session first
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
@@ -32,8 +36,6 @@ const Auth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         navigate("/");
-      } else if (event === 'SIGNED_OUT') {
-        navigate("/auth");
       }
     });
 
@@ -83,8 +85,12 @@ const Auth = () => {
         <div className="self-end mb-8">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <Languages className="h-4 w-4" />
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-8 w-8 border-gray-300 bg-white hover:bg-gray-100"
+              >
+                <Languages className="h-4 w-4 text-gray-700" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -115,6 +121,9 @@ const Auth = () => {
                   },
                   anchor: {
                     color: 'rgb(37 99 235)',
+                  },
+                  input: {
+                    borderRadius: '0.5rem',
                   },
                 },
               }}
