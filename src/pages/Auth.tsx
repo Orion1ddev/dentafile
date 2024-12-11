@@ -3,11 +3,20 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Stethoscope } from "lucide-react";
+import { Stethoscope, Languages } from "lucide-react";
+import { useLanguage } from "@/stores/useLanguage";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Auth = () => {
   const navigate = useNavigate();
   const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_in');
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     // Check current session first
@@ -43,25 +52,25 @@ const Auth = () => {
             <h1 className="text-3xl font-bold">DentaFile</h1>
           </div>
           <h2 className="text-2xl font-semibold mb-6">
-            Welcome to DentaFile - Your Partner in Dental Practice Management
+            {t('welcome_title')}
           </h2>
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-semibold mb-2">Customizable Patient Cards</h3>
+              <h3 className="text-xl font-semibold mb-2">{t('patient_cards_title')}</h3>
               <p className="text-blue-100">
-                Design patient profiles to suit your needs with flexible, personalized fields.
+                {t('patient_cards_desc')}
               </p>
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Seamless Dental Record Keeping</h3>
+              <h3 className="text-xl font-semibold mb-2">{t('record_keeping_title')}</h3>
               <p className="text-blue-100">
-                Organize and access comprehensive patient records securely and effortlessly.
+                {t('record_keeping_desc')}
               </p>
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Photo Storage</h3>
+              <h3 className="text-xl font-semibold mb-2">{t('photo_storage_title')}</h3>
               <p className="text-blue-100">
-                Store and manage patient images, from X-rays to progress photos, all in one place.
+                {t('photo_storage_desc')}
               </p>
             </div>
           </div>
@@ -69,41 +78,61 @@ const Auth = () => {
       </div>
 
       {/* Right side - Auth form */}
-      <div className="w-1/2 p-12 flex items-center justify-center">
-        <div className="max-w-md w-full">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {view === 'sign_in' ? 'Login' : 'Sign Up'}
-          </h2>
-          <SupabaseAuth 
-            supabaseClient={supabase}
-            appearance={{
-              theme: ThemeSupa,
-              style: {
-                button: {
-                  background: 'rgb(37 99 235)',
-                  color: 'white',
-                  borderRadius: '0.5rem',
+      <div className="w-1/2 p-12 flex flex-col">
+        {/* Language Toggle */}
+        <div className="self-end mb-8">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Languages className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => setLanguage("en")}>
+                English {language === "en" && "✓"}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage("tr")}>
+                Türkçe {language === "tr" && "✓"}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        <div className="flex-1 flex items-center justify-center">
+          <div className="max-w-md w-full">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {view === 'sign_in' ? t('login') : t('sign_up')}
+            </h2>
+            <SupabaseAuth 
+              supabaseClient={supabase}
+              appearance={{
+                theme: ThemeSupa,
+                style: {
+                  button: {
+                    background: 'rgb(37 99 235)',
+                    color: 'white',
+                    borderRadius: '0.5rem',
+                  },
+                  anchor: {
+                    color: 'rgb(37 99 235)',
+                  },
                 },
-                anchor: {
-                  color: 'rgb(37 99 235)',
+              }}
+              providers={[]}
+              localization={{
+                variables: {
+                  sign_in: {
+                    email_label: t('email_label'),
+                    password_label: t('password_label'),
+                  },
+                  sign_up: {
+                    email_label: t('email_label'),
+                    password_label: t('password_label'),
+                  },
                 },
-              },
-            }}
-            providers={[]}
-            view={view}
-            localization={{
-              variables: {
-                sign_in: {
-                  email_label: 'Email address',
-                  password_label: 'Password',
-                },
-                sign_up: {
-                  email_label: 'Email address',
-                  password_label: 'Password',
-                },
-              },
-            }}
-          />
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
