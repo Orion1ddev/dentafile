@@ -25,10 +25,7 @@ const App = () => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // First, ensure any stale session is cleared
-        await supabase.auth.signOut({ scope: 'local' });
-
-        // Get the initial session
+        // Get the initial session without clearing first
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -37,21 +34,14 @@ const App = () => {
           return;
         }
 
-        // If no session, set as not authenticated
-        if (!session) {
-          setIsAuthenticated(false);
-          return;
-        }
-
-        // Valid session found
-        setIsAuthenticated(true);
+        // Set authentication state based on session existence
+        setIsAuthenticated(!!session);
 
         // Set up the auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           console.log('Auth state changed:', event, !!session);
           
           if (event === 'SIGNED_OUT' || !session) {
-            await supabase.auth.signOut({ scope: 'local' });
             setIsAuthenticated(false);
           } else if (event === 'SIGNED_IN' && session) {
             setIsAuthenticated(true);
@@ -63,7 +53,6 @@ const App = () => {
         };
       } catch (error) {
         console.error('Auth initialization error:', error);
-        await supabase.auth.signOut({ scope: 'local' });
         setIsAuthenticated(false);
       }
     };
