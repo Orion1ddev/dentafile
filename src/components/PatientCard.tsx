@@ -66,7 +66,7 @@ export const PatientCard = ({ patient, onClick }: PatientCardProps) => {
             {format(new Date(patient.date_of_birth), 'dd.MM.yyyy')}
           </p>
         </div>
-        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex gap-2">
           <PatientFormDialog 
             patient={patient} 
             mode="edit"

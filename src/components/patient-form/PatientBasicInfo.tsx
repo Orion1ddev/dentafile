@@ -41,9 +41,17 @@ export const PatientBasicInfo = ({ form }: PatientBasicInfoProps) => {
         name="date_of_birth"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Date of Birth</FormLabel>
+            <FormLabel>Date of Birth (DD.MM.YYYY)</FormLabel>
             <FormControl>
-              <Input type="date" {...field} />
+              <Input 
+                type="date" 
+                {...field}
+                onChange={(e) => {
+                  const date = new Date(e.target.value);
+                  const formattedDate = date.toISOString().split('T')[0];
+                  field.onChange(formattedDate);
+                }}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

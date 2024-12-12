@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useLanguage } from "@/stores/useLanguage";
-import { Moon, Sun, Languages, LogOut, Download } from "lucide-react";
+import { Moon, Sun, Languages, LogOut, Download, Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,7 +48,7 @@ export const NavMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Languages className="h-4 w-4" />
+          <Menu className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
