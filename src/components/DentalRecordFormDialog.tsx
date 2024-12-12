@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { Plus, X } from "lucide-react";
 
 interface DentalRecordFormData {
   visit_date: string;
@@ -24,7 +25,7 @@ interface DentalRecordFormDialogProps {
 export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const [uploading, setUploading] = useState(false);
+  const [newImageUrl, setNewImageUrl] = useState("");
   
   const form = useForm<DentalRecordFormData>({
     defaultValues: {
@@ -36,44 +37,28 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
     },
   });
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      setUploading(true);
-      const files = event.target.files;
-      if (!files || files.length === 0) return;
-
-      const uploadedUrls: string[] = [];
-      
-      for (const file of files) {
-        const fileExt = file.name.split('.').pop();
-        const filePath = `${patientId}/${crypto.randomUUID()}.${fileExt}`;
-        
-        const { error: uploadError, data } = await supabase.storage
-          .from('dental_photos')
-          .upload(filePath, file);
-
-        if (uploadError) {
-          toast.error(`Error uploading ${file.name}`);
-          console.error(uploadError);
-          continue;
-        }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('dental_photos')
-          .getPublicUrl(filePath);
-
-        uploadedUrls.push(publicUrl);
-      }
-
-      const currentImages = form.getValues('images') || [];
-      form.setValue('images', [...currentImages, ...uploadedUrls]);
-      toast.success('Files uploaded successfully');
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Error uploading files');
-    } finally {
-      setUploading(false);
+  const handleAddImage = () => {
+    if (!newImageUrl) {
+      toast.error("Please enter an image URL");
+      return;
     }
+
+    try {
+      new URL(newImageUrl); // Validate URL format
+      const currentImages = form.getValues('images') || [];
+      form.setValue('images', [...currentImages, newImageUrl]);
+      setNewImageUrl(""); // Clear input after adding
+      toast.success('Image URL added successfully');
+    } catch (error) {
+      toast.error('Please enter a valid URL');
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const currentImages = form.getValues('images') || [];
+    const newImages = currentImages.filter((_, i) => i !== index);
+    form.setValue('images', newImages);
+    toast.success('Image removed successfully');
   };
 
   const onSubmit = async (data: DentalRecordFormData) => {
@@ -164,19 +149,37 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
               )}
             />
             <FormItem>
-              <FormLabel>Photos</FormLabel>
-              <FormControl>
-                <Input 
-                  type="file" 
-                  accept="image/*" 
-                  multiple
-                  onChange={handleFileUpload}
-                  disabled={uploading}
+              <FormLabel>Add Photo URL</FormLabel>
+              <div className="flex gap-2">
+                <Input
+                  type="url"
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                  placeholder="Enter image URL"
                 />
-              </FormControl>
-              <FormMessage />
+                <Button 
+                  type="button" 
+                  onClick={handleAddImage}
+                  size="icon"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              {form.watch('images')?.map((url, index) => (
+                <div key={index} className="flex items-center gap-2 mt-2">
+                  <Input value={url} readOnly className="flex-1" />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
             </FormItem>
-            <Button type="submit" className="w-full" disabled={uploading}>
+            <Button type="submit" className="w-full">
               Add Record
             </Button>
           </form>
