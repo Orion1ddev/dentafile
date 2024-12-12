@@ -23,28 +23,22 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
+    let subscription: { unsubscribe: () => void } | null = null;
+
     const initializeAuth = async () => {
       try {
-        // Get the current session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        // First, get the current session
+        const { data: { session } } = await supabase.auth.getSession();
         
-        if (sessionError) {
-          console.error('Session error:', sessionError);
-          setIsAuthenticated(false);
-          return;
-        }
-
-        // Set initial authentication state
+        // Set initial authentication state based on session existence
         setIsAuthenticated(!!session);
 
-        // Listen for auth state changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        // Set up auth state change listener
+        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
           setIsAuthenticated(!!session);
         });
 
-        return () => {
-          subscription.unsubscribe();
-        };
+        subscription = data.subscription;
       } catch (error) {
         console.error('Auth initialization error:', error);
         setIsAuthenticated(false);
@@ -52,6 +46,13 @@ const App = () => {
     };
 
     initializeAuth();
+
+    // Cleanup subscription on unmount
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, []);
 
   // Show loading state while checking authentication
