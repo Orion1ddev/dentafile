@@ -13,14 +13,33 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { exportPatientsToCSV } from "@/utils/exportUtils";
+import { useNavigate } from "react-router-dom";
 
 export const NavMenu = () => {
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    toast.success(t("sign_out"));
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Sign out error:', error);
+        // If we get a 403 or session not found error, we can consider the user already signed out
+        if (error.status === 403 || error.message.includes('session_not_found')) {
+          // Force clear the session
+          await supabase.auth.clearSession();
+          navigate('/auth');
+          return;
+        }
+        throw error;
+      }
+      toast.success(t("sign_out"));
+    } catch (error: any) {
+      toast.error(error.message || t("sign_out_error"));
+      // Even if there's an error, try to redirect to auth page
+      navigate('/auth');
+    }
   };
 
   const handleExport = async () => {
