@@ -30,6 +30,7 @@ const App = () => {
         
         if (sessionError) {
           console.error('Session error:', sessionError);
+          await supabase.auth.signOut({ scope: 'local' });
           setIsAuthenticated(false);
           return;
         }
@@ -41,6 +42,7 @@ const App = () => {
           return;
         }
 
+        // Valid session found
         setIsAuthenticated(true);
 
         // Set up the auth state listener
@@ -48,12 +50,13 @@ const App = () => {
           console.log('Auth state changed:', event, !!session);
           
           if (event === 'SIGNED_OUT') {
-            // Clear local session data
             await supabase.auth.signOut({ scope: 'local' });
             setIsAuthenticated(false);
           } else if (event === 'SIGNED_IN' && session) {
             setIsAuthenticated(true);
           } else if (!session) {
+            // No session available
+            await supabase.auth.signOut({ scope: 'local' });
             setIsAuthenticated(false);
           }
         });
@@ -63,6 +66,8 @@ const App = () => {
         };
       } catch (error) {
         console.error('Auth initialization error:', error);
+        // In case of any error, clear local session and set as not authenticated
+        await supabase.auth.signOut({ scope: 'local' });
         setIsAuthenticated(false);
       }
     };
