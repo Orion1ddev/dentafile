@@ -23,16 +23,39 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Initialize auth state
     const initializeAuth = async () => {
       try {
         // Get the initial session
-        const { data: { session } } = await supabase.auth.getSession();
-        setIsAuthenticated(!!session);
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          setIsAuthenticated(false);
+          return;
+        }
+
+        // If no session, clear any stale data and set as not authenticated
+        if (!session) {
+          await supabase.auth.signOut({ scope: 'local' });
+          setIsAuthenticated(false);
+          return;
+        }
+
+        setIsAuthenticated(true);
 
         // Set up the auth state listener
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-          setIsAuthenticated(!!session);
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log('Auth state changed:', event, !!session);
+          
+          if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+            // Clear local session data
+            await supabase.auth.signOut({ scope: 'local' });
+            setIsAuthenticated(false);
+          } else if (event === 'SIGNED_IN' && session) {
+            setIsAuthenticated(true);
+          } else if (!session) {
+            setIsAuthenticated(false);
+          }
         });
 
         return () => {
