@@ -22,18 +22,23 @@ export const NavMenu = () => {
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
+      // First try to sign out globally
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
+      
       if (error) {
-        console.error('Sign out error:', error);
-        // If we get a 403 or session not found error, we can consider the user already signed out
+        console.error('Global sign out error:', error);
+        // If we get a 403 or session not found error, try local sign out
         if (error.status === 403 || error.message.includes('session_not_found')) {
-          // Instead of clearSession, we'll sign out again with a different scope
-          await supabase.auth.signOut({ scope: 'local' });
-          navigate('/auth');
-          return;
+          const { error: localError } = await supabase.auth.signOut({ scope: 'local' });
+          if (localError) {
+            console.error('Local sign out error:', localError);
+            throw localError;
+          }
+        } else {
+          throw error;
         }
-        throw error;
       }
+      
       toast.success(t("sign_out"));
       navigate('/auth');
     } catch (error: any) {
