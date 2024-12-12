@@ -25,6 +25,7 @@ const App = () => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        // Get the current session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -33,10 +34,11 @@ const App = () => {
           return;
         }
 
+        // Set initial authentication state
         setIsAuthenticated(!!session);
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-          console.log('Auth state changed:', event, !!session);
+        // Listen for auth state changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
           setIsAuthenticated(!!session);
         });
 
@@ -52,6 +54,7 @@ const App = () => {
     initializeAuth();
   }, []);
 
+  // Show loading state while checking authentication
   if (isAuthenticated === null) {
     return (
       <div className="min-h-screen flex items-center justify-center">
