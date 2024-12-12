@@ -25,19 +25,20 @@ const App = () => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        // First, ensure any stale session is cleared
+        await supabase.auth.signOut({ scope: 'local' });
+
         // Get the initial session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           console.error('Session error:', sessionError);
-          await supabase.auth.signOut({ scope: 'local' });
           setIsAuthenticated(false);
           return;
         }
 
-        // If no session, clear any stale data and set as not authenticated
+        // If no session, set as not authenticated
         if (!session) {
-          await supabase.auth.signOut({ scope: 'local' });
           setIsAuthenticated(false);
           return;
         }
@@ -49,15 +50,11 @@ const App = () => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           console.log('Auth state changed:', event, !!session);
           
-          if (event === 'SIGNED_OUT') {
+          if (event === 'SIGNED_OUT' || !session) {
             await supabase.auth.signOut({ scope: 'local' });
             setIsAuthenticated(false);
           } else if (event === 'SIGNED_IN' && session) {
             setIsAuthenticated(true);
-          } else if (!session) {
-            // No session available
-            await supabase.auth.signOut({ scope: 'local' });
-            setIsAuthenticated(false);
           }
         });
 
@@ -66,7 +63,6 @@ const App = () => {
         };
       } catch (error) {
         console.error('Auth initialization error:', error);
-        // In case of any error, clear local session and set as not authenticated
         await supabase.auth.signOut({ scope: 'local' });
         setIsAuthenticated(false);
       }
