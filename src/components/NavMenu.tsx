@@ -27,15 +27,17 @@ export const NavMenu = () => {
         console.error('Sign out error:', error);
         // If we get a 403 or session not found error, we can consider the user already signed out
         if (error.status === 403 || error.message.includes('session_not_found')) {
-          // Force clear the session
-          await supabase.auth.clearSession();
+          // Instead of clearSession, we'll sign out again with a different scope
+          await supabase.auth.signOut({ scope: 'local' });
           navigate('/auth');
           return;
         }
         throw error;
       }
       toast.success(t("sign_out"));
+      navigate('/auth');
     } catch (error: any) {
+      console.error('Sign out error:', error);
       toast.error(error.message || t("sign_out_error"));
       // Even if there's an error, try to redirect to auth page
       navigate('/auth');
