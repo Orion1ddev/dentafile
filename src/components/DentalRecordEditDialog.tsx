@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { Pencil, Plus, X } from "lucide-react";
+import { Pencil } from "lucide-react";
+import { ImageUploadField } from "./dental-records/ImageUploadField";
 
 interface DentalRecordFormData {
   visit_date: string;
@@ -33,7 +34,6 @@ interface DentalRecordEditDialogProps {
 export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const [newImageUrl, setNewImageUrl] = useState("");
   
   const form = useForm<DentalRecordFormData>({
     defaultValues: {
@@ -44,30 +44,6 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
       images: record.images || [],
     },
   });
-
-  const handleAddImage = () => {
-    if (!newImageUrl) {
-      toast.error("Please enter an image URL");
-      return;
-    }
-
-    try {
-      new URL(newImageUrl); // Validate URL format
-      const currentImages = form.getValues('images') || [];
-      form.setValue('images', [...currentImages, newImageUrl]);
-      setNewImageUrl(""); // Clear input after adding
-      toast.success('Image URL added successfully');
-    } catch (error) {
-      toast.error('Please enter a valid URL');
-    }
-  };
-
-  const handleRemoveImage = (index: number) => {
-    const currentImages = form.getValues('images') || [];
-    const newImages = currentImages.filter((_, i) => i !== index);
-    form.setValue('images', newImages);
-    toast.success('Image removed successfully');
-  };
 
   const onSubmit = async (data: DentalRecordFormData) => {
     try {
@@ -159,37 +135,7 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
                 </FormItem>
               )}
             />
-            <FormItem>
-              <FormLabel>Add Photo URL</FormLabel>
-              <div className="flex gap-2">
-                <Input
-                  type="url"
-                  value={newImageUrl}
-                  onChange={(e) => setNewImageUrl(e.target.value)}
-                  placeholder="Enter image URL"
-                />
-                <Button 
-                  type="button" 
-                  onClick={handleAddImage}
-                  size="icon"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              {form.watch('images')?.map((url, index) => (
-                <div key={index} className="flex items-center gap-2 mt-2">
-                  <Input value={url} readOnly className="flex-1" />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => handleRemoveImage(index)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </FormItem>
+            <ImageUploadField form={form} />
             <Button type="submit" className="w-full">
               Update Record
             </Button>
