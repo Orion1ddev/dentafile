@@ -3,7 +3,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Stethoscope, Languages } from "lucide-react";
+import { Stethoscope, Menu } from "lucide-react";
 import { useLanguage } from "@/stores/useLanguage";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -97,23 +97,12 @@ const Auth = () => {
 
       {/* Right side - Auth form */}
       <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col">
-        {/* Mobile header */}
-        {isMobile && (
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Stethoscope className="h-8 w-8 text-blue-600" />
-              <h1 className="text-3xl font-bold text-blue-600">DentaFile</h1>
-            </div>
-            <p className="text-gray-600">{t('welcome_title')}</p>
-          </div>
-        )}
-
-        {/* Language Toggle */}
-        <div className="self-end mb-8">
+        {/* Language Toggle - Moved to top */}
+        <div className="mb-8">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <Languages className="h-4 w-4" />
+              <Button variant="outline" size="icon" className="h-8 w-8">
+                <Menu className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -127,10 +116,21 @@ const Auth = () => {
           </DropdownMenu>
         </div>
 
+        {/* Mobile header */}
+        {isMobile && (
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Stethoscope className="h-8 w-8 text-blue-600" />
+              <h1 className="text-3xl font-bold text-blue-600">DentaFile</h1>
+            </div>
+            <p className="text-gray-600">{t('welcome_title')}</p>
+          </div>
+        )}
+
         <div className="flex-1 flex items-center justify-center">
           <div className="w-full max-w-md">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {view === 'sign_in' ? t('login') : t('sign_up')}
+              {t('login')}
             </h2>
             <SupabaseAuth 
               supabaseClient={supabase}
@@ -153,10 +153,14 @@ const Auth = () => {
                   sign_in: {
                     email_label: t('email_label'),
                     password_label: t('password_label'),
+                    button_label: t('login'),
+                    link_text: t('sign_up'),
                   },
                   sign_up: {
                     email_label: t('email_label'),
                     password_label: t('password_label'),
+                    button_label: t('sign_up'),
+                    link_text: t('login'),
                   },
                 },
               }}
