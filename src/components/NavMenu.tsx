@@ -45,41 +45,43 @@ export const NavMenu = () => {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Menu className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuLabel>{t("settings")}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-          {theme === "dark" ? (
-            <Sun className="mr-2 h-4 w-4" />
-          ) : (
-            <Moon className="mr-2 h-4 w-4" />
-          )}
-          {theme === "dark" ? t("light_mode") : t("dark_mode")}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleExport}>
-          <Download className="mr-2 h-4 w-4" />
-          {t("export_data")}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setLanguage("en")}>
-          <Languages className="mr-2 h-4 w-4" />
-          English {language === "en" && "✓"}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setLanguage("tr")}>
-          <Languages className="mr-2 h-4 w-4" />
-          Türkçe {language === "tr" && "✓"}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-          <LogOut className="mr-2 h-4 w-4" />
-          {t("sign_out")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="fixed top-4 right-4 z-50">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Menu className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuLabel>{t("settings")}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            {theme === "dark" ? (
+              <Sun className="mr-2 h-4 w-4" />
+            ) : (
+              <Moon className="mr-2 h-4 w-4" />
+            )}
+            {theme === "dark" ? t("light_mode") : t("dark_mode")}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleExport}>
+            <Download className="mr-2 h-4 w-4" />
+            {t("export_data")}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setLanguage("en")}>
+            <Languages className="mr-2 h-4 w-4" />
+            English {language === "en" && "✓"}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setLanguage("tr")}>
+            <Languages className="mr-2 h-4 w-4" />
+            Türkçe {language === "tr" && "✓"}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+            <LogOut className="mr-2 h-4 w-4" />
+            {t("sign_out")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 };
