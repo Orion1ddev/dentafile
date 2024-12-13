@@ -10,12 +10,15 @@ import { useQuery } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
+import { CalendarView } from "@/components/CalendarView";
+import { Calendar, LayoutGrid } from "lucide-react";
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 
 const Index = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [view, setView] = useState<"list" | "calendar">("list");
   const { t, fetchTranslations } = useLanguage();
 
   useEffect(() => {
@@ -67,6 +70,19 @@ const Index = () => {
               </h1>
             </div>
             <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setView(view === "list" ? "calendar" : "list")}
+                className="relative"
+                title={view === "list" ? "Switch to Calendar View" : "Switch to List View"}
+              >
+                {view === "list" ? (
+                  <Calendar className="h-5 w-5" />
+                ) : (
+                  <LayoutGrid className="h-5 w-5" />
+                )}
+              </Button>
               <PatientFormDialog mode="create" />
               <NavMenu />
             </div>
@@ -76,24 +92,30 @@ const Index = () => {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 sm:px-0">
-          <PatientFilter
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
+          {view === "list" && (
+            <>
+              <PatientFilter
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+              />
 
-          {isLoading ? (
-            <div className="text-center py-12">{t('loading')}</div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {patients?.map((patient) => (
-                <PatientCard
-                  key={patient.id}
-                  patient={patient}
-                  onClick={() => navigate(`/patient/${patient.id}`)}
-                />
-              ))}
-            </div>
+              {isLoading ? (
+                <div className="text-center py-12">{t('loading')}</div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {patients?.map((patient) => (
+                    <PatientCard
+                      key={patient.id}
+                      patient={patient}
+                      onClick={() => navigate(`/patient/${patient.id}`)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
+
+          {view === "calendar" && <CalendarView />}
         </div>
       </main>
     </div>
