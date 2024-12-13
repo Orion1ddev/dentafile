@@ -21,12 +21,10 @@ const Auth = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    // Fetch translations when component mounts
     fetchTranslations();
   }, [fetchTranslations]);
 
   useEffect(() => {
-    // Check current session first
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
@@ -49,7 +47,6 @@ const Auth = () => {
     };
   }, [navigate]);
 
-  // Show loading state while translations are being fetched
   if (!translations.length) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -97,8 +94,8 @@ const Auth = () => {
 
       {/* Right side - Auth form */}
       <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col">
-        {/* Language Toggle - Moved to top */}
-        <div className="mb-8">
+        {/* Language Toggle - Always visible at the top */}
+        <div className="absolute top-4 right-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon" className="h-8 w-8">
@@ -154,13 +151,13 @@ const Auth = () => {
                     email_label: t('email_label'),
                     password_label: t('password_label'),
                     button_label: t('login'),
-                    link_text: t('sign_up'),
+                    link_text: t('sign_up_link'),
                   },
                   sign_up: {
                     email_label: t('email_label'),
                     password_label: t('password_label'),
-                    button_label: t('sign_up'),
-                    link_text: t('login'),
+                    button_label: t('sign_up_link'),
+                    link_text: t('login_link'),
                   },
                 },
               }}
