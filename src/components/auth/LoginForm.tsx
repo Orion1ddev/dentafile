@@ -1,6 +1,8 @@
+import { Auth } from "@supabase/auth-ui-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { Link } from "react-router-dom";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
 
 const LoginForm = () => {
   const { t } = useLanguage();
@@ -11,20 +13,20 @@ const LoginForm = () => {
         {t('login_title')}
       </h2>
       <div className="space-y-4">
-        <div className="supabase-auth-ui">
-          {supabase.auth.ui.createFormHelpers({
-            view: 'sign_in',
-            localization: {
-              variables: {
-                sign_in: {
-                  email_label: t('email_label'),
-                  password_label: t('password_label'),
-                  button_label: t('login_title'),
-                }
+        <Auth
+          supabaseClient={supabase}
+          appearance={{ theme: ThemeSupa }}
+          localization={{
+            variables: {
+              sign_in: {
+                email_label: t('email_label'),
+                password_label: t('password_label'),
+                button_label: t('login_title'),
               }
             }
-          })}
-        </div>
+          }}
+          view="sign_in"
+        />
         <div className="text-center mt-4">
           <Link 
             to="/auth/signup" 

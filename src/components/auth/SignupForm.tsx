@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { Auth } from "@supabase/auth-ui-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { Link } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
 
 const SignupForm = () => {
   const { t } = useLanguage();
@@ -20,20 +22,21 @@ const SignupForm = () => {
         {t('sign_up_title')}
       </h2>
       <div className="space-y-4">
-        <div className="supabase-auth-ui">
-          {supabase.auth.ui.createFormHelpers({
-            view: 'sign_up',
-            localization: {
-              variables: {
-                sign_up: {
-                  email_label: t('email_label'),
-                  password_label: t('password_label'),
-                  button_label: t('sign_up_title'),
-                }
+        <Auth
+          supabaseClient={supabase}
+          appearance={{ theme: ThemeSupa }}
+          localization={{
+            variables: {
+              sign_up: {
+                email_label: t('email_label'),
+                password_label: t('password_label'),
+                button_label: t('sign_up_title'),
               }
             }
-          })}
-        </div>
+          }}
+          view="sign_up"
+          providers={[]}
+        />
         
         <div className="flex items-start space-x-2 mb-4">
           <Checkbox
