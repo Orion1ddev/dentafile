@@ -1,16 +1,16 @@
-import { createHash } from 'crypto';
 import { supabase } from "@/integrations/supabase/client";
 
-// Hash the filename to make it harder to guess
-const hashFilename = (filename: string): string => {
+// Hash the filename to make it harder to guess using Web Crypto API
+const hashFilename = async (filename: string): Promise<string> => {
   const timestamp = Date.now().toString();
-  const hash = createHash('sha256')
-    .update(filename + timestamp)
-    .digest('hex')
-    .substring(0, 16); // Take first 16 chars for reasonable length
+  const data = new TextEncoder().encode(filename + timestamp);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const truncatedHash = hashHex.substring(0, 16); // Take first 16 chars for reasonable length
   
   const extension = filename.split('.').pop();
-  return `${hash}.${extension}`;
+  return `${truncatedHash}.${extension}`;
 };
 
 // Upload image securely to ImgBB and store metadata in Supabase
@@ -28,7 +28,7 @@ export const uploadImageSecurely = async (file: File): Promise<string> => {
     }
 
     // Hash the filename
-    const hashedFilename = hashFilename(file.name);
+    const hashedFilename = await hashFilename(file.name);
 
     const reader = new FileReader();
     const base64Promise = new Promise<string>((resolve) => {
