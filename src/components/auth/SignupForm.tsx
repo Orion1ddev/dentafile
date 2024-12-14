@@ -1,20 +1,10 @@
-import { useState } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
-import { Link } from "react-router-dom";
-import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 
 const SignupForm = () => {
   const { t } = useLanguage();
-  const [termsAccepted, setTermsAccepted] = useState(false);
-
-  const handleTermsClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    toast.info("Terms and conditions will be displayed here");
-  };
 
   return (
     <div className="w-full max-w-md">
@@ -24,49 +14,19 @@ const SignupForm = () => {
       <div className="space-y-4">
         <Auth
           supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}
-          localization={{
-            variables: {
-              sign_up: {
-                email_label: t('email_label'),
-                password_label: t('password_label'),
-                button_label: t('sign_up_title'),
+          appearance={{ 
+            theme: ThemeSupa,
+            style: {
+              button: {
+                background: 'white',
+                color: 'black',
+                border: '1px solid #e5e7eb',
               }
             }
           }}
+          providers={['google']}
           view="sign_up"
-          providers={[]}
         />
-        
-        <div className="flex items-start space-x-2 mb-4">
-          <Checkbox
-            id="terms"
-            checked={termsAccepted}
-            onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-            className="mt-1"
-          />
-          <label
-            htmlFor="terms"
-            className="text-sm text-gray-600 cursor-pointer"
-          >
-            {t('terms_agreement')}{' '}
-            <button
-              onClick={handleTermsClick}
-              className="text-blue-600 hover:underline"
-            >
-              {t('terms_and_conditions')}
-            </button>
-          </label>
-        </div>
-
-        <div className="text-center mt-4">
-          <Link 
-            to="/auth" 
-            className="text-blue-600 hover:text-blue-800 text-sm"
-          >
-            {t('login_link')}
-          </Link>
-        </div>
       </div>
     </div>
   );
