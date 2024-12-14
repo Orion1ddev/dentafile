@@ -1,9 +1,9 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
-import { uploadImageToImgBB } from "@/utils/imageUpload";
+import { uploadImageSecurely } from "@/utils/secureImageUpload";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -20,15 +20,17 @@ export const ImageUploadField = ({ form }: ImageUploadFieldProps) => {
 
     try {
       setIsUploading(true);
-      const imageUrl = await uploadImageToImgBB(file);
+      const imageUrl = await uploadImageSecurely(file);
       const currentImages = form.getValues('images') || [];
       form.setValue('images', [...currentImages, imageUrl]);
       toast.success('Image uploaded successfully');
-    } catch (error) {
-      toast.error('Failed to upload image');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to upload image');
       console.error('Upload error:', error);
     } finally {
       setIsUploading(false);
+      // Clear the input value to allow uploading the same file again
+      e.target.value = '';
     }
   };
 
@@ -47,12 +49,16 @@ export const ImageUploadField = ({ form }: ImageUploadFieldProps) => {
           <div className="flex gap-2">
             <Input
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/gif"
               onChange={handleFileUpload}
               disabled={isUploading}
+              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
             />
           </div>
         </FormControl>
+        <div className="text-sm text-muted-foreground">
+          Accepted formats: JPEG, PNG, GIF. Max size: 5MB
+        </div>
         {form.watch('images')?.map((url: string, index: number) => (
           <div key={index} className="flex items-center gap-2">
             <img 
