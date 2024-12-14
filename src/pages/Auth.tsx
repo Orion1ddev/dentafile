@@ -1,14 +1,12 @@
-import { Auth as SupabaseAuth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { useEffect } from "react";
+import { useNavigate, Routes, Route } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Stethoscope, Menu } from "lucide-react";
 import { useLanguage } from "@/stores/useLanguage";
+import { Stethoscope, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
+import LoginForm from "@/components/auth/LoginForm";
+import SignupForm from "@/components/auth/SignupForm";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,8 +16,6 @@ import {
 
 const Auth = () => {
   const navigate = useNavigate();
-  const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_in');
-  const [termsAccepted, setTermsAccepted] = useState(false);
   const { language, setLanguage, t, translations, fetchTranslations } = useLanguage();
   const isMobile = useIsMobile();
 
@@ -40,8 +36,6 @@ const Auth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         navigate("/");
-      } else if (event === 'SIGNED_OUT') {
-        navigate("/auth");
       }
     });
 
@@ -49,10 +43,6 @@ const Auth = () => {
       subscription.unsubscribe();
     };
   }, [navigate]);
-
-  const handleTermsClick = () => {
-    toast.info("Terms and conditions will be displayed here");
-  };
 
   if (!translations.length) {
     return (
@@ -99,7 +89,7 @@ const Auth = () => {
         </div>
       )}
 
-      {/* Right side - Auth form */}
+      {/* Right side - Auth forms */}
       <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col">
         {/* Language Toggle */}
         <div className="absolute top-4 right-4">
@@ -132,71 +122,10 @@ const Auth = () => {
         )}
 
         <div className="flex-1 flex items-center justify-center">
-          <div className="w-full max-w-md">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {view === 'sign_in' ? t('login') : t('sign_up')}
-            </h2>
-            
-            {view === 'sign_up' && (
-              <div className="mb-4 flex items-start space-x-2">
-                <Checkbox
-                  id="terms"
-                  checked={termsAccepted}
-                  onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                  className="mt-1"
-                />
-                <label
-                  htmlFor="terms"
-                  className="text-sm text-gray-600 cursor-pointer"
-                >
-                  {t('terms_agreement')}
-                  <button
-                    onClick={handleTermsClick}
-                    className="text-blue-600 hover:underline ml-1"
-                  >
-                    {t('terms_and_conditions')}
-                  </button>
-                </label>
-              </div>
-            )}
-            
-            <SupabaseAuth 
-              supabaseClient={supabase}
-              appearance={{
-                theme: ThemeSupa,
-                style: {
-                  button: {
-                    background: 'rgb(37 99 235)',
-                    color: 'white',
-                    borderRadius: '0.5rem',
-                    opacity: (!termsAccepted && view === 'sign_up') ? '0.5' : '1',
-                    pointerEvents: (!termsAccepted && view === 'sign_up') ? 'none' : 'auto',
-                  },
-                  anchor: {
-                    color: 'rgb(37 99 235)',
-                  },
-                },
-              }}
-              providers={[]}
-              localization={{
-                variables: {
-                  sign_in: {
-                    email_label: t('email_label'),
-                    password_label: t('password_label'),
-                    button_label: t('login'),
-                    link_text: t('sign_up_link'),
-                  },
-                  sign_up: {
-                    email_label: t('email_label'),
-                    password_label: t('password_label'),
-                    button_label: t('sign_up'),
-                    link_text: t('login_link'),
-                  },
-                },
-              }}
-              view={view}
-            />
-          </div>
+          <Routes>
+            <Route path="/" element={<LoginForm />} />
+            <Route path="/signup" element={<SignupForm />} />
+          </Routes>
         </div>
       </div>
     </div>
