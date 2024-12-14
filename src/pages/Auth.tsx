@@ -50,13 +50,7 @@ const Auth = () => {
     };
   }, [navigate]);
 
-  const handleViewChange = (newView: 'sign_in' | 'sign_up') => {
-    setView(newView);
-    setTermsAccepted(false);
-  };
-
   const handleTermsClick = () => {
-    // Here you would typically open your terms modal or navigate to terms page
     toast.info("Terms and conditions will be displayed here");
   };
 
@@ -168,7 +162,6 @@ const Auth = () => {
             
             <SupabaseAuth 
               supabaseClient={supabase}
-              view={view}
               appearance={{
                 theme: ThemeSupa,
                 style: {
@@ -201,7 +194,7 @@ const Auth = () => {
                   },
                 },
               }}
-              onViewChange={handleViewChange}
+              view={view}
             />
           </div>
         </div>
