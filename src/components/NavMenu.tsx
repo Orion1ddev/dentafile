@@ -45,10 +45,10 @@ export const NavMenu = () => {
   };
 
   return (
-    <div className="fixed top-4 right-4 z-50">
+    <div className="fixed top-4 right-4 z-[100]">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/50 backdrop-blur-sm">
             <Menu className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>

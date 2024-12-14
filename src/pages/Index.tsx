@@ -69,13 +69,14 @@ const Index = () => {
                 DentaFile
               </h1>
             </div>
-            <div className="flex items-center gap-4">
+            {/* Functional buttons container */}
+            <div className="flex items-center space-x-2 mr-12">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setView(view === "list" ? "calendar" : "list")}
                 className="relative"
-                title={view === "list" ? "Switch to Calendar View" : "Switch to List View"}
+                title={view === "list" ? t("switch_to_calendar") : t("switch_to_list")}
               >
                 {view === "list" ? (
                   <Calendar className="h-5 w-5" />
@@ -84,7 +85,6 @@ const Index = () => {
                 )}
               </Button>
               <PatientFormDialog mode="create" />
-              <NavMenu />
             </div>
           </div>
         </div>
@@ -118,6 +118,7 @@ const Index = () => {
           {view === "calendar" && <CalendarView />}
         </div>
       </main>
+      <NavMenu />
     </div>
   );
 };
