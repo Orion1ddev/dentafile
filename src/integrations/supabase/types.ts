@@ -108,28 +108,29 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "patients_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
           created_at: string
+          encrypted_data: string | null
           id: string
+          terms_accepted: boolean | null
+          terms_accepted_at: string | null
         }
         Insert: {
           created_at?: string
+          encrypted_data?: string | null
           id: string
+          terms_accepted?: boolean | null
+          terms_accepted_at?: string | null
         }
         Update: {
           created_at?: string
+          encrypted_data?: string | null
           id?: string
+          terms_accepted?: boolean | null
+          terms_accepted_at?: string | null
         }
         Relationships: []
       }

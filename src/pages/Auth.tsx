@@ -7,6 +7,8 @@ import { Stethoscope, Menu } from "lucide-react";
 import { useLanguage } from "@/stores/useLanguage";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +19,7 @@ import {
 const Auth = () => {
   const navigate = useNavigate();
   const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_in');
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const { language, setLanguage, t, translations, fetchTranslations } = useLanguage();
   const isMobile = useIsMobile();
 
@@ -46,6 +49,16 @@ const Auth = () => {
       subscription.unsubscribe();
     };
   }, [navigate]);
+
+  const handleViewChange = (newView: 'sign_in' | 'sign_up') => {
+    setView(newView);
+    setTermsAccepted(false);
+  };
+
+  const handleTermsClick = () => {
+    // Here you would typically open your terms modal or navigate to terms page
+    toast.info("Terms and conditions will be displayed here");
+  };
 
   if (!translations.length) {
     return (
@@ -94,7 +107,7 @@ const Auth = () => {
 
       {/* Right side - Auth form */}
       <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col">
-        {/* Language Toggle - Always visible at the top */}
+        {/* Language Toggle */}
         <div className="absolute top-4 right-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -127,10 +140,35 @@ const Auth = () => {
         <div className="flex-1 flex items-center justify-center">
           <div className="w-full max-w-md">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {t('login')}
+              {view === 'sign_in' ? t('login') : t('sign_up')}
             </h2>
+            
+            {view === 'sign_up' && (
+              <div className="mb-4 flex items-start space-x-2">
+                <Checkbox
+                  id="terms"
+                  checked={termsAccepted}
+                  onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                  className="mt-1"
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-sm text-gray-600 cursor-pointer"
+                >
+                  {t('terms_agreement')}
+                  <button
+                    onClick={handleTermsClick}
+                    className="text-blue-600 hover:underline ml-1"
+                  >
+                    {t('terms_and_conditions')}
+                  </button>
+                </label>
+              </div>
+            )}
+            
             <SupabaseAuth 
               supabaseClient={supabase}
+              view={view}
               appearance={{
                 theme: ThemeSupa,
                 style: {
@@ -138,6 +176,8 @@ const Auth = () => {
                     background: 'rgb(37 99 235)',
                     color: 'white',
                     borderRadius: '0.5rem',
+                    opacity: (!termsAccepted && view === 'sign_up') ? '0.5' : '1',
+                    pointerEvents: (!termsAccepted && view === 'sign_up') ? 'none' : 'auto',
                   },
                   anchor: {
                     color: 'rgb(37 99 235)',
@@ -156,11 +196,12 @@ const Auth = () => {
                   sign_up: {
                     email_label: t('email_label'),
                     password_label: t('password_label'),
-                    button_label: t('sign_up_link'),
+                    button_label: t('sign_up'),
                     link_text: t('login_link'),
                   },
                 },
               }}
+              onViewChange={handleViewChange}
             />
           </div>
         </div>
