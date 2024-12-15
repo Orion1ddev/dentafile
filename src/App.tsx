@@ -23,22 +23,35 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    let subscription: { unsubscribe: () => void } | null = null;
-
     const initializeAuth = async () => {
       try {
-        // First, get the current session
-        const { data: { session } } = await supabase.auth.getSession();
+        // Get the initial session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        // Set initial authentication state based on session existence
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          setIsAuthenticated(false);
+          return;
+        }
+
         setIsAuthenticated(!!session);
 
         // Set up auth state change listener
-        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-          setIsAuthenticated(!!session);
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log('Auth event:', event);
+          
+          if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+            setIsAuthenticated(false);
+          } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            setIsAuthenticated(true);
+          } else if (event === 'INITIAL_SESSION') {
+            setIsAuthenticated(!!session);
+          }
         });
 
-        subscription = data.subscription;
+        return () => {
+          subscription.unsubscribe();
+        };
       } catch (error) {
         console.error('Auth initialization error:', error);
         setIsAuthenticated(false);
@@ -46,13 +59,6 @@ const App = () => {
     };
 
     initializeAuth();
-
-    // Cleanup subscription on unmount
-    return () => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    };
   }, []);
 
   // Show loading state while checking authentication
@@ -77,7 +83,7 @@ const App = () => {
                 element={isAuthenticated ? <Index /> : <Navigate to="/auth" replace />} 
               />
               <Route 
-                path="/auth" 
+                path="/auth/*" 
                 element={!isAuthenticated ? <Auth /> : <Navigate to="/" replace />} 
               />
               <Route 
