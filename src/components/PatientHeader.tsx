@@ -36,7 +36,15 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('patient_details')}</h1>
           </div>
           <div className="flex items-center gap-2">
-            <PatientFormDialog patient={patient} mode="edit" />
+            <PatientFormDialog 
+              patient={patient} 
+              mode="edit" 
+              trigger={
+                <Button variant="outline">
+                  {t('edit_patient')}
+                </Button>
+              }
+            />
             <DentalRecordFormDialog patientId={patient.id} />
             <NavMenu />
           </div>

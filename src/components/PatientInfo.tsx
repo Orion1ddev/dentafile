@@ -24,6 +24,10 @@ export const PatientInfo = ({ patient }: PatientInfoProps) => {
     }
   };
 
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -31,8 +35,8 @@ export const PatientInfo = ({ patient }: PatientInfoProps) => {
           {patient.first_name} {patient.last_name}
         </CardTitle>
         <div className="text-muted-foreground">
-          <p>{t('born')}: {formatDisplayDate(patient.date_of_birth)}</p>
-          <p>{t('contact')}: {patient.phone || 'N/A'} • {patient.email || 'N/A'}</p>
+          <p>{capitalizeFirstLetter(t('born'))}: {formatDisplayDate(patient.date_of_birth)}</p>
+          <p>{capitalizeFirstLetter(t('contact'))}: {patient.phone || 'N/A'} • {patient.email || 'N/A'}</p>
         </div>
       </CardHeader>
     </Card>
