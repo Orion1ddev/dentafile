@@ -16,7 +16,7 @@ const SignupForm = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'USER_UPDATED' || event === 'SIGNED_UP') {
+      if (event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED') {
         console.log('Auth event:', event);
         // If the user already exists, show a toast and redirect to login
         toast({
