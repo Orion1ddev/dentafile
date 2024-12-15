@@ -11,25 +11,24 @@ const SignupForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Listen for auth state changes to handle errors
+  // Handle auth errors through the error event listener
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED') {
-        console.log('Auth event:', event);
-        // If the user already exists, show a toast and redirect to login
+    const handleAuthError = (error: Error) => {
+      if (error.message.includes('User already registered')) {
         toast({
           variant: "destructive",
           title: "Account Already Exists",
           description: "This email is already registered. Please try logging in instead.",
         });
-        navigate('/auth'); // Redirect to login page
+        navigate('/auth');
       }
-    });
+    };
+
+    // Add error event listener
+    const subscription = supabase.auth.onError(handleAuthError);
 
     return () => {
-      subscription.unsubscribe();
+      subscription.data.subscription.unsubscribe();
     };
   }, [toast, navigate]);
 
