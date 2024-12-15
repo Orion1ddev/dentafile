@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useToast } from "@/components/ui/use-toast";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const SignupForm = () => {
@@ -11,31 +10,16 @@ const SignupForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'USER_UPDATED') {
-        // Check if there's an error message in the URL
-        const params = new URLSearchParams(window.location.search);
-        const error = params.get('error');
-        const errorDescription = params.get('error_description');
-        
-        if (error === 'unauthorized' && errorDescription?.includes('User already registered')) {
-          toast({
-            variant: "destructive",
-            title: "Account Already Exists",
-            description: "This email is already registered. Please try logging in instead.",
-          });
-          navigate('/auth');
-        }
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [toast, navigate]);
+  const handleAuthError = (error: Error) => {
+    if (error.message.includes('User already registered')) {
+      toast({
+        variant: "destructive",
+        title: "Account Already Exists",
+        description: "This email is already registered. Please try logging in instead.",
+      });
+      navigate('/auth');
+    }
+  };
 
   return (
     <div className="w-full max-w-md">
@@ -64,6 +48,7 @@ const SignupForm = () => {
           view="sign_up"
           showLinks={true}
           redirectTo={`${window.location.origin}/auth`}
+          onError={handleAuthError}
         />
       </div>
     </div>
