@@ -4,30 +4,34 @@ import { useLanguage } from "@/stores/useLanguage";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SignupForm = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Listen for auth state changes to handle errors
   useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'USER_UPDATED') {
-        console.error('User registration event:', event);
+      if (event === 'USER_UPDATED' || event === 'SIGNED_UP') {
+        console.log('Auth event:', event);
+        // If the user already exists, show a toast and redirect to login
         toast({
           variant: "destructive",
           title: "Account Already Exists",
           description: "This email is already registered. Please try logging in instead.",
         });
+        navigate('/auth'); // Redirect to login page
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [toast]);
+  }, [toast, navigate]);
 
   return (
     <div className="w-full max-w-md">

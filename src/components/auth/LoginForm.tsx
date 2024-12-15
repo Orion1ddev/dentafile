@@ -14,12 +14,12 @@ const LoginForm = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY' || event === 'TOKEN_REFRESHED') {
-        console.error('Authentication event:', event);
+      if (event === 'PASSWORD_RECOVERY') {
+        console.log('Auth event:', event);
         toast({
           variant: "destructive",
-          title: "Error",
-          description: "An error occurred during authentication. Please try again.",
+          title: "Password Recovery",
+          description: "Please check your email for password reset instructions.",
         });
       }
     });
