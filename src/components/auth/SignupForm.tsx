@@ -14,8 +14,8 @@ const SignupForm = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'USER_DELETED') {
-        console.error('User registration error');
+      if (event === 'USER_UPDATED') {
+        console.error('User registration event:', event);
         toast({
           variant: "destructive",
           title: "Account Already Exists",

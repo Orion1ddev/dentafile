@@ -14,8 +14,8 @@ const LoginForm = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
-        console.error('Authentication error occurred');
+      if (event === 'PASSWORD_RECOVERY' || event === 'TOKEN_REFRESHED') {
+        console.error('Authentication event:', event);
         toast({
           variant: "destructive",
           title: "Error",
