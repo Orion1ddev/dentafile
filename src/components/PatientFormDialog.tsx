@@ -13,6 +13,7 @@ import { PatientGenderSelect } from "./patient-form/PatientGenderSelect";
 import type { PatientFormData } from "./patient-form/types";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLanguage } from "@/stores/useLanguage";
 
 const patientFormSchema = z.object({
   first_name: z.string().min(1, "First name is required"),
@@ -34,6 +35,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   const form = useForm<PatientFormData>({
     resolver: zodResolver(patientFormSchema),
@@ -47,7 +49,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
       phone: patient.phone,
     } : {
       medical_history: [],
-      date_of_birth: new Date().toISOString().split('T')[0], // Set default date
+      date_of_birth: new Date().toISOString().split('T')[0],
     },
   });
 
@@ -60,7 +62,6 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
         return;
       }
 
-      // Ensure date is in the correct format (YYYY-MM-DD)
       const formattedDate = new Date(data.date_of_birth).toISOString().split('T')[0];
       const patientData = {
         ...data,
@@ -73,7 +74,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
           .insert([{ ...patientData, user_id: user.id }]);
 
         if (error) throw error;
-        toast.success("Patient created successfully");
+        toast.success(t("patient_created"));
       } else {
         const { error } = await supabase
           .from('patients')
@@ -81,7 +82,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
           .eq('id', patient.id);
 
         if (error) throw error;
-        toast.success("Patient updated successfully");
+        toast.success(t("patient_updated"));
       }
 
       queryClient.invalidateQueries({ queryKey: ['patients'] });
@@ -97,13 +98,15 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
       <DialogTrigger asChild>
         {trigger || (
           <Button variant={mode === 'create' ? 'default' : 'outline'}>
-            {mode === 'create' ? 'Add New Patient' : 'Edit Patient'}
+            {mode === 'create' ? t('add_new_patient') : t('edit_patient')}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Add New Patient' : 'Edit Patient'}</DialogTitle>
+          <DialogTitle>
+            {mode === 'create' ? t('add_new_patient') : t('edit_patient')}
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -111,7 +114,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
             <PatientGenderSelect form={form} />
             <PatientContactInfo form={form} />
             <Button type="submit" className="w-full">
-              {mode === 'create' ? 'Create Patient' : 'Update Patient'}
+              {mode === 'create' ? t('create_patient') : t('update_patient')}
             </Button>
           </form>
         </Form>

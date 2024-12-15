@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useLanguage } from "@/stores/useLanguage";
-import { Moon, Sun, Languages, LogOut, Download, Menu, ChevronDown } from "lucide-react";
+import { Moon, Sun, Languages, LogOut, Download, Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,7 +73,6 @@ export const NavMenu = () => {
             <DropdownMenuSubTrigger>
               <Languages className="mr-2 h-4 w-4" />
               {t("language")}
-              <ChevronDown className="ml-auto h-4 w-4" />
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <DropdownMenuItem onClick={() => setLanguage("en")}>
@@ -82,7 +81,6 @@ export const NavMenu = () => {
               <DropdownMenuItem onClick={() => setLanguage("tr")}>
                 Türkçe {language === "tr" && "✓"}
               </DropdownMenuItem>
-              {/* Additional languages can be added here */}
             </DropdownMenuSubContent>
           </DropdownMenuSub>
           <DropdownMenuSeparator />
