@@ -9,7 +9,6 @@ const LoginForm = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
 
-  // Listen for auth state changes to handle errors
   useEffect(() => {
     const {
       data: { subscription },
@@ -55,6 +54,7 @@ const LoginForm = () => {
           }}
           view="sign_in"
           showLinks={true}
+          providers={[]}
           redirectTo={`${window.location.origin}/auth`}
         />
       </div>

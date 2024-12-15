@@ -61,6 +61,7 @@ const SignupForm = () => {
           }}
           view="sign_up"
           showLinks={true}
+          providers={[]}
           redirectTo={`${window.location.origin}/auth`}
         />
       </div>
