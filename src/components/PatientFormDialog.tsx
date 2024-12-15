@@ -11,6 +11,18 @@ import { PatientBasicInfo } from "./patient-form/PatientBasicInfo";
 import { PatientContactInfo } from "./patient-form/PatientContactInfo";
 import { PatientGenderSelect } from "./patient-form/PatientGenderSelect";
 import type { PatientFormData } from "./patient-form/types";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const patientFormSchema = z.object({
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  date_of_birth: z.string().min(1, "Date of birth is required"),
+  gender: z.string().min(1, "Gender is required"),
+  medical_history: z.array(z.string()),
+  email: z.string().email().optional().or(z.literal("")),
+  phone: z.string().optional().or(z.literal(""))
+});
 
 interface PatientFormDialogProps {
   patient?: any;
@@ -24,6 +36,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
   const navigate = useNavigate();
   
   const form = useForm<PatientFormData>({
+    resolver: zodResolver(patientFormSchema),
     defaultValues: mode === 'edit' && patient ? {
       first_name: patient.first_name,
       last_name: patient.last_name,
@@ -34,6 +47,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
       phone: patient.phone,
     } : {
       medical_history: [],
+      date_of_birth: new Date().toISOString().split('T')[0], // Set default date
     },
   });
 
@@ -46,17 +60,24 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
         return;
       }
 
+      // Ensure date is in the correct format (YYYY-MM-DD)
+      const formattedDate = new Date(data.date_of_birth).toISOString().split('T')[0];
+      const patientData = {
+        ...data,
+        date_of_birth: formattedDate,
+      };
+
       if (mode === 'create') {
         const { error } = await supabase
           .from('patients')
-          .insert([{ ...data, user_id: user.id }]);
+          .insert([{ ...patientData, user_id: user.id }]);
 
         if (error) throw error;
         toast.success("Patient created successfully");
       } else {
         const { error } = await supabase
           .from('patients')
-          .update(data)
+          .update(patientData)
           .eq('id', patient.id);
 
         if (error) throw error;

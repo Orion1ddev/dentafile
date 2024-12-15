@@ -41,15 +41,16 @@ export const PatientBasicInfo = ({ form }: PatientBasicInfoProps) => {
         name="date_of_birth"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Date of Birth (DD.MM.YYYY)</FormLabel>
+            <FormLabel>Date of Birth</FormLabel>
             <FormControl>
               <Input 
                 type="date" 
                 {...field}
                 onChange={(e) => {
                   const date = new Date(e.target.value);
-                  const formattedDate = date.toISOString().split('T')[0];
-                  field.onChange(formattedDate);
+                  if (!isNaN(date.getTime())) {
+                    field.onChange(e.target.value);
+                  }
                 }}
               />
             </FormControl>
