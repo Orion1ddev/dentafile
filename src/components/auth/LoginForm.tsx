@@ -3,10 +3,31 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
 
 const LoginForm = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
+
+  // Listen for auth state changes to handle errors
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
+        console.error('Authentication error occurred');
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "An error occurred during authentication. Please try again.",
+        });
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [toast]);
 
   return (
     <div className="w-full max-w-md">
@@ -35,14 +56,6 @@ const LoginForm = () => {
           view="sign_in"
           showLinks={true}
           redirectTo={`${window.location.origin}/auth`}
-          onError={(error) => {
-            console.error('Auth error:', error);
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: error.message,
-            });
-          }}
         />
       </div>
     </div>

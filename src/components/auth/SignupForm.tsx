@@ -3,10 +3,31 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
 
 const SignupForm = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
+
+  // Listen for auth state changes to handle errors
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'USER_DELETED') {
+        console.error('User registration error');
+        toast({
+          variant: "destructive",
+          title: "Account Already Exists",
+          description: "This email is already registered. Please try logging in instead.",
+        });
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [toast]);
 
   return (
     <div className="w-full max-w-md">
@@ -35,22 +56,6 @@ const SignupForm = () => {
           view="sign_up"
           showLinks={true}
           redirectTo={`${window.location.origin}/auth`}
-          onError={(error) => {
-            console.error('Auth error:', error);
-            if (error.message.includes('User already registered')) {
-              toast({
-                variant: "destructive",
-                title: "Account Already Exists",
-                description: "This email is already registered. Please try logging in instead.",
-              });
-            } else {
-              toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.message,
-              });
-            }
-          }}
         />
       </div>
     </div>
