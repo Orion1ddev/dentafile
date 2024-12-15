@@ -42,6 +42,7 @@ const Index = () => {
         .from('patients')
         .select('*, dental_records(*)')
         .eq('user_id', user.id)
+        .order('pinned', { ascending: false })
         .order('created_at', { ascending: false });
 
       if (searchQuery) {
@@ -69,7 +70,6 @@ const Index = () => {
                 DentaFile
               </h1>
             </div>
-            {/* Functional buttons container */}
             <div className="flex items-center space-x-2 mr-12">
               <Button
                 variant="ghost"

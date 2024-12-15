@@ -77,6 +77,7 @@ export type Database = {
           last_name: string
           medical_history: string[] | null
           phone: string | null
+          pinned: boolean | null
           updated_at: string
           user_id: string | null
         }
@@ -91,6 +92,7 @@ export type Database = {
           last_name: string
           medical_history?: string[] | null
           phone?: string | null
+          pinned?: boolean | null
           updated_at?: string
           user_id?: string | null
         }
@@ -105,6 +107,7 @@ export type Database = {
           last_name?: string
           medical_history?: string[] | null
           phone?: string | null
+          pinned?: boolean | null
           updated_at?: string
           user_id?: string | null
         }
