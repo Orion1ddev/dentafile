@@ -11,15 +11,17 @@ const SignupForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Handle auth errors through the auth state change listener
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      // Check for error in session
-      if (session?.user?.aud === 'authenticated') {
-        const error = new URL(window.location.href).searchParams.get('error_description');
-        if (error?.includes('User already registered')) {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'USER_UPDATED') {
+        // Check if there's an error message in the URL
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get('error');
+        const errorDescription = params.get('error_description');
+        
+        if (error === 'unauthorized' && errorDescription?.includes('User already registered')) {
           toast({
             variant: "destructive",
             title: "Account Already Exists",
