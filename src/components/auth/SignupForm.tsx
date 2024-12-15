@@ -18,13 +18,15 @@ const SignupForm = () => {
             theme: ThemeSupa,
             style: {
               button: {
-                background: 'white',
-                color: 'black',
-                border: '1px solid #e5e7eb',
+                background: 'rgb(37 99 235)',
+                color: 'white',
+                borderRadius: '0.375rem',
+              },
+              input: {
+                borderRadius: '0.375rem',
               }
             }
           }}
-          providers={['google']}
           view="sign_up"
         />
       </div>
