@@ -117,21 +117,30 @@ export type Database = {
         Row: {
           created_at: string
           encrypted_data: string | null
+          first_name: string | null
+          gender: string | null
           id: string
+          last_name: string | null
           terms_accepted: boolean | null
           terms_accepted_at: string | null
         }
         Insert: {
           created_at?: string
           encrypted_data?: string | null
+          first_name?: string | null
+          gender?: string | null
           id: string
+          last_name?: string | null
           terms_accepted?: boolean | null
           terms_accepted_at?: string | null
         }
         Update: {
           created_at?: string
           encrypted_data?: string | null
+          first_name?: string | null
+          gender?: string | null
           id?: string
+          last_name?: string | null
           terms_accepted?: boolean | null
           terms_accepted_at?: string | null
         }

@@ -17,8 +17,8 @@ const LoginForm = () => {
         console.log('Auth event:', event);
         toast({
           variant: "destructive",
-          title: "Password Recovery",
-          description: "Please check your email for password reset instructions.",
+          title: t('password_recovery'),
+          description: t('check_email_reset'),
         });
       }
     });
@@ -26,7 +26,7 @@ const LoginForm = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [toast]);
+  }, [toast, t]);
 
   return (
     <div className="w-full max-w-md">
