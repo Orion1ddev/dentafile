@@ -1,58 +1,47 @@
 import { create } from "zustand";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Translation {
+  key: string;
+  en: string;
+  tr: string;
+}
 
 interface LanguageState {
   language: string;
+  translations: Translation[];
   setLanguage: (language: string) => void;
   t: (key: string) => string;
+  fetchTranslations: () => Promise<void>;
 }
-
-const translations = {
-  patients: {
-    en: "Patients",
-    tr: "Hastalar"
-  },
-  add_patient: {
-    en: "Add Patient",
-    tr: "Hasta Ekle"
-  },
-  search: {
-    en: "Search",
-    tr: "Ara"
-  },
-  loading: {
-    en: "Loading...",
-    tr: "Yükleniyor..."
-  },
-  back_to_dashboard: {
-    en: "Back to Dashboard",
-    tr: "Gösterge Paneline Dön"
-  },
-  born: {
-    en: "born",
-    tr: "doğum"
-  },
-  contact: {
-    en: "contact",
-    tr: "iletişim"
-  },
-  appointments_for: {
-    en: "Appointments for",
-    tr: "Randevular"
-  },
-  no_appointments: {
-    en: "No appointments scheduled for this date",
-    tr: "Bu tarih için randevu bulunmamaktadır"
-  }
-};
 
 export const useLanguage = create<LanguageState>((set, get) => ({
   language: localStorage.getItem("language") || "en",
+  translations: [],
   setLanguage: (language: string) => {
     localStorage.setItem("language", language);
     set({ language });
   },
   t: (key: string) => {
-    const language = get().language;
-    return translations[key as keyof typeof translations]?.[language as "en" | "tr"] || key;
+    const { language, translations } = get();
+    const translation = translations.find(t => t.key === key);
+    if (!translation) return key;
+    return translation[language as "en" | "tr"] || key;
   },
+  fetchTranslations: async () => {
+    try {
+      const { data, error } = await supabase
+        .from('translations')
+        .select('*');
+
+      if (error) {
+        console.error('Error fetching translations:', error);
+        return;
+      }
+
+      set({ translations: data });
+    } catch (error) {
+      console.error('Error fetching translations:', error);
+    }
+  }
 }));
