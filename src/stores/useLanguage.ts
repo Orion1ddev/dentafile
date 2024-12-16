@@ -26,6 +26,22 @@ const fallbackTranslations: Translation[] = [
   { key: 'login_success', en: 'Successfully logged in', tr: 'Başarıyla giriş yapıldı' },
   { key: 'login_error', en: 'Login failed', tr: 'Giriş başarısız' },
   { key: 'loading', en: 'Loading...', tr: 'Yükleniyor...' },
+  { key: 'welcome_title', en: 'Welcome to DentaFile', tr: 'DentaFile\'a Hoşgeldiniz' },
+  { key: 'patient_cards_title', en: 'Patient Cards', tr: 'Hasta Kartları' },
+  { key: 'patient_cards_desc', en: 'Manage your patient records efficiently', tr: 'Hasta kayıtlarınızı verimli bir şekilde yönetin' },
+  { key: 'record_keeping_title', en: 'Record Keeping', tr: 'Kayıt Tutma' },
+  { key: 'record_keeping_desc', en: 'Keep track of patient history and treatments', tr: 'Hasta geçmişi ve tedavileri takip edin' },
+  { key: 'photo_storage_title', en: 'Photo Storage', tr: 'Fotoğraf Depolama' },
+  { key: 'photo_storage_desc', en: 'Store and manage patient photos securely', tr: 'Hasta fotoğraflarını güvenli bir şekilde saklayın ve yönetin' },
+  { key: 'settings', en: 'Settings', tr: 'Ayarlar' },
+  { key: 'light_mode', en: 'Light Mode', tr: 'Aydınlık Mod' },
+  { key: 'dark_mode', en: 'Dark Mode', tr: 'Karanlık Mod' },
+  { key: 'language', en: 'Language', tr: 'Dil' },
+  { key: 'sign_out', en: 'Sign Out', tr: 'Çıkış Yap' },
+  { key: 'export_data', en: 'Export Data', tr: 'Verileri Dışa Aktar' },
+  { key: 'export_success', en: 'Data exported successfully', tr: 'Veriler başarıyla dışa aktarıldı' },
+  { key: 'export_error', en: 'Failed to export data', tr: 'Veriler dışa aktarılamadı' },
+  { key: 'sign_out_error', en: 'Error signing out', tr: 'Çıkış yapılırken hata oluştu' },
 ];
 
 export const useLanguage = create<LanguageState>((set, get) => ({
