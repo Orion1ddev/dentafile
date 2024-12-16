@@ -1,21 +1,22 @@
-import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
-import { format } from "date-fns";
+import { format, addDays, subDays } from "date-fns";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PatientCard } from "./PatientCard";
 import { useNavigate } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "@/stores/useLanguage";
 
 export const CalendarView = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const { data: appointments } = useQuery({
     queryKey: ['appointments', selectedDate],
     queryFn: async () => {
-      if (!selectedDate) return [];
-      
       const startOfDay = new Date(selectedDate);
       startOfDay.setHours(0, 0, 0, 0);
       
@@ -41,38 +42,52 @@ export const CalendarView = () => {
     enabled: !!selectedDate
   });
 
+  const handlePreviousDay = () => {
+    setSelectedDate(prev => subDays(prev, 1));
+  };
+
+  const handleNextDay = () => {
+    setSelectedDate(prev => addDays(prev, 1));
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-center p-4 bg-card rounded-lg shadow">
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          className="rounded-md border"
-        />
+      <div className="flex items-center justify-between p-4 bg-card rounded-lg shadow">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handlePreviousDay}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        
+        <h2 className="text-xl font-semibold">
+          {t('appointments_for')} {format(selectedDate, 'dd MMMM, yyyy')}
+        </h2>
+        
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleNextDay}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
       </div>
 
-      {selectedDate && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold">
-            Appointments for {format(selectedDate, 'MMMM d, yyyy')}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {appointments?.map((record) => (
-              <PatientCard
-                key={record.id}
-                patient={record.patient}
-                onClick={() => navigate(`/patient/${record.patient.id}`)}
-              />
-            ))}
-            {appointments?.length === 0 && (
-              <Card className="p-6 col-span-full text-center text-muted-foreground">
-                No appointments scheduled for this date
-              </Card>
-            )}
-          </div>
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {appointments?.map((record) => (
+          <PatientCard
+            key={record.id}
+            patient={record.patient}
+            onClick={() => navigate(`/patient/${record.patient.id}`)}
+          />
+        ))}
+        {appointments?.length === 0 && (
+          <Card className="p-6 col-span-full text-center text-muted-foreground">
+            {t('no_appointments')}
+          </Card>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,42 +1,58 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { supabase } from '@/integrations/supabase/client';
+import { create } from "zustand";
 
-type Translation = {
-  key: string;
-  en: string;
-  tr: string;
-};
-
-type LanguageStore = {
-  language: 'en' | 'tr';
-  translations: Translation[];
-  setLanguage: (lang: 'en' | 'tr') => void;
+interface LanguageState {
+  language: string;
+  setLanguage: (language: string) => void;
   t: (key: string) => string;
-  fetchTranslations: () => Promise<void>;
+}
+
+const translations = {
+  patients: {
+    en: "Patients",
+    tr: "Hastalar"
+  },
+  add_patient: {
+    en: "Add Patient",
+    tr: "Hasta Ekle"
+  },
+  search: {
+    en: "Search",
+    tr: "Ara"
+  },
+  loading: {
+    en: "Loading...",
+    tr: "Yükleniyor..."
+  },
+  back_to_dashboard: {
+    en: "Back to Dashboard",
+    tr: "Gösterge Paneline Dön"
+  },
+  born: {
+    en: "born",
+    tr: "doğum"
+  },
+  contact: {
+    en: "contact",
+    tr: "iletişim"
+  },
+  appointments_for: {
+    en: "Appointments for",
+    tr: "Randevular"
+  },
+  no_appointments: {
+    en: "No appointments scheduled for this date",
+    tr: "Bu tarih için randevu bulunmamaktadır"
+  }
 };
 
-export const useLanguage = create<LanguageStore>()(
-  persist(
-    (set, get) => ({
-      language: 'en',
-      translations: [],
-      setLanguage: (lang) => set({ language: lang }),
-      t: (key) => {
-        const translation = get().translations.find((t) => t.key === key);
-        return translation ? translation[get().language] : key;
-      },
-      fetchTranslations: async () => {
-        const { data } = await supabase
-          .from('translations')
-          .select('*');
-        if (data) {
-          set({ translations: data });
-        }
-      },
-    }),
-    {
-      name: 'language-store',
-    }
-  )
-);
+export const useLanguage = create<LanguageState>((set, get) => ({
+  language: localStorage.getItem("language") || "en",
+  setLanguage: (language: string) => {
+    localStorage.setItem("language", language);
+    set({ language });
+  },
+  t: (key: string) => {
+    const language = get().language;
+    return translations[key as keyof typeof translations]?.[language as "en" | "tr"] || key;
+  },
+}));
