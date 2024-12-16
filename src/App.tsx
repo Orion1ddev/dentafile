@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import PatientDetails from "./pages/PatientDetails";
+import { toast } from "sonner";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,17 +35,35 @@ const App = () => {
           return;
         }
 
-        setIsAuthenticated(!!session);
+        if (!session) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        // Check if session is valid
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError || !user) {
+          console.error('User error:', userError);
+          await supabase.auth.signOut();
+          setIsAuthenticated(false);
+          return;
+        }
+
+        setIsAuthenticated(true);
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           console.log('Auth event:', event);
           
-          if (event === 'SIGNED_OUT') {
+          if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
             setIsAuthenticated(false);
-          } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            queryClient.clear();
+          } else if (event === 'SIGNED_IN') {
             setIsAuthenticated(true);
-          } else if (event === 'INITIAL_SESSION') {
-            setIsAuthenticated(!!session);
+          } else if (event === 'TOKEN_REFRESHED') {
+            setIsAuthenticated(true);
+          } else if (event === 'USER_UPDATED') {
+            setIsAuthenticated(true);
           }
         });
 
@@ -54,6 +73,7 @@ const App = () => {
       } catch (error) {
         console.error('Auth initialization error:', error);
         setIsAuthenticated(false);
+        toast.error("Authentication error. Please try logging in again.");
       }
     };
 
