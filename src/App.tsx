@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeProvider } from "next-themes";
+import Dashboard from "./pages/Dashboard";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import PatientDetails from "./pages/PatientDetails";
@@ -25,7 +26,6 @@ const App = () => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Get the initial session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -36,7 +36,6 @@ const App = () => {
 
         setIsAuthenticated(!!session);
 
-        // Set up auth state change listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           console.log('Auth event:', event);
           
@@ -61,7 +60,6 @@ const App = () => {
     initializeAuth();
   }, []);
 
-  // Show loading state while checking authentication
   if (isAuthenticated === null) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -80,7 +78,15 @@ const App = () => {
             <Routes>
               <Route 
                 path="/" 
+                element={isAuthenticated ? <Dashboard /> : <Navigate to="/auth" replace />} 
+              />
+              <Route 
+                path="/patients" 
                 element={isAuthenticated ? <Index /> : <Navigate to="/auth" replace />} 
+              />
+              <Route 
+                path="/calendar" 
+                element={isAuthenticated ? <Index view="calendar" /> : <Navigate to="/auth" replace />} 
               />
               <Route 
                 path="/auth/*" 

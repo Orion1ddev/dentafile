@@ -11,18 +11,19 @@ import type { Database } from "@/integrations/supabase/types";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
 import { CalendarView } from "@/components/CalendarView";
-import { Calendar, LayoutGrid } from "lucide-react";
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 
-const Index = () => {
+interface IndexProps {
+  view?: "list" | "calendar";
+}
+
+const Index = ({ view = "list" }: IndexProps) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [view, setView] = useState<"list" | "calendar">("list");
-  const { t, fetchTranslations } = useLanguage();
+  const { t } = useLanguage();
 
   useEffect(() => {
-    fetchTranslations();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) {
         navigate("/auth");
@@ -30,7 +31,7 @@ const Index = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, fetchTranslations]);
+  }, [navigate]);
 
   const { data: patients, isLoading, error } = useQuery({
     queryKey: ['patients', searchQuery],
@@ -71,19 +72,6 @@ const Index = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-2 mr-12">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setView(view === "list" ? "calendar" : "list")}
-                className="relative"
-                title={view === "list" ? t("switch_to_calendar") : t("switch_to_list")}
-              >
-                {view === "list" ? (
-                  <Calendar className="h-5 w-5" />
-                ) : (
-                  <LayoutGrid className="h-5 w-5" />
-                )}
-              </Button>
               <PatientFormDialog mode="create" />
             </div>
           </div>
