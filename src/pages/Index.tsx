@@ -11,6 +11,7 @@ import type { Database } from "@/integrations/supabase/types";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
 import { CalendarView } from "@/components/CalendarView";
+import { ChevronLeft } from "lucide-react";
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 
@@ -61,18 +62,33 @@ const Index = ({ view = "list" }: IndexProps) => {
     toast.error("Error loading patients");
   }
 
+  const handleBackToDashboard = () => {
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex-shrink-0 flex items-center">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                onClick={handleBackToDashboard}
+                className="mr-2"
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                {t('back_to_dashboard')}
+              </Button>
+              <h1 
+                onClick={handleBackToDashboard}
+                className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
+              >
                 DentaFile
               </h1>
             </div>
             <div className="flex items-center space-x-2 mr-12">
-              <PatientFormDialog mode="create" />
+              {view === "list" && <PatientFormDialog mode="create" />}
             </div>
           </div>
         </div>
