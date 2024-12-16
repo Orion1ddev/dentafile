@@ -16,12 +16,8 @@ import {
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { language, setLanguage, t, translations, fetchTranslations } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    fetchTranslations();
-  }, [fetchTranslations]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -43,14 +39,6 @@ const Auth = () => {
       subscription.unsubscribe();
     };
   }, [navigate]);
-
-  if (!translations.length) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">{t('loading')}</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
