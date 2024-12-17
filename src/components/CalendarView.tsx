@@ -1,19 +1,22 @@
 import { useState } from "react";
-import { format, addDays, subDays } from "date-fns";
+import { format, addDays, subDays, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PatientCard } from "./PatientCard";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Pin } from "lucide-react";
 import { useLanguage } from "@/stores/useLanguage";
+import { Calendar } from "@/components/ui/calendar";
+import { Badge } from "@/components/ui/badge";
 
 export const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const navigate = useNavigate();
   const { t } = useLanguage();
 
+  // Query for appointments on selected date
   const { data: appointments } = useQuery({
     queryKey: ['appointments', selectedDate],
     queryFn: async () => {
@@ -42,51 +45,118 @@ export const CalendarView = () => {
     enabled: !!selectedDate
   });
 
-  const handlePreviousDay = () => {
-    setSelectedDate(prev => subDays(prev, 1));
-  };
+  // Query for monthly appointment counts
+  const { data: monthlyAppointments } = useQuery({
+    queryKey: ['monthly-appointments', selectedDate],
+    queryFn: async () => {
+      const start = startOfMonth(selectedDate);
+      const end = endOfMonth(selectedDate);
 
-  const handleNextDay = () => {
-    setSelectedDate(prev => addDays(prev, 1));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { data, error } = await supabase
+        .from('dental_records')
+        .select(`
+          visit_date,
+          patient:patients(pinned)
+        `)
+        .eq('patients.user_id', user.id)
+        .gte('visit_date', start.toISOString())
+        .lte('visit_date', end.toISOString());
+
+      if (error) throw error;
+
+      // Create a map of dates to appointment counts and pinned status
+      const appointmentMap = new Map();
+      
+      data?.forEach(record => {
+        const date = format(new Date(record.visit_date), 'yyyy-MM-dd');
+        const current = appointmentMap.get(date) || { total: 0, pinned: 0 };
+        current.total += 1;
+        if (record.patient.pinned) {
+          current.pinned += 1;
+        }
+        appointmentMap.set(date, current);
+      });
+
+      return appointmentMap;
+    },
+    enabled: !!selectedDate
+  });
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setSelectedDate(date);
+    }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between p-4 bg-card rounded-lg shadow">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handlePreviousDay}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        
-        <h2 className="text-xl font-semibold">
-          {t('appointments_for')} {format(selectedDate, 'dd MMMM, yyyy')}
-        </h2>
-        
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handleNextDay}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {appointments?.map((record) => (
-          <PatientCard
-            key={record.id}
-            patient={record.patient}
-            onClick={() => navigate(`/patient/${record.patient.id}`)}
+      <div className="flex flex-col md:flex-row gap-6">
+        <Card className="p-4 flex-1">
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={handleDateSelect}
+            className="rounded-md"
+            modifiers={{
+              hasAppointments: (date) => {
+                const key = format(date, 'yyyy-MM-dd');
+                return monthlyAppointments?.has(key) || false;
+              }
+            }}
+            modifiersStyles={{
+              hasAppointments: {
+                fontWeight: 'bold',
+                textDecoration: 'underline'
+              }
+            }}
+            components={{
+              DayContent: ({ date }) => {
+                const key = format(date, 'yyyy-MM-dd');
+                const appointments = monthlyAppointments?.get(key);
+                
+                return (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <span>{date.getDate()}</span>
+                    {appointments && (
+                      <div className="absolute -bottom-1 left-0 right-0 flex justify-center gap-1">
+                        <Badge variant="secondary" className="h-2 w-2 p-0">
+                          {appointments.total}
+                        </Badge>
+                        {appointments.pinned > 0 && (
+                          <Pin className="h-2 w-2 text-primary" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+            }}
           />
-        ))}
-        {appointments?.length === 0 && (
-          <Card className="p-6 col-span-full text-center text-muted-foreground">
-            {t('no_appointments')}
-          </Card>
-        )}
+        </Card>
+
+        <Card className="p-4 flex-1">
+          <h3 className="text-lg font-semibold mb-4">
+            {format(selectedDate, 'MMMM d, yyyy')} - {appointments?.length || 0} {t('appointments')}
+          </h3>
+          
+          <div className="space-y-4">
+            {appointments?.map((record) => (
+              <PatientCard
+                key={record.id}
+                patient={record.patient}
+                onClick={() => navigate(`/patient/${record.patient.id}`)}
+              />
+            ))}
+            {appointments?.length === 0 && (
+              <div className="text-center text-muted-foreground">
+                {t('no_appointments')}
+              </div>
+            )}
+          </div>
+        </Card>
       </div>
     </div>
   );
