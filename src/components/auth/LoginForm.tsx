@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const LoginForm = () => {
   const { t } = useLanguage();
@@ -15,6 +16,8 @@ const LoginForm = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
+    
     setIsLoading(true);
 
     try {
@@ -26,6 +29,7 @@ const LoginForm = () => {
       if (error) throw error;
 
       toast.success(t('login_success'));
+      navigate('/', { replace: true });
     } catch (error: any) {
       console.error('Login error:', error);
       toast.error(error.message || t('login_error'));
@@ -49,7 +53,9 @@ const LoginForm = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoading}
             required
+            className="w-full"
           />
         </div>
         <div>
@@ -61,17 +67,31 @@ const LoginForm = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
             required
+            className="w-full"
           />
         </div>
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? t('logging_in') : t('login')}
+        <Button 
+          type="submit" 
+          className="w-full" 
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {t('logging_in')}
+            </>
+          ) : (
+            t('login')
+          )}
         </Button>
         <Button
           type="button"
           variant="outline"
           className="w-full"
           onClick={() => navigate('/auth/signup')}
+          disabled={isLoading}
         >
           {t('create_account')}
         </Button>

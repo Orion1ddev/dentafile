@@ -42,6 +42,13 @@ const fallbackTranslations: Translation[] = [
   { key: 'export_success', en: 'Data exported successfully', tr: 'Veriler başarıyla dışa aktarıldı' },
   { key: 'export_error', en: 'Failed to export data', tr: 'Veriler dışa aktarılamadı' },
   { key: 'sign_out_error', en: 'Error signing out', tr: 'Çıkış yapılırken hata oluştu' },
+  { key: 'consultation', en: 'Consultation', tr: 'Konsültasyon' },
+  { key: 'today_appointments', en: 'Today\'s Appointments', tr: 'Bugünkü Randevular' },
+  { key: 'dashboard', en: 'Dashboard', tr: 'Panel' },
+  { key: 'app_settings', en: 'App Settings', tr: 'Uygulama Ayarları' },
+  { key: 'today_schedule', en: 'Today\'s Schedule', tr: 'Bugünkü Program' },
+  { key: 'view_appointments', en: 'View Appointments', tr: 'Randevuları Görüntüle' },
+  { key: 'calendar', en: 'Calendar', tr: 'Takvim' }
 ];
 
 export const useLanguage = create<LanguageState>((set, get) => ({

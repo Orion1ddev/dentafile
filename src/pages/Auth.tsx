@@ -21,17 +21,17 @@ const Auth = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate("/");
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (session && !error) {
+        navigate("/", { replace: true });
       }
     };
     
     checkSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        navigate("/");
+        navigate("/", { replace: true });
       }
     });
 
