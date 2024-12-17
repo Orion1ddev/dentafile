@@ -29,28 +29,34 @@ export type Database = {
       }
       dental_records: {
         Row: {
+          appointment_time: string
           diagnosis: string | null
           id: string
           images: string[] | null
           notes: string | null
+          operation_type: string | null
           patient_id: string
           treatment: string | null
           visit_date: string
         }
         Insert: {
+          appointment_time: string
           diagnosis?: string | null
           id?: string
           images?: string[] | null
           notes?: string | null
+          operation_type?: string | null
           patient_id: string
           treatment?: string | null
           visit_date?: string
         }
         Update: {
+          appointment_time?: string
           diagnosis?: string | null
           id?: string
           images?: string[] | null
           notes?: string | null
+          operation_type?: string | null
           patient_id?: string
           treatment?: string | null
           visit_date?: string

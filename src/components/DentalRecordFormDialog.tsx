@@ -12,6 +12,8 @@ import { ImageUploadField } from "./dental-records/ImageUploadField";
 
 interface DentalRecordFormData {
   visit_date: string;
+  appointment_time: string;
+  operation_type: string;
   diagnosis: string | null;
   treatment: string | null;
   notes: string | null;
@@ -29,6 +31,8 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
   const form = useForm<DentalRecordFormData>({
     defaultValues: {
       visit_date: new Date().toISOString().split('T')[0],
+      appointment_time: '09:00',
+      operation_type: '',
       diagnosis: '',
       treatment: '',
       notes: '',
@@ -43,6 +47,8 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
         .insert([{ 
           patient_id: patientId,
           visit_date: data.visit_date,
+          appointment_time: data.appointment_time,
+          operation_type: data.operation_type,
           diagnosis: data.diagnosis,
           treatment: data.treatment,
           notes: data.notes,
@@ -71,14 +77,42 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="visit_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Visit Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="appointment_time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Time</FormLabel>
+                    <FormControl>
+                      <Input type="time" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
-              name="visit_date"
+              name="operation_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Visit Date</FormLabel>
+                  <FormLabel>Operation Type</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input {...field} placeholder="e.g., Cleaning, Filling, etc." />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

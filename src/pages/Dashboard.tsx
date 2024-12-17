@@ -69,7 +69,6 @@ const Dashboard = () => {
       title: t('today_appointments'),
       icon: Clock,
       description: t('today_schedule'),
-      onClick: () => navigate('/calendar'),
       count: todayAppointments?.length || 0
     },
     {
@@ -103,7 +102,7 @@ const Dashboard = () => {
             {dashboardItems.map((item) => (
               <Card 
                 key={item.title}
-                className="hover:shadow-lg transition-shadow cursor-pointer"
+                className={`hover:shadow-lg transition-shadow ${item.onClick ? 'cursor-pointer' : ''}`}
                 onClick={item.onClick}
               >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -151,7 +150,9 @@ const Dashboard = () => {
           )}
         </div>
       </main>
-      <BuyMeCoffeeButton />
+      <div className="fixed bottom-4 right-4">
+        <BuyMeCoffeeButton />
+      </div>
       <NavMenu />
     </div>
   );

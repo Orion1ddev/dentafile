@@ -79,7 +79,7 @@ const Auth = () => {
       )}
 
       {/* Right side - Auth forms */}
-      <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col">
+      <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col relative">
         {/* Language Toggle */}
         <div className="absolute top-4 right-4">
           <DropdownMenu>
@@ -117,7 +117,9 @@ const Auth = () => {
           </Routes>
         </div>
         
-        <BuyMeCoffeeButton />
+        <div className="fixed bottom-4 right-4">
+          <BuyMeCoffeeButton />
+        </div>
       </div>
     </div>
   );
