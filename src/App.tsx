@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeProvider } from "next-themes";
+import { useLanguage } from "@/stores/useLanguage";
 import Dashboard from "./pages/Dashboard";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -23,6 +24,12 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const { fetchTranslations } = useLanguage();
+
+  useEffect(() => {
+    // Fetch translations on app initialization
+    fetchTranslations();
+  }, [fetchTranslations]);
 
   useEffect(() => {
     const initializeAuth = async () => {

@@ -60,37 +60,42 @@ export const useLanguage = create<LanguageState>((set, get) => ({
   },
   t: (key: string) => {
     const { language, translations } = get();
-    const translation = translations.find(t => t.key === key) || 
-                       fallbackTranslations.find(t => t.key === key);
+    const translation = translations.find(t => t.key === key);
+    
     if (!translation) {
       console.warn(`Translation missing for key: ${key}`);
       return key;
     }
-    return translation[language as "en" | "tr"] || key;
+    
+    return translation[language as keyof Pick<Translation, "en" | "tr">] || key;
   },
   fetchTranslations: async () => {
     try {
       const { data, error } = await supabase
         .from('translations')
-        .select('*');
+        .select('*')
+        .order('key', { ascending: true });
 
       if (error) {
         console.error('Error fetching translations:', error);
         return;
       }
 
-      // Merge fetched translations with fallback translations
-      const mergedTranslations = [...fallbackTranslations];
-      data.forEach(translation => {
-        const existingIndex = mergedTranslations.findIndex(t => t.key === translation.key);
-        if (existingIndex >= 0) {
-          mergedTranslations[existingIndex] = translation;
-        } else {
-          mergedTranslations.push(translation);
-        }
-      });
+      if (data) {
+        // Merge database translations with fallback translations
+        const mergedTranslations = [...fallbackTranslations];
+        
+        data.forEach(dbTranslation => {
+          const existingIndex = mergedTranslations.findIndex(t => t.key === dbTranslation.key);
+          if (existingIndex >= 0) {
+            mergedTranslations[existingIndex] = dbTranslation;
+          } else {
+            mergedTranslations.push(dbTranslation);
+          }
+        });
 
-      set({ translations: mergedTranslations });
+        set({ translations: mergedTranslations });
+      }
     } catch (error) {
       console.error('Error fetching translations:', error);
     }
