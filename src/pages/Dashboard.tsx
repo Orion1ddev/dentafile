@@ -7,6 +7,7 @@ import { NavMenu } from "@/components/NavMenu";
 import { Users, Calendar, Clock, Settings } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
+import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -150,6 +151,7 @@ const Dashboard = () => {
           )}
         </div>
       </main>
+      <BuyMeCoffeeButton />
       <NavMenu />
     </div>
   );

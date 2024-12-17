@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
+import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -115,6 +116,8 @@ const Auth = () => {
             <Route path="/signup" element={<SignupForm />} />
           </Routes>
         </div>
+        
+        <BuyMeCoffeeButton />
       </div>
     </div>
   );
