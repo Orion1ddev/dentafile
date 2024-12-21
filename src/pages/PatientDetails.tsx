@@ -8,6 +8,7 @@ import { useLanguage } from "@/stores/useLanguage";
 import { PatientHeader } from "@/components/PatientHeader";
 import { PatientInfo } from "@/components/PatientInfo";
 import { DentalRecordsList } from "@/components/DentalRecordsList";
+import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 
 type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
   dental_records: Database['public']['Tables']['dental_records']['Row'][];
@@ -31,6 +32,8 @@ const PatientDetails = () => {
   const { data: patient, isLoading } = useQuery({
     queryKey: ['patient', id],
     queryFn: async () => {
+      if (!id) throw new Error("No patient ID provided");
+
       const { data, error } = await supabase
         .from('patients')
         .select(`
@@ -38,9 +41,17 @@ const PatientDetails = () => {
           dental_records (*)
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching patient:', error);
+        throw error;
+      }
+      
+      if (!data) {
+        throw new Error("Patient not found");
+      }
+
       return data as PatientWithRecords;
     },
   });
@@ -78,6 +89,9 @@ const PatientDetails = () => {
           </CardContent>
         </div>
       </main>
+      <div className="fixed bottom-4 right-4">
+        <BuyMeCoffeeButton />
+      </div>
     </div>
   );
 };
