@@ -119,7 +119,9 @@ export const DentalRecordsList = ({ records, patientId }: DentalRecordsListProps
                     {formatDisplayDate(record.visit_date)} - {record.appointment_time}
                   </CardTitle>
                   <div className="flex items-center gap-2">
-                    <DentalRecordEditDialog record={record} patientId={patientId} />
+                    {record.appointment_time && (
+                      <DentalRecordEditDialog record={record} patientId={patientId} />
+                    )}
                     <Button
                       variant="destructive"
                       size="icon"

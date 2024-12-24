@@ -41,12 +41,13 @@ export const DentalNoteFormDialog = ({ patientId }: DentalNoteFormDialogProps) =
     try {
       const { error } = await supabase
         .from('dental_records')
-        .insert([{ 
+        .insert({
           patient_id: patientId,
           notes: data.notes,
           images: data.images,
           visit_date: new Date().toISOString(),
-        }]);
+          appointment_time: null,
+        });
 
       if (error) throw error;
       
