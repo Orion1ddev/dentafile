@@ -10,6 +10,7 @@ import { useLanguage } from "@/stores/useLanguage";
 import Dashboard from "./pages/Dashboard";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import Settings from "./pages/Settings";
 import PatientDetails from "./pages/PatientDetails";
 import { toast } from "sonner";
 
@@ -114,6 +115,10 @@ const App = () => {
               <Route 
                 path="/calendar" 
                 element={isAuthenticated ? <Index view="calendar" /> : <Navigate to="/auth" replace />} 
+              />
+              <Route 
+                path="/settings" 
+                element={isAuthenticated ? <Settings /> : <Navigate to="/auth" replace />} 
               />
               <Route 
                 path="/auth/*" 
