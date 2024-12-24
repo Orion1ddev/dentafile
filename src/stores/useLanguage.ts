@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { supabase } from "@/integrations/supabase/client";
+import { checkAndAddDefaultTranslations } from "@/utils/translationUtils";
 
 interface Translation {
   key: string;
@@ -106,6 +107,10 @@ export const useLanguage = create<LanguageState>((set, get) => ({
   },
   fetchTranslations: async () => {
     try {
+      // First, ensure all translations exist
+      await checkAndAddDefaultTranslations();
+
+      // Then fetch all translations
       const { data, error } = await supabase
         .from('translations')
         .select('*')
