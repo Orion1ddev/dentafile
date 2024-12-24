@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
-import { Stethoscope, Menu } from "lucide-react";
+import { Stethoscope, Menu, Tooth } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import LoginForm from "@/components/auth/LoginForm";
@@ -16,13 +16,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const FloatingIcon = ({ delay = "0s" }: { delay?: string }) => (
+  <div 
+    className="absolute animate-float"
+    style={{ 
+      animation: `float 3s ease-in-out infinite`,
+      animationDelay: delay,
+    }}
+  >
+    <Tooth className="text-blue-200 w-8 h-8 opacity-50" />
+  </div>
+);
+
 const Auth = () => {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const isMobile = useIsMobile();
   const { setTheme } = useTheme();
 
-  // Force light theme on component mount
   useEffect(() => {
     setTheme('light');
   }, [setTheme]);
@@ -49,11 +60,22 @@ const Auth = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col md:flex-row">
+    <div className="min-h-screen bg-white flex flex-col md:flex-row font-['Roboto']">
       {/* Left side - Welcome content */}
       {!isMobile && (
-        <div className="w-full md:w-1/2 bg-blue-600 p-6 md:p-12 text-white flex flex-col justify-center">
-          <div className="max-w-lg mx-auto">
+        <div className="w-full md:w-1/2 bg-blue-600 p-6 md:p-12 text-white flex flex-col justify-center relative overflow-hidden">
+          {/* Floating icons */}
+          <div className="absolute inset-0">
+            <FloatingIcon delay="0s" />
+            <div className="absolute top-1/4 right-1/4">
+              <FloatingIcon delay="1s" />
+            </div>
+            <div className="absolute bottom-1/4 left-1/4">
+              <FloatingIcon delay="2s" />
+            </div>
+          </div>
+          
+          <div className="max-w-lg mx-auto relative z-10">
             <div className="flex items-center gap-2 mb-8">
               <Stethoscope className="h-8 w-8" />
               <h1 className="text-3xl font-bold">DentaFile</h1>
