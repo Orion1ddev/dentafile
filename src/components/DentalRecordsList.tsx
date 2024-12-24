@@ -15,7 +15,7 @@ interface DentalRecord {
   treatment: string | null;
   notes: string | null;
   images: string[] | null;
-  appointment_time?: string;
+  appointment_time?: string | null;
   operation_type?: string | null;
 }
 

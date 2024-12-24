@@ -47,6 +47,9 @@ export const DentalNoteFormDialog = ({ patientId }: DentalNoteFormDialogProps) =
           images: data.images,
           visit_date: new Date().toISOString(),
           appointment_time: null,
+          operation_type: null,
+          diagnosis: null,
+          treatment: null,
         });
 
       if (error) throw error;
