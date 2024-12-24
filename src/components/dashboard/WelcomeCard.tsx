@@ -21,7 +21,7 @@ export const WelcomeCard = ({ userProfile, appointmentCount, pinnedPatientsCount
     <Card className="mb-6">
       <CardContent className="pt-6">
         <p className="text-xl">
-          {getGreeting()}, {userProfile?.gender === 'female' ? t('dr_mrs') : t('dr_mr')} {userProfile?.first_name}.{' '}
+          {getGreeting()}, Dr. {userProfile?.first_name}.{' '}
           {appointmentCount ? (
             <span>
               {t('you_have')} {appointmentCount} {t('appointments_today')}.

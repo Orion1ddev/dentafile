@@ -2,7 +2,6 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -14,7 +13,6 @@ const SignupForm = () => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [gender, setGender] = useState("");
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -38,8 +36,7 @@ const SignupForm = () => {
         options: {
           data: {
             first_name: firstName,
-            last_name: lastName,
-            gender: gender
+            last_name: lastName
           }
         }
       });
@@ -129,20 +126,6 @@ const SignupForm = () => {
             onChange={(e) => setLastName(e.target.value)}
             required
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="gender">
-            {t('gender')}
-          </label>
-          <Select value={gender} onValueChange={setGender} required>
-            <SelectTrigger>
-              <SelectValue placeholder={t('select_gender')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="male">{t('mr')}</SelectItem>
-              <SelectItem value="female">{t('mrs')}</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
           {t('complete_signup')}

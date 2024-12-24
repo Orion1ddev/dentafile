@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/stores/useLanguage";
@@ -11,7 +10,6 @@ export const PersonalInfoSettings = () => {
   const { t } = useLanguage();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [gender, setGender] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -38,9 +36,7 @@ export const PersonalInfoSettings = () => {
         if (profile) {
           setFirstName(profile.first_name || "");
           setLastName(profile.last_name || "");
-          setGender(profile.gender || "");
         } else {
-          // Create a new profile if one doesn't exist
           const { error: insertError } = await supabase
             .from('profiles')
             .insert([{ id: user.id }]);
@@ -71,8 +67,7 @@ export const PersonalInfoSettings = () => {
         .from('profiles')
         .update({
           first_name: firstName,
-          last_name: lastName,
-          gender: gender
+          last_name: lastName
         })
         .eq('id', user.id);
 
@@ -111,18 +106,6 @@ export const PersonalInfoSettings = () => {
               placeholder={t("enter_last_name")}
               required
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">{t("gender")}</label>
-            <Select value={gender} onValueChange={setGender}>
-              <SelectTrigger>
-                <SelectValue placeholder={t("select_gender")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">{t("mr")}</SelectItem>
-                <SelectItem value="female">{t("mrs")}</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <Button type="submit" disabled={isLoading}>
             {isLoading ? t("saving") : t("save_changes")}
