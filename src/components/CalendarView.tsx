@@ -12,6 +12,8 @@ import { useLanguage } from "@/stores/useLanguage";
 interface DentalRecord {
   id: string;
   visit_date: string;
+  appointment_time: string;
+  operation_type: string | null;
   patient: {
     id: string;
     first_name: string;
@@ -53,6 +55,8 @@ export const CalendarView = () => {
         .select(`
           id,
           visit_date,
+          appointment_time,
+          operation_type,
           patient:patients(*)
         `)
         .eq('patients.user_id', user.id)
@@ -80,6 +84,8 @@ export const CalendarView = () => {
         .select(`
           id,
           visit_date,
+          appointment_time,
+          operation_type,
           patient:patients(*)
         `)
         .eq('patients.user_id', user.id)
@@ -92,7 +98,7 @@ export const CalendarView = () => {
       return data?.map(record => ({
         id: record.id,
         calendarId: '1',
-        title: `${record.patient.first_name} ${record.patient.last_name}`,
+        title: `${record.patient.first_name} ${record.patient.last_name} - ${record.operation_type || 'Appointment'}`,
         category: 'time',
         start: new Date(record.visit_date),
         end: new Date(new Date(record.visit_date).getTime() + 60 * 60 * 1000), // 1 hour duration

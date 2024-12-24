@@ -9,16 +9,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { ImageUploadField } from "./dental-records/ImageUploadField";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface DentalRecordFormData {
-  visit_date: string;
-  appointment_time: string;
-  operation_type: string;
-  diagnosis: string | null;
-  treatment: string | null;
-  notes: string | null;
-  images: string[] | null;
-}
+const formSchema = z.object({
+  visit_date: z.string().min(1, "Visit date is required"),
+  appointment_time: z.string().min(1, "Appointment time is required"),
+  operation_type: z.string().min(1, "Operation type is required"),
+  diagnosis: z.string().nullable(),
+  treatment: z.string().nullable(),
+  notes: z.string().nullable(),
+  images: z.array(z.string()).nullable(),
+});
+
+type DentalRecordFormData = z.infer<typeof formSchema>;
 
 interface DentalRecordFormDialogProps {
   patientId: string;
@@ -29,6 +33,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
   const queryClient = useQueryClient();
   
   const form = useForm<DentalRecordFormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       visit_date: new Date().toISOString().split('T')[0],
       appointment_time: '09:00',
@@ -46,7 +51,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
         .from('dental_records')
         .insert([{ 
           patient_id: patientId,
-          visit_date: data.visit_date,
+          visit_date: `${data.visit_date}T${data.appointment_time}:00`,
           appointment_time: data.appointment_time,
           operation_type: data.operation_type,
           diagnosis: data.diagnosis,
@@ -98,7 +103,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
                   <FormItem>
                     <FormLabel>Time</FormLabel>
                     <FormControl>
-                      <Input type="time" {...field} />
+                      <Input type="time" {...field} required />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,7 +117,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
                 <FormItem>
                   <FormLabel>Operation Type</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g., Cleaning, Filling, etc." />
+                    <Input {...field} placeholder="e.g., Cleaning, Filling, etc." required />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
