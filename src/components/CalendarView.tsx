@@ -129,6 +129,11 @@ export const CalendarView = () => {
               ]}
               events={monthlyAppointments || []}
               onSelectDateTime={handleDateSelect}
+              isReadOnly={false}
+              useDetailPopup={true}
+              useCreationPopup={false}
+              disableDblClick={true}
+              selectable="day"
             />
           </div>
         </Card>
