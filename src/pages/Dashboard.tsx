@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
 import { Users, Calendar, Clock, Settings } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
 import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
+import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
+import { DashboardGrid } from "@/components/dashboard/DashboardGrid";
+import { AppointmentsList } from "@/components/dashboard/AppointmentsList";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -84,13 +85,6 @@ const Dashboard = () => {
     }
   });
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return t('good_morning');
-    if (hour < 18) return t('good_afternoon');
-    return t('good_evening');
-  };
-
   const dashboardItems = [
     {
       title: t('patient_list'),
@@ -137,76 +131,15 @@ const Dashboard = () => {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 sm:px-0">
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <p className="text-xl">
-                {getGreeting()}, {userProfile?.gender === 'female' ? t('dr_mrs') : t('dr_mr')} {userProfile?.first_name}.{' '}
-                {todayAppointments?.length ? (
-                  <span>
-                    {t('you_have')} {todayAppointments.length} {t('appointments_today')}.
-                  </span>
-                ) : (
-                  <span>{t('no_appointments_today')}.</span>
-                )}
-                {pinnedPatients?.length ? (
-                  <span className="block mt-2 text-muted-foreground">
-                    {t('you_have')} {pinnedPatients.length} {t('pinned_patients')}.
-                  </span>
-                ) : null}
-              </p>
-            </CardContent>
-          </Card>
+          <WelcomeCard 
+            userProfile={userProfile}
+            appointmentCount={todayAppointments?.length || 0}
+            pinnedPatientsCount={pinnedPatients?.length || 0}
+          />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {dashboardItems.map((item) => (
-              <Card 
-                key={item.title}
-                className={`hover:shadow-lg transition-shadow ${item.onClick ? 'cursor-pointer' : ''}`}
-                onClick={item.onClick}
-              >
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {item.title}
-                  </CardTitle>
-                  <item.icon className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {item.count !== null ? item.count : ""}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {item.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {todayAppointments && todayAppointments.length > 0 && (
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4">{t('today_appointments')}</h3>
-              <div className="space-y-4">
-                {todayAppointments.map((record: any) => (
-                  <Card key={record.id} className="cursor-pointer hover:shadow-md transition-shadow"
-                        onClick={() => navigate(`/patient/${record.patient.id}`)}>
-                    <CardContent className="flex items-center justify-between p-4">
-                      <div>
-                        <p className="font-medium">
-                          {record.patient.first_name} {record.patient.last_name}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {format(new Date(record.visit_date), 'HH:mm')}
-                        </p>
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {record.treatment || t('consultation')}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
+          <DashboardGrid items={dashboardItems} />
+          
+          <AppointmentsList appointments={todayAppointments} />
         </div>
       </main>
       <div className="fixed bottom-4 right-4">
