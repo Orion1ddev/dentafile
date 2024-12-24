@@ -48,7 +48,17 @@ const fallbackTranslations: Translation[] = [
   { key: 'app_settings', en: 'App Settings', tr: 'Uygulama Ayarları' },
   { key: 'today_schedule', en: 'Today\'s Schedule', tr: 'Bugünkü Program' },
   { key: 'view_appointments', en: 'View Appointments', tr: 'Randevuları Görüntüle' },
-  { key: 'calendar', en: 'Calendar', tr: 'Takvim' }
+  { key: 'calendar', en: 'Calendar', tr: 'Takvim' },
+  { key: 'user_not_authenticated', en: 'User not authenticated', tr: 'Kullanıcı kimliği doğrulanmadı' },
+  { key: 'failed_load_profile', en: 'Failed to load profile', tr: 'Profil yüklenemedi' },
+  { key: 'failed_create_profile', en: 'Failed to create profile', tr: 'Profil oluşturulamadı' },
+  { key: 'profile_updated', en: 'Profile updated successfully', tr: 'Profil başarıyla güncellendi' },
+  { key: 'profile_update_error', en: 'Failed to update profile', tr: 'Profil güncellenemedi' },
+  { key: 'enter_first_name', en: 'Enter your first name', tr: 'Adınızı girin' },
+  { key: 'enter_last_name', en: 'Enter your last name', tr: 'Soyadınızı girin' },
+  { key: 'select_gender', en: 'Select your gender', tr: 'Cinsiyetinizi seçin' },
+  { key: 'saving', en: 'Saving...', tr: 'Kaydediliyor...' },
+  { key: 'save_changes', en: 'Save Changes', tr: 'Değişiklikleri Kaydet' },
 ];
 
 export const useLanguage = create<LanguageState>((set, get) => ({
