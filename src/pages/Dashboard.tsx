@@ -50,6 +50,47 @@ const Dashboard = () => {
     }
   });
 
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const { data: pinnedPatients } = useQuery({
+    queryKey: ['pinned-patients'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { data, error } = await supabase
+        .from('patients')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('pinned', true);
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return t('good_morning');
+    if (hour < 18) return t('good_afternoon');
+    return t('good_evening');
+  };
+
   const dashboardItems = [
     {
       title: t('patient_list'),
@@ -96,7 +137,25 @@ const Dashboard = () => {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 sm:px-0">
-          <h2 className="text-2xl font-bold mb-6">{t('dashboard')}</h2>
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <p className="text-xl">
+                {getGreeting()}, {userProfile?.gender === 'female' ? t('dr_mrs') : t('dr_mr')} {userProfile?.first_name}.{' '}
+                {todayAppointments?.length ? (
+                  <span>
+                    {t('you_have')} {todayAppointments.length} {t('appointments_today')}.
+                  </span>
+                ) : (
+                  <span>{t('no_appointments_today')}.</span>
+                )}
+                {pinnedPatients?.length ? (
+                  <span className="block mt-2 text-muted-foreground">
+                    {t('you_have')} {pinnedPatients.length} {t('pinned_patients')}.
+                  </span>
+                ) : null}
+              </p>
+            </CardContent>
+          </Card>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {dashboardItems.map((item) => (
