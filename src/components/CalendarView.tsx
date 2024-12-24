@@ -1,18 +1,17 @@
-import { useState } from "react";
-import { format, addDays, subDays, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
+import { useEffect, useRef, useState } from "react";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PatientCard } from "./PatientCard";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Pin } from "lucide-react";
+import Calendar from '@toast-ui/react-calendar';
+import '@toast-ui/calendar/dist/toastui-calendar.min.css';
 import { useLanguage } from "@/stores/useLanguage";
-import { Calendar } from "@/components/ui/calendar";
-import { Badge } from "@/components/ui/badge";
 
 export const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const calendarRef = useRef<any>(null);
   const navigate = useNavigate();
   const { t } = useLanguage();
 
@@ -59,82 +58,55 @@ export const CalendarView = () => {
         .from('dental_records')
         .select(`
           visit_date,
-          patient:patients(pinned)
+          patient:patients(*)
         `)
         .eq('patients.user_id', user.id)
         .gte('visit_date', start.toISOString())
         .lte('visit_date', end.toISOString());
 
       if (error) throw error;
-
-      // Create a map of dates to appointment counts and pinned status
-      const appointmentMap = new Map();
       
-      data?.forEach(record => {
-        const date = format(new Date(record.visit_date), 'yyyy-MM-dd');
-        const current = appointmentMap.get(date) || { total: 0, pinned: 0 };
-        current.total += 1;
-        if (record.patient.pinned) {
-          current.pinned += 1;
-        }
-        appointmentMap.set(date, current);
-      });
-
-      return appointmentMap;
+      // Transform appointments into Toast UI Calendar format
+      return data?.map(record => ({
+        id: record.id,
+        calendarId: '1',
+        title: `${record.patient.first_name} ${record.patient.last_name}`,
+        category: 'time',
+        start: new Date(record.visit_date),
+        end: new Date(new Date(record.visit_date).getTime() + 60 * 60 * 1000), // 1 hour duration
+      })) || [];
     },
     enabled: !!selectedDate
   });
 
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      setSelectedDate(date);
-    }
+  const handleDateSelect = (e: any) => {
+    const date = new Date(e.start);
+    setSelectedDate(date);
   };
 
   return (
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex flex-col lg:flex-row gap-6 min-h-[calc(100vh-12rem)]">
         <Card className="p-4 lg:w-2/3">
-          <div className="aspect-square w-full flex items-center justify-center">
+          <div className="aspect-square w-full">
             <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={handleDateSelect}
-              className="w-full h-full"
-              modifiers={{
-                hasAppointments: (date) => {
-                  const key = format(date, 'yyyy-MM-dd');
-                  return monthlyAppointments?.has(key) || false;
-                }
+              ref={calendarRef}
+              height="100%"
+              view="month"
+              month={{
+                dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                isAlways6Weeks: true,
               }}
-              modifiersStyles={{
-                hasAppointments: {
-                  fontWeight: 'bold',
-                  textDecoration: 'underline'
+              calendars={[
+                {
+                  id: '1',
+                  name: 'Appointments',
+                  backgroundColor: '#e2e8f0',
+                  borderColor: '#94a3b8'
                 }
-              }}
-              components={{
-                DayContent: ({ date }) => {
-                  const key = format(date, 'yyyy-MM-dd');
-                  const appointments = monthlyAppointments?.get(key);
-                  
-                  return (
-                    <div className="relative w-full h-full flex items-center justify-center">
-                      <span>{date.getDate()}</span>
-                      {appointments && (
-                        <div className="absolute -bottom-1 left-0 right-0 flex justify-center gap-1">
-                          <Badge variant="secondary" className="h-2 w-2 p-0">
-                            {appointments.total}
-                          </Badge>
-                          {appointments.pinned > 0 && (
-                            <Pin className="h-2 w-2 text-primary" />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-              }}
+              ]}
+              events={monthlyAppointments || []}
+              onSelectDateTime={handleDateSelect}
             />
           </div>
         </Card>
