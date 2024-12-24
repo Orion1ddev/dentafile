@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { format, startOfMonth, endOfMonth } from "date-fns";
+import { useEffect, useState } from "react";
+import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PatientCard } from "./PatientCard";
 import { useNavigate } from "react-router-dom";
-import Calendar from '@toast-ui/react-calendar';
-import '@toast-ui/calendar/dist/toastui-calendar.min.css';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import { useLanguage } from "@/stores/useLanguage";
 
 interface DentalRecord {
@@ -33,7 +34,6 @@ interface DentalRecord {
 
 export const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const calendarRef = useRef<any>(null);
   const navigate = useNavigate();
   const { t } = useLanguage();
 
@@ -69,13 +69,10 @@ export const CalendarView = () => {
     enabled: !!selectedDate
   });
 
-  // Query for monthly appointment counts
+  // Query for monthly appointments
   const { data: monthlyAppointments } = useQuery({
     queryKey: ['monthly-appointments', selectedDate],
     queryFn: async () => {
-      const start = startOfMonth(selectedDate);
-      const end = endOfMonth(selectedDate);
-
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
@@ -88,27 +85,24 @@ export const CalendarView = () => {
           operation_type,
           patient:patients(*)
         `)
-        .eq('patients.user_id', user.id)
-        .gte('visit_date', start.toISOString())
-        .lte('visit_date', end.toISOString());
+        .eq('patients.user_id', user.id);
 
       if (error) throw error;
       
-      // Transform appointments into Toast UI Calendar format
       return data?.map(record => ({
         id: record.id,
-        calendarId: '1',
         title: `${record.patient.first_name} ${record.patient.last_name} - ${record.operation_type || 'Appointment'}`,
-        category: 'time',
-        start: new Date(record.visit_date),
-        end: new Date(new Date(record.visit_date).getTime() + 60 * 60 * 1000), // 1 hour duration
+        start: new Date(`${record.visit_date.split('T')[0]}T${record.appointment_time}`).toISOString(),
+        extendedProps: {
+          patientId: record.patient.id,
+          operationType: record.operation_type
+        }
       })) || [];
-    },
-    enabled: !!selectedDate
+    }
   });
 
-  const handleDateSelect = (e: any) => {
-    const date = new Date(e.start);
+  const handleDateSelect = (info: any) => {
+    const date = new Date(info.date);
     setSelectedDate(date);
   };
 
@@ -116,30 +110,26 @@ export const CalendarView = () => {
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex flex-col lg:flex-row gap-6 min-h-[calc(100vh-12rem)]">
         <Card className="p-4 lg:w-2/3">
-          <div className="aspect-square w-full">
-            <Calendar
-              ref={calendarRef}
-              height="100%"
-              view="month"
-              month={{
-                dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                isAlways6Weeks: true,
-              }}
-              calendars={[
-                {
-                  id: '1',
-                  name: 'Appointments',
-                  backgroundColor: '#e2e8f0',
-                  borderColor: '#94a3b8'
-                }
-              ]}
+          <div className="w-full h-full">
+            <FullCalendar
+              plugins={[dayGridPlugin, interactionPlugin]}
+              initialView="dayGridMonth"
               events={monthlyAppointments || []}
-              onSelectDateTime={handleDateSelect}
-              isReadOnly={false}
-              useDetailPopup={true}
-              useCreationPopup={false}
-              disableDblClick={true}
-              selectable="day"
+              dateClick={handleDateSelect}
+              height="auto"
+              aspectRatio={1.5}
+              headerToolbar={{
+                left: 'title',
+                center: '',
+                right: 'prev,next'
+              }}
+              eventDisplay="block"
+              eventTimeFormat={{
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false,
+                hour12: false
+              }}
             />
           </div>
         </Card>
