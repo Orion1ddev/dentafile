@@ -100,7 +100,7 @@ export const CalendarView = () => {
               mode="single"
               selected={selectedDate}
               onSelect={handleDateSelect}
-              className="w-full max-w-[600px]"
+              className="w-full h-full"
               modifiers={{
                 hasAppointments: (date) => {
                   const key = format(date, 'yyyy-MM-dd');
