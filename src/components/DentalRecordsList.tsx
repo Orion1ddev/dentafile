@@ -15,8 +15,8 @@ interface DentalRecord {
   treatment: string | null;
   notes: string | null;
   images: string[] | null;
-  appointment_time?: string | null;
-  operation_type?: string | null;
+  appointment_time: string | null;
+  operation_type: string | null;
 }
 
 interface DentalRecordsListProps {
@@ -119,9 +119,7 @@ export const DentalRecordsList = ({ records, patientId }: DentalRecordsListProps
                     {formatDisplayDate(record.visit_date)} - {record.appointment_time}
                   </CardTitle>
                   <div className="flex items-center gap-2">
-                    {record.appointment_time && (
-                      <DentalRecordEditDialog record={record} patientId={patientId} />
-                    )}
+                    <DentalRecordEditDialog record={record} patientId={patientId} />
                     <Button
                       variant="destructive"
                       size="icon"

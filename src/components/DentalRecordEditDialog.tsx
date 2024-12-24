@@ -14,8 +14,8 @@ import { useLanguage } from "@/stores/useLanguage";
 
 interface DentalRecordFormData {
   visit_date: string;
-  appointment_time: string;
-  operation_type: string;
+  appointment_time: string | null;
+  operation_type: string | null;
   diagnosis: string | null;
   treatment: string | null;
   notes: string | null;
@@ -26,7 +26,7 @@ interface DentalRecordEditDialogProps {
   record: {
     id: string;
     visit_date: string;
-    appointment_time: string;
+    appointment_time: string | null;
     operation_type: string | null;
     diagnosis: string | null;
     treatment: string | null;
@@ -44,7 +44,7 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
   const form = useForm<DentalRecordFormData>({
     defaultValues: {
       visit_date: new Date(record.visit_date).toISOString().split('T')[0],
-      appointment_time: record.appointment_time,
+      appointment_time: record.appointment_time || '',
       operation_type: record.operation_type || '',
       diagnosis: record.diagnosis || '',
       treatment: record.treatment || '',
@@ -59,7 +59,7 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
         .from('dental_records')
         .update({ 
           visit_date: data.visit_date,
-          appointment_time: data.appointment_time,
+          appointment_time: data.appointment_time || null,
           operation_type: data.operation_type,
           diagnosis: data.diagnosis,
           treatment: data.treatment,
