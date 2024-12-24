@@ -79,7 +79,7 @@ export const PatientCard = ({ patient, onClick }: PatientCardProps) => {
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="flex items-center space-x-4">
           <Avatar className="h-12 w-12">
-            <AvatarImage src={patient.avatar_url || undefined} />
+            <AvatarImage src={patient.avatar_url || undefined} alt={`${patient.first_name} ${patient.last_name}`} />
             <AvatarFallback>
               {patient.first_name[0]}{patient.last_name[0]}
             </AvatarFallback>
