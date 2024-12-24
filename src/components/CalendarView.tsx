@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { PatientCard } from "./PatientCard";
-import { useNavigate } from "react-router-dom";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { useLanguage } from "@/stores/useLanguage";
+import { AppointmentsList } from "./appointments/AppointmentsList";
 
 interface DentalRecord {
   id: string;
@@ -34,8 +32,6 @@ interface DentalRecord {
 
 export const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const navigate = useNavigate();
-  const { t } = useLanguage();
 
   // Query for appointments on selected date
   const { data: appointments } = useQuery<DentalRecord[]>({
@@ -135,28 +131,10 @@ export const CalendarView = () => {
         </Card>
 
         <Card className="p-4 w-full">
-          <h3 className="text-lg font-semibold mb-4">
-            {format(selectedDate, 'MMMM d, yyyy')} - {appointments?.length || 0} {t('appointments')}
-          </h3>
-          
-          <div className="space-y-4">
-            {appointments?.map((record) => (
-              <div key={record.id} className="space-y-2">
-                <div className="text-sm text-muted-foreground">
-                  {format(new Date(`2000-01-01T${record.appointment_time}`), 'HH:mm')} - {record.operation_type}
-                </div>
-                <PatientCard
-                  patient={record.patient}
-                  onClick={() => navigate(`/patient/${record.patient.id}`)}
-                />
-              </div>
-            ))}
-            {appointments?.length === 0 && (
-              <div className="text-center text-muted-foreground">
-                {t('no_appointments')}
-              </div>
-            )}
-          </div>
+          <AppointmentsList 
+            appointments={appointments}
+            selectedDate={selectedDate}
+          />
         </Card>
       </div>
     </div>
