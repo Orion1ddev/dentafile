@@ -9,6 +9,26 @@ import Calendar from '@toast-ui/react-calendar';
 import '@toast-ui/calendar/dist/toastui-calendar.min.css';
 import { useLanguage } from "@/stores/useLanguage";
 
+interface DentalRecord {
+  id: string;
+  visit_date: string;
+  patient: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    avatar_url: string | null;
+    created_at: string;
+    date_of_birth: string;
+    email: string | null;
+    gender: string;
+    medical_history: string[] | null;
+    phone: string | null;
+    pinned: boolean | null;
+    updated_at: string;
+    user_id: string | null;
+  };
+}
+
 export const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const calendarRef = useRef<any>(null);
@@ -16,7 +36,7 @@ export const CalendarView = () => {
   const { t } = useLanguage();
 
   // Query for appointments on selected date
-  const { data: appointments } = useQuery({
+  const { data: appointments } = useQuery<DentalRecord[]>({
     queryKey: ['appointments', selectedDate],
     queryFn: async () => {
       const startOfDay = new Date(selectedDate);
@@ -31,7 +51,8 @@ export const CalendarView = () => {
       const { data, error } = await supabase
         .from('dental_records')
         .select(`
-          *,
+          id,
+          visit_date,
           patient:patients(*)
         `)
         .eq('patients.user_id', user.id)
@@ -57,6 +78,7 @@ export const CalendarView = () => {
       const { data, error } = await supabase
         .from('dental_records')
         .select(`
+          id,
           visit_date,
           patient:patients(*)
         `)
