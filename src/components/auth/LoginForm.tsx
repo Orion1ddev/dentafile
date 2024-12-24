@@ -18,22 +18,33 @@ const LoginForm = () => {
     e.preventDefault();
     if (isLoading) return;
     
+    if (!email || !password) {
+      toast.error(t('all_fields_required'));
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Login error:', error);
+        throw error;
+      }
+
+      if (!data.user) {
+        throw new Error('No user data returned');
+      }
 
       toast.success(t('login_success'));
       navigate('/', { replace: true });
     } catch (error: any) {
       console.error('Login error:', error);
       toast.error(error.message || t('login_error'));
-    } finally {
       setIsLoading(false);
     }
   };
