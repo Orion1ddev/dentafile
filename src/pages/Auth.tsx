@@ -9,34 +9,13 @@ import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
 import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 import { useTheme } from "next-themes";
+import { FallingIcons } from "@/components/effects/FallingIcons";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-const FloatingIcon = ({ delay = "0s", iconType = "tooth" }: { delay?: string, iconType?: "tooth" | "tools" }) => {
-  const iconSrc = iconType === "tooth" 
-    ? "/lovable-uploads/8352edea-6585-4245-80e1-e9058d16e7be.png"
-    : "/lovable-uploads/59206af8-de49-412c-95ca-b26114eeb916.png";
-
-  return (
-    <div 
-      className="absolute animate-float"
-      style={{ 
-        animation: `float 3s ease-in-out infinite`,
-        animationDelay: delay,
-      }}
-    >
-      <img 
-        src={iconSrc} 
-        alt="Dental icon" 
-        className="w-8 h-8 opacity-50 filter brightness-0 invert"
-      />
-    </div>
-  );
-};
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -74,16 +53,7 @@ const Auth = () => {
       {/* Left side - Welcome content */}
       {!isMobile && (
         <div className="w-full md:w-1/2 bg-blue-600 p-6 md:p-12 text-white flex flex-col justify-center relative overflow-hidden">
-          {/* Floating icons */}
-          <div className="absolute inset-0">
-            <FloatingIcon delay="0s" iconType="tooth" />
-            <div className="absolute top-1/4 right-1/4">
-              <FloatingIcon delay="1s" iconType="tools" />
-            </div>
-            <div className="absolute bottom-1/4 left-1/4">
-              <FloatingIcon delay="2s" iconType="tooth" />
-            </div>
-          </div>
+          <FallingIcons />
           
           <div className="max-w-lg mx-auto relative z-10">
             <div className="flex items-center gap-2 mb-8">
