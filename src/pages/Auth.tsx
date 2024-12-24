@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
-import { Stethoscope, Menu, Tooth } from "lucide-react";
+import { Stethoscope, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import LoginForm from "@/components/auth/LoginForm";
@@ -24,7 +24,7 @@ const FloatingIcon = ({ delay = "0s" }: { delay?: string }) => (
       animationDelay: delay,
     }}
   >
-    <Tooth className="text-blue-200 w-8 h-8 opacity-50" />
+    <Stethoscope className="text-blue-200 w-8 h-8 opacity-50" />
   </div>
 );
 
