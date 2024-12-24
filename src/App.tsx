@@ -67,7 +67,7 @@ const App = () => {
           
           if (!mounted) return;
 
-          if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+          if (event === 'SIGNED_OUT') {
             setIsAuthenticated(false);
             queryClient.clear();
           } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
