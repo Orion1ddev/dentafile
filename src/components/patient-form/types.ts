@@ -6,4 +6,5 @@ export interface PatientFormData {
   medical_history: string[];
   email?: string;
   phone?: string;
+  avatar_url?: string;
 }
