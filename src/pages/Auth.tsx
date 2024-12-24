@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
-import { Stethoscope, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import LoginForm from "@/components/auth/LoginForm";
@@ -16,17 +16,27 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const FloatingIcon = ({ delay = "0s" }: { delay?: string }) => (
-  <div 
-    className="absolute animate-float"
-    style={{ 
-      animation: `float 3s ease-in-out infinite`,
-      animationDelay: delay,
-    }}
-  >
-    <Stethoscope className="text-blue-200 w-8 h-8 opacity-50" />
-  </div>
-);
+const FloatingIcon = ({ delay = "0s", iconType = "tooth" }: { delay?: string, iconType?: "tooth" | "tools" }) => {
+  const iconSrc = iconType === "tooth" 
+    ? "/lovable-uploads/8352edea-6585-4245-80e1-e9058d16e7be.png"
+    : "/lovable-uploads/59206af8-de49-412c-95ca-b26114eeb916.png";
+
+  return (
+    <div 
+      className="absolute animate-float"
+      style={{ 
+        animation: `float 3s ease-in-out infinite`,
+        animationDelay: delay,
+      }}
+    >
+      <img 
+        src={iconSrc} 
+        alt="Dental icon" 
+        className="w-8 h-8 opacity-50 filter brightness-0 invert"
+      />
+    </div>
+  );
+};
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -66,18 +76,22 @@ const Auth = () => {
         <div className="w-full md:w-1/2 bg-blue-600 p-6 md:p-12 text-white flex flex-col justify-center relative overflow-hidden">
           {/* Floating icons */}
           <div className="absolute inset-0">
-            <FloatingIcon delay="0s" />
+            <FloatingIcon delay="0s" iconType="tooth" />
             <div className="absolute top-1/4 right-1/4">
-              <FloatingIcon delay="1s" />
+              <FloatingIcon delay="1s" iconType="tools" />
             </div>
             <div className="absolute bottom-1/4 left-1/4">
-              <FloatingIcon delay="2s" />
+              <FloatingIcon delay="2s" iconType="tooth" />
             </div>
           </div>
           
           <div className="max-w-lg mx-auto relative z-10">
             <div className="flex items-center gap-2 mb-8">
-              <Stethoscope className="h-8 w-8" />
+              <img 
+                src="/lovable-uploads/8352edea-6585-4245-80e1-e9058d16e7be.png" 
+                alt="Dental icon"
+                className="h-8 w-8 filter brightness-0 invert" 
+              />
               <h1 className="text-3xl font-bold">DentaFile</h1>
             </div>
             <h2 className="text-2xl font-semibold mb-6">
@@ -132,7 +146,11 @@ const Auth = () => {
         {isMobile && (
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Stethoscope className="h-8 w-8 text-blue-600" />
+              <img 
+                src="/lovable-uploads/8352edea-6585-4245-80e1-e9058d16e7be.png" 
+                alt="Dental icon"
+                className="h-8 w-8 text-blue-600" 
+              />
               <h1 className="text-3xl font-bold text-blue-600">DentaFile</h1>
             </div>
             <p className="text-gray-600">{t('welcome_title')}</p>
