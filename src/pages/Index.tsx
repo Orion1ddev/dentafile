@@ -12,6 +12,7 @@ import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
 import { CalendarView } from "@/components/CalendarView";
 import { ChevronLeft } from "lucide-react";
+import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 
@@ -68,6 +69,7 @@ const Index = ({ view = "list" }: IndexProps) => {
 
   return (
     <div className="min-h-screen bg-background">
+      <BackgroundEffect />
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">

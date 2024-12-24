@@ -29,11 +29,11 @@ export const AppointmentsList = ({ appointments }: AppointmentsListProps) => {
                   {record.patient.first_name} {record.patient.last_name}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {format(new Date(record.visit_date), 'HH:mm')}
+                  {format(new Date(`2000-01-01T${record.appointment_time}`), 'HH:mm')}
                 </p>
               </div>
               <div className="text-sm text-muted-foreground">
-                {record.treatment || t('consultation')}
+                {record.operation_type || t('consultation')}
               </div>
             </CardContent>
           </Card>
