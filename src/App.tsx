@@ -28,64 +28,78 @@ const App = () => {
   const { fetchTranslations } = useLanguage();
 
   useEffect(() => {
-    // Fetch translations on app initialization
     fetchTranslations();
   }, [fetchTranslations]);
 
   useEffect(() => {
+    let mounted = true;
+
     const initializeAuth = async () => {
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           console.error('Session error:', sessionError);
-          setIsAuthenticated(false);
+          if (mounted) setIsAuthenticated(false);
           return;
         }
 
         if (!session) {
-          setIsAuthenticated(false);
+          if (mounted) setIsAuthenticated(false);
           return;
         }
 
-        // Check if session is valid
+        // Verify session is valid
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         
         if (userError || !user) {
           console.error('User error:', userError);
           await supabase.auth.signOut();
-          setIsAuthenticated(false);
+          if (mounted) setIsAuthenticated(false);
           return;
         }
 
-        setIsAuthenticated(true);
+        if (mounted) setIsAuthenticated(true);
 
+        // Set up auth state change listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           console.log('Auth event:', event);
           
-          if (event === 'SIGNED_OUT') {
+          if (!mounted) return;
+
+          if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
             setIsAuthenticated(false);
             queryClient.clear();
-          } else if (event === 'SIGNED_IN') {
-            setIsAuthenticated(true);
-          } else if (event === 'TOKEN_REFRESHED') {
-            setIsAuthenticated(true);
-          } else if (event === 'USER_UPDATED') {
-            setIsAuthenticated(true);
+          } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+            try {
+              const { data: { user }, error } = await supabase.auth.getUser();
+              if (error || !user) throw error;
+              setIsAuthenticated(true);
+            } catch (error) {
+              console.error('Auth state change error:', error);
+              setIsAuthenticated(false);
+            }
           }
         });
 
         return () => {
+          mounted = false;
           subscription.unsubscribe();
         };
       } catch (error) {
         console.error('Auth initialization error:', error);
-        setIsAuthenticated(false);
-        toast.error("Authentication error. Please try logging in again.");
+        if (mounted) {
+          setIsAuthenticated(false);
+          toast.error("Authentication error. Please try logging in again.");
+        }
       }
     };
 
     initializeAuth();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   if (isAuthenticated === null) {
