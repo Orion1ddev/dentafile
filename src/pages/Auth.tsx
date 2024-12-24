@@ -8,6 +8,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
 import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
+import { useTheme } from "next-themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,12 @@ const Auth = () => {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const isMobile = useIsMobile();
+  const { setTheme } = useTheme();
+
+  // Force light theme on component mount
+  useEffect(() => {
+    setTheme('light');
+  }, [setTheme]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -42,7 +49,7 @@ const Auth = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-white flex flex-col md:flex-row">
       {/* Left side - Welcome content */}
       {!isMobile && (
         <div className="w-full md:w-1/2 bg-blue-600 p-6 md:p-12 text-white flex flex-col justify-center">
@@ -79,7 +86,7 @@ const Auth = () => {
       )}
 
       {/* Right side - Auth forms */}
-      <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col relative">
+      <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col relative bg-gray-50">
         {/* Language Toggle */}
         <div className="absolute top-4 right-4">
           <DropdownMenu>
