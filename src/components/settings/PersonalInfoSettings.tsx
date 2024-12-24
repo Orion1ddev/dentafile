@@ -16,24 +16,43 @@ export const PersonalInfoSettings = () => {
 
   useEffect(() => {
     const loadProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          toast.error("User not authenticated");
+          return;
+        }
 
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
 
-      if (error) {
-        console.error('Error loading profile:', error);
-        return;
-      }
+        if (error) {
+          console.error('Error loading profile:', error);
+          toast.error("Failed to load profile");
+          return;
+        }
 
-      if (profile) {
-        setFirstName(profile.first_name || "");
-        setLastName(profile.last_name || "");
-        setGender(profile.gender || "");
+        if (profile) {
+          setFirstName(profile.first_name || "");
+          setLastName(profile.last_name || "");
+          setGender(profile.gender || "");
+        } else {
+          // Create a new profile if one doesn't exist
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert([{ id: user.id }]);
+
+          if (insertError) {
+            console.error('Error creating profile:', insertError);
+            toast.error("Failed to create profile");
+          }
+        }
+      } catch (error) {
+        console.error('Profile loading error:', error);
+        toast.error("Failed to load profile");
       }
     };
 
