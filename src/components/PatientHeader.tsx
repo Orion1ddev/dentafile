@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DentalRecordFormDialog } from "@/components/DentalRecordFormDialog";
 import { PatientFormDialog } from "@/components/PatientFormDialog";
 import { NavMenu } from "@/components/NavMenu";
 import { useLanguage } from "@/stores/useLanguage";
+import { DentalNoteFormDialog } from "./dental-records/DentalNoteFormDialog";
 
 interface PatientHeaderProps {
   patient: {
@@ -17,7 +18,7 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
   const { t } = useLanguage();
 
   const handleBack = () => {
-    navigate("/");
+    navigate("/patients");
   };
 
   return (
@@ -31,7 +32,7 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
               onClick={handleBack}
             >
               <ChevronLeft className="h-4 w-4 mr-2" />
-              {t('back')}
+              {t('patient_list')}
             </Button>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('patient_details')}</h1>
           </div>
@@ -45,6 +46,7 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
                 </Button>
               }
             />
+            <DentalNoteFormDialog patientId={patient.id} />
             <DentalRecordFormDialog patientId={patient.id} />
             <NavMenu />
           </div>

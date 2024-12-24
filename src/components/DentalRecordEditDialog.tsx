@@ -10,9 +10,12 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Pencil } from "lucide-react";
 import { ImageUploadField } from "./dental-records/ImageUploadField";
+import { useLanguage } from "@/stores/useLanguage";
 
 interface DentalRecordFormData {
   visit_date: string;
+  appointment_time: string;
+  operation_type: string;
   diagnosis: string | null;
   treatment: string | null;
   notes: string | null;
@@ -23,6 +26,8 @@ interface DentalRecordEditDialogProps {
   record: {
     id: string;
     visit_date: string;
+    appointment_time: string;
+    operation_type: string | null;
     diagnosis: string | null;
     treatment: string | null;
     notes: string | null;
@@ -34,10 +39,13 @@ interface DentalRecordEditDialogProps {
 export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
   
   const form = useForm<DentalRecordFormData>({
     defaultValues: {
       visit_date: new Date(record.visit_date).toISOString().split('T')[0],
+      appointment_time: record.appointment_time,
+      operation_type: record.operation_type || '',
       diagnosis: record.diagnosis || '',
       treatment: record.treatment || '',
       notes: record.notes || '',
@@ -51,6 +59,8 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
         .from('dental_records')
         .update({ 
           visit_date: data.visit_date,
+          appointment_time: data.appointment_time,
+          operation_type: data.operation_type,
           diagnosis: data.diagnosis,
           treatment: data.treatment,
           notes: data.notes,
@@ -60,7 +70,7 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
 
       if (error) throw error;
       
-      toast.success("Record updated successfully");
+      toast.success(t("appointment_updated"));
       queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
       setOpen(false);
     } catch (error: any) {
@@ -74,23 +84,51 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="ml-auto">
           <Pencil className="h-4 w-4 mr-2" />
-          Edit Record
+          {t('edit_appointment')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Dental Record</DialogTitle>
+          <DialogTitle>{t('edit_appointment')}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="visit_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('visit_date')}</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="appointment_time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('time')}</FormLabel>
+                    <FormControl>
+                      <Input type="time" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
-              name="visit_date"
+              name="operation_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Visit Date</FormLabel>
+                  <FormLabel>{t('operation_type')}</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input {...field} placeholder="e.g., Cleaning, Filling, etc." />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,7 +139,7 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
               name="diagnosis"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Diagnosis</FormLabel>
+                  <FormLabel>{t('diagnosis')}</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
@@ -114,7 +152,7 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
               name="treatment"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Treatment</FormLabel>
+                  <FormLabel>{t('treatment')}</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
@@ -127,7 +165,7 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes</FormLabel>
+                  <FormLabel>{t('notes')}</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
@@ -137,7 +175,7 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
             />
             <ImageUploadField form={form} />
             <Button type="submit" className="w-full">
-              Update Record
+              {t('update_appointment')}
             </Button>
           </form>
         </Form>

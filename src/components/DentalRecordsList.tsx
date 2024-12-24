@@ -15,6 +15,8 @@ interface DentalRecord {
   treatment: string | null;
   notes: string | null;
   images: string[] | null;
+  appointment_time?: string;
+  operation_type?: string | null;
 }
 
 interface DentalRecordsListProps {
@@ -36,7 +38,7 @@ export const DentalRecordsList = ({ records, patientId }: DentalRecordsListProps
   };
 
   const handleDeleteVisit = async (recordId: string) => {
-    if (!confirm('Are you sure you want to delete this visit record? This action cannot be undone.')) {
+    if (!confirm(t('confirm_delete_record'))) {
       return;
     }
 
@@ -46,59 +48,117 @@ export const DentalRecordsList = ({ records, patientId }: DentalRecordsListProps
       .eq('id', recordId);
 
     if (error) {
-      toast.error('Failed to delete visit record');
+      toast.error(t('delete_record_error'));
       return;
     }
 
-    toast.success('Visit record deleted successfully');
+    toast.success(t('record_deleted'));
     queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
   };
 
+  // Separate notes and appointments
+  const notes = records.filter(record => !record.appointment_time);
+  const appointments = records.filter(record => record.appointment_time);
+
   return (
     <div className="space-y-4">
-      {records?.map((record) => (
-        <Card key={record.id}>
-          <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="text-lg">
-              {t('visit')}: {formatDisplayDate(record.visit_date)}
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              <DentalRecordEditDialog record={record} patientId={patientId} />
-              <Button
-                variant="destructive"
-                size="icon"
-                onClick={() => handleDeleteVisit(record.id)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <p><strong>{t('diagnosis')}:</strong> {record.diagnosis || 'N/A'}</p>
-                <p><strong>{t('treatment')}:</strong> {record.treatment || 'N/A'}</p>
-                <p><strong>{t('notes')}:</strong> {record.notes || 'N/A'}</p>
-              </div>
-              {record.images && record.images.length > 0 && (
-                <div>
-                  <h4 className="font-semibold mb-2">{t('photos')}</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {record.images.map((image, index) => (
-                      <img
-                        key={index}
-                        src={image}
-                        alt={`Dental record ${index + 1}`}
-                        className="rounded-lg object-cover w-full aspect-square"
-                      />
-                    ))}
+      {/* Notes Section */}
+      {notes.length > 0 && (
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold mb-4">{t('notes')}</h3>
+          <div className="space-y-4">
+            {notes.map((record) => (
+              <Card key={record.id}>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="text-lg">
+                    {formatDisplayDate(record.visit_date)}
+                  </CardTitle>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => handleDeleteVisit(record.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <p><strong>{t('notes')}:</strong> {record.notes || 'N/A'}</p>
+                    {record.images && record.images.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-2">{t('photos')}</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {record.images.map((image, index) => (
+                            <img
+                              key={index}
+                              src={image}
+                              alt={`Dental record ${index + 1}`}
+                              className="rounded-lg object-cover w-full aspect-square"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Appointments Section */}
+      {appointments.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-4">{t('appointments')}</h3>
+          <div className="space-y-4">
+            {appointments.map((record) => (
+              <Card key={record.id}>
+                <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <CardTitle className="text-lg">
+                    {formatDisplayDate(record.visit_date)} - {record.appointment_time}
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    <DentalRecordEditDialog record={record} patientId={patientId} />
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => handleDeleteVisit(record.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <p><strong>{t('operation_type')}:</strong> {record.operation_type || 'N/A'}</p>
+                      <p><strong>{t('diagnosis')}:</strong> {record.diagnosis || 'N/A'}</p>
+                      <p><strong>{t('treatment')}:</strong> {record.treatment || 'N/A'}</p>
+                      <p><strong>{t('notes')}:</strong> {record.notes || 'N/A'}</p>
+                    </div>
+                    {record.images && record.images.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-2">{t('photos')}</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {record.images.map((image, index) => (
+                            <img
+                              key={index}
+                              src={image}
+                              alt={`Dental record ${index + 1}`}
+                              className="rounded-lg object-cover w-full aspect-square"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
