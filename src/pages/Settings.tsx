@@ -5,6 +5,7 @@ import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
 import { Link } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 
 const Settings = () => {
   const { t } = useLanguage();
@@ -16,19 +17,18 @@ const Settings = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
+              <Link 
+                to="/" 
+                className="flex items-center text-sm text-muted-foreground hover:text-foreground"
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                {t('back_to_dashboard')}
+              </Link>
               <Link to="/" className="flex-shrink-0 flex items-center">
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                   DentaFile
                 </h1>
               </Link>
-              <div className="hidden md:flex items-center space-x-4">
-                <Link to="/patients" className="text-foreground/60 hover:text-foreground px-3 py-2 rounded-md text-sm font-medium">
-                  {t("patient_list")}
-                </Link>
-                <Link to="/calendar" className="text-foreground/60 hover:text-foreground px-3 py-2 rounded-md text-sm font-medium">
-                  {t("calendar")}
-                </Link>
-              </div>
             </div>
           </div>
         </div>
