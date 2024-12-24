@@ -108,16 +108,16 @@ export const CalendarView = () => {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <div className="flex flex-col lg:flex-row gap-6 min-h-[calc(100vh-12rem)]">
-        <Card className="p-4 lg:w-2/3">
-          <div className="w-full h-full">
+      <div className="flex flex-col gap-6">
+        <Card className="p-4 w-full">
+          <div className="w-full">
             <FullCalendar
               plugins={[dayGridPlugin, interactionPlugin]}
               initialView="dayGridMonth"
               events={monthlyAppointments || []}
               dateClick={handleDateSelect}
               height="auto"
-              aspectRatio={1.5}
+              aspectRatio={2}
               headerToolbar={{
                 left: 'title',
                 center: '',
@@ -134,12 +134,12 @@ export const CalendarView = () => {
           </div>
         </Card>
 
-        <Card className="p-4 lg:w-1/3 flex flex-col">
+        <Card className="p-4 w-full">
           <h3 className="text-lg font-semibold mb-4">
             {format(selectedDate, 'MMMM d, yyyy')} - {appointments?.length || 0} {t('appointments')}
           </h3>
           
-          <div className="space-y-4 flex-grow overflow-y-auto">
+          <div className="space-y-4">
             {appointments?.map((record) => (
               <PatientCard
                 key={record.id}
