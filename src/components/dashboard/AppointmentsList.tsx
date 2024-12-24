@@ -13,6 +13,16 @@ export const AppointmentsList = ({ appointments }: AppointmentsListProps) => {
 
   if (!appointments || appointments.length === 0) return null;
 
+  const formatAppointmentTime = (time: string | null) => {
+    if (!time) return '';
+    try {
+      return format(new Date(`2000-01-01T${time}`), 'HH:mm');
+    } catch (error) {
+      console.error('Error formatting time:', error);
+      return time;
+    }
+  };
+
   return (
     <div className="mt-8">
       <h3 className="text-lg font-semibold mb-4">{t('today_appointments')}</h3>
@@ -29,7 +39,7 @@ export const AppointmentsList = ({ appointments }: AppointmentsListProps) => {
                   {record.patient.first_name} {record.patient.last_name}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {format(new Date(`2000-01-01T${record.appointment_time}`), 'HH:mm')}
+                  {formatAppointmentTime(record.appointment_time)}
                 </p>
               </div>
               <div className="text-sm text-muted-foreground">
