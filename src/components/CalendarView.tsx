@@ -91,7 +91,7 @@ export const CalendarView = () => {
       
       return data?.map(record => ({
         id: record.id,
-        title: `${record.patient.first_name} ${record.patient.last_name} - ${record.operation_type || 'Appointment'}`,
+        title: `${format(new Date(`2000-01-01T${record.appointment_time}`), 'HH:mm')} - ${record.patient.first_name} ${record.patient.last_name}`,
         start: new Date(`${record.visit_date.split('T')[0]}T${record.appointment_time}`).toISOString(),
         extendedProps: {
           patientId: record.patient.id,
@@ -141,11 +141,15 @@ export const CalendarView = () => {
           
           <div className="space-y-4">
             {appointments?.map((record) => (
-              <PatientCard
-                key={record.id}
-                patient={record.patient}
-                onClick={() => navigate(`/patient/${record.patient.id}`)}
-              />
+              <div key={record.id} className="space-y-2">
+                <div className="text-sm text-muted-foreground">
+                  {format(new Date(`2000-01-01T${record.appointment_time}`), 'HH:mm')} - {record.operation_type}
+                </div>
+                <PatientCard
+                  patient={record.patient}
+                  onClick={() => navigate(`/patient/${record.patient.id}`)}
+                />
+              </div>
             ))}
             {appointments?.length === 0 && (
               <div className="text-center text-muted-foreground">
