@@ -92,57 +92,59 @@ export const CalendarView = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-6">
-        <Card className="p-4 flex-1">
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={handleDateSelect}
-            className="rounded-md"
-            modifiers={{
-              hasAppointments: (date) => {
-                const key = format(date, 'yyyy-MM-dd');
-                return monthlyAppointments?.has(key) || false;
-              }
-            }}
-            modifiersStyles={{
-              hasAppointments: {
-                fontWeight: 'bold',
-                textDecoration: 'underline'
-              }
-            }}
-            components={{
-              DayContent: ({ date }) => {
-                const key = format(date, 'yyyy-MM-dd');
-                const appointments = monthlyAppointments?.get(key);
-                
-                return (
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    <span>{date.getDate()}</span>
-                    {appointments && (
-                      <div className="absolute -bottom-1 left-0 right-0 flex justify-center gap-1">
-                        <Badge variant="secondary" className="h-2 w-2 p-0">
-                          {appointments.total}
-                        </Badge>
-                        {appointments.pinned > 0 && (
-                          <Pin className="h-2 w-2 text-primary" />
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-            }}
-          />
+    <div className="container mx-auto p-4 space-y-6">
+      <div className="flex flex-col lg:flex-row gap-6 min-h-[calc(100vh-12rem)]">
+        <Card className="p-4 lg:w-2/3">
+          <div className="aspect-square w-full flex items-center justify-center">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={handleDateSelect}
+              className="w-full max-w-[600px]"
+              modifiers={{
+                hasAppointments: (date) => {
+                  const key = format(date, 'yyyy-MM-dd');
+                  return monthlyAppointments?.has(key) || false;
+                }
+              }}
+              modifiersStyles={{
+                hasAppointments: {
+                  fontWeight: 'bold',
+                  textDecoration: 'underline'
+                }
+              }}
+              components={{
+                DayContent: ({ date }) => {
+                  const key = format(date, 'yyyy-MM-dd');
+                  const appointments = monthlyAppointments?.get(key);
+                  
+                  return (
+                    <div className="relative w-full h-full flex items-center justify-center">
+                      <span>{date.getDate()}</span>
+                      {appointments && (
+                        <div className="absolute -bottom-1 left-0 right-0 flex justify-center gap-1">
+                          <Badge variant="secondary" className="h-2 w-2 p-0">
+                            {appointments.total}
+                          </Badge>
+                          {appointments.pinned > 0 && (
+                            <Pin className="h-2 w-2 text-primary" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+              }}
+            />
+          </div>
         </Card>
 
-        <Card className="p-4 flex-1">
+        <Card className="p-4 lg:w-1/3 flex flex-col">
           <h3 className="text-lg font-semibold mb-4">
             {format(selectedDate, 'MMMM d, yyyy')} - {appointments?.length || 0} {t('appointments')}
           </h3>
           
-          <div className="space-y-4">
+          <div className="space-y-4 flex-grow overflow-y-auto">
             {appointments?.map((record) => (
               <PatientCard
                 key={record.id}
