@@ -19,7 +19,7 @@ export const PersonalInfoSettings = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
-          toast.error("User not authenticated");
+          toast.error(t("user_not_authenticated"));
           return;
         }
 
@@ -31,7 +31,7 @@ export const PersonalInfoSettings = () => {
 
         if (error) {
           console.error('Error loading profile:', error);
-          toast.error("Failed to load profile");
+          toast.error(t("failed_load_profile"));
           return;
         }
 
@@ -47,17 +47,17 @@ export const PersonalInfoSettings = () => {
 
           if (insertError) {
             console.error('Error creating profile:', insertError);
-            toast.error("Failed to create profile");
+            toast.error(t("failed_create_profile"));
           }
         }
       } catch (error) {
         console.error('Profile loading error:', error);
-        toast.error("Failed to load profile");
+        toast.error(t("failed_load_profile"));
       }
     };
 
     loadProfile();
-  }, []);
+  }, [t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +65,7 @@ export const PersonalInfoSettings = () => {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
+      if (!user) throw new Error(t("user_not_authenticated"));
 
       const { error } = await supabase
         .from('profiles')
@@ -78,10 +78,10 @@ export const PersonalInfoSettings = () => {
 
       if (error) throw error;
 
-      toast.success(t('profile_updated'));
+      toast.success(t("profile_updated"));
     } catch (error: any) {
       console.error('Error updating profile:', error);
-      toast.error(error.message);
+      toast.error(error.message || t("profile_update_error"));
     } finally {
       setIsLoading(false);
     }
@@ -90,40 +90,42 @@ export const PersonalInfoSettings = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('personal_info')}</CardTitle>
+        <CardTitle>{t("personal_info")}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">{t('first_name')}</label>
+            <label className="block text-sm font-medium mb-1">{t("first_name")}</label>
             <Input
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
+              placeholder={t("enter_first_name")}
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">{t('last_name')}</label>
+            <label className="block text-sm font-medium mb-1">{t("last_name")}</label>
             <Input
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+              placeholder={t("enter_last_name")}
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">{t('gender')}</label>
+            <label className="block text-sm font-medium mb-1">{t("gender")}</label>
             <Select value={gender} onValueChange={setGender}>
               <SelectTrigger>
-                <SelectValue placeholder={t('select_gender')} />
+                <SelectValue placeholder={t("select_gender")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="male">{t('mr')}</SelectItem>
-                <SelectItem value="female">{t('mrs')}</SelectItem>
+                <SelectItem value="male">{t("mr")}</SelectItem>
+                <SelectItem value="female">{t("mrs")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? t('saving') : t('save_changes')}
+            {isLoading ? t("saving") : t("save_changes")}
           </Button>
         </form>
       </CardContent>
