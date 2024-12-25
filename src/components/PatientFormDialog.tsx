@@ -7,6 +7,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/stores/useLanguage";
+import { useForm } from "react-hook-form";
+import { Form } from "@/components/ui/form";
+import { PatientFormData } from "./patient-form/types";
 
 export interface PatientFormDialogProps {
   mode: "create" | "edit";
@@ -18,8 +21,19 @@ export const PatientFormDialog = ({ mode, patientId, trigger }: PatientFormDialo
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const { t } = useLanguage();
+  
+  const form = useForm<PatientFormData>({
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      medical_history: [],
+      email: "",
+      phone: "",
+      avatar_url: "",
+    }
+  });
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: PatientFormData) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
@@ -73,10 +87,15 @@ export const PatientFormDialog = ({ mode, patientId, trigger }: PatientFormDialo
             {mode === "create" ? t('add_patient') : t('edit_patient')}
           </DialogTitle>
         </DialogHeader>
-        <div className="grid gap-6">
-          <PatientBasicInfo onSubmit={handleSubmit} mode={mode} patientId={patientId} />
-          <PatientContactInfo />
-        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <PatientBasicInfo form={form} />
+            <PatientContactInfo form={form} />
+            <Button type="submit" className="w-full">
+              {mode === "create" ? t('add_patient') : t('save_changes')}
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
