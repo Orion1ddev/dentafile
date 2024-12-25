@@ -6,23 +6,19 @@ import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { PatientBasicInfo } from "./patient-form/PatientBasicInfo";
 import { PatientContactInfo } from "./patient-form/PatientContactInfo";
-import { PatientGenderSelect } from "./patient-form/PatientGenderSelect";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { uploadImageSecurely } from "@/utils/secureImageUpload";
-import type { PatientFormData } from "./patient-form/types";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLanguage } from "@/stores/useLanguage";
+import { Edit2 } from "lucide-react";
 
 const patientFormSchema = z.object({
   first_name: z.string().min(1, "First name is required"),
   last_name: z.string().min(1, "Last name is required"),
-  date_of_birth: z.string().min(1, "Date of birth is required"),
-  gender: z.string().min(1, "Gender is required"),
   medical_history: z.array(z.string()),
   email: z.string().email().optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
@@ -39,7 +35,6 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
   const [open, setOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { t } = useLanguage();
   
   const form = useForm<PatientFormData>({
@@ -47,15 +42,12 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
     defaultValues: mode === 'edit' && patient ? {
       first_name: patient.first_name,
       last_name: patient.last_name,
-      date_of_birth: patient.date_of_birth,
-      gender: patient.gender,
       medical_history: patient.medical_history || [],
       email: patient.email,
       phone: patient.phone,
       avatar_url: patient.avatar_url
     } : {
       medical_history: [],
-      date_of_birth: new Date().toISOString().split('T')[0],
     },
   });
 
@@ -82,14 +74,11 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error("You must be logged in to perform this action");
-        navigate('/auth');
         return;
       }
 
-      const formattedDate = new Date(data.date_of_birth).toISOString().split('T')[0];
       const patientData = {
         ...data,
-        date_of_birth: formattedDate,
       };
 
       if (mode === 'create') {
@@ -99,7 +88,6 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
 
         if (error) throw error;
         toast.success(t("patient_created"));
-        navigate('/patients');
       } else {
         const { error } = await supabase
           .from('patients')
@@ -123,7 +111,11 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
       <DialogTrigger asChild>
         {trigger || (
           <Button variant={mode === 'create' ? 'default' : 'outline'}>
-            {mode === 'create' ? t('add_new_patient') : t('edit_patient')}
+            {mode === 'create' ? (
+              <>{t('add_new_patient')}</>
+            ) : (
+              <><Edit2 className="h-4 w-4 mr-2" />{t('edit_patient')}</>
+            )}
           </Button>
         )}
       </DialogTrigger>
@@ -151,7 +143,6 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
               />
             </div>
             <PatientBasicInfo form={form} />
-            <PatientGenderSelect form={form} />
             <PatientContactInfo form={form} />
             <Button type="submit" className="w-full">
               {mode === 'create' ? t('create_patient') : t('update_patient')}

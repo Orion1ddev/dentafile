@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Plus } from "lucide-react";
+import { ChevronLeft, Plus, StickyNote, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DentalRecordFormDialog } from "@/components/DentalRecordFormDialog";
 import { PatientFormDialog } from "@/components/PatientFormDialog";
@@ -40,14 +40,17 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
             <PatientFormDialog 
               patient={patient} 
               mode="edit" 
+            />
+            <DentalNoteFormDialog patientId={patient.id} />
+            <DentalRecordFormDialog 
+              patientId={patient.id} 
               trigger={
-                <Button variant="outline">
-                  {t('edit_patient')}
+                <Button>
+                  <FileText className="h-4 w-4 mr-2" />
+                  {t('add_dental_record')}
                 </Button>
               }
             />
-            <DentalNoteFormDialog patientId={patient.id} />
-            <DentalRecordFormDialog patientId={patient.id} />
             <NavMenu />
           </div>
         </div>

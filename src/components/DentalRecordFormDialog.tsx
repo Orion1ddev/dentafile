@@ -8,17 +8,20 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { DentalRecordFormFields, formSchema } from "./dental-records/DentalRecordFormFields";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLanguage } from "@/stores/useLanguage";
 import type { z } from "zod";
 
 type DentalRecordFormData = z.infer<typeof formSchema>;
 
 interface DentalRecordFormDialogProps {
   patientId: string;
+  trigger?: React.ReactNode;
 }
 
-export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProps) => {
+export const DentalRecordFormDialog = ({ patientId, trigger }: DentalRecordFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
   
   const form = useForm<DentalRecordFormData>({
     resolver: zodResolver(formSchema),
@@ -50,7 +53,7 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
 
       if (error) throw error;
       
-      toast.success("Record added successfully");
+      toast.success(t("record_added"));
       queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
       setOpen(false);
     } catch (error: any) {
@@ -62,17 +65,21 @@ export const DentalRecordFormDialog = ({ patientId }: DentalRecordFormDialogProp
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add Dental Record</Button>
+        {trigger || (
+          <Button>
+            {t('add_dental_record')}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Dental Record</DialogTitle>
+          <DialogTitle>{t('add_dental_record')}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DentalRecordFormFields form={form} />
             <Button type="submit" className="w-full">
-              Add Record
+              {t('add_record')}
             </Button>
           </form>
         </Form>

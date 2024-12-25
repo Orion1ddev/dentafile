@@ -1,12 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format } from "date-fns";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/stores/useLanguage";
 
 interface PatientInfoProps {
   patient: {
     first_name: string;
     last_name: string;
-    date_of_birth: string;
     phone: string | null;
     email: string | null;
   };
@@ -14,15 +12,6 @@ interface PatientInfoProps {
 
 export const PatientInfo = ({ patient }: PatientInfoProps) => {
   const { t } = useLanguage();
-
-  const formatDisplayDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), 'dd.MM.yyyy');
-    } catch (error) {
-      console.error('Date formatting error:', error);
-      return dateString;
-    }
-  };
 
   const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -35,7 +24,6 @@ export const PatientInfo = ({ patient }: PatientInfoProps) => {
           {patient.first_name} {patient.last_name}
         </CardTitle>
         <div className="text-muted-foreground">
-          <p>{capitalizeFirstLetter(t('born'))}: {formatDisplayDate(patient.date_of_birth)}</p>
           <p>{capitalizeFirstLetter(t('contact'))}: {patient.phone || 'N/A'} • {patient.email || 'N/A'}</p>
         </div>
       </CardHeader>
