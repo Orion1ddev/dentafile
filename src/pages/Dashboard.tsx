@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
-import { Users, Calendar, Clock, Settings } from "lucide-react";
+import { Users, Calendar, Settings } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
@@ -23,33 +23,6 @@ const Dashboard = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
-
-  const { data: todayAppointments } = useQuery({
-    queryKey: ['today-appointments'],
-    queryFn: async () => {
-      const startOfDay = new Date();
-      startOfDay.setHours(0, 0, 0, 0);
-      
-      const endOfDay = new Date();
-      endOfDay.setHours(23, 59, 59, 999);
-
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      const { data, error } = await supabase
-        .from('dental_records')
-        .select(`
-          *,
-          patient:patients(*)
-        `)
-        .eq('patients.user_id', user.id)
-        .gte('visit_date', startOfDay.toISOString())
-        .lte('visit_date', endOfDay.toISOString());
-
-      if (error) throw error;
-      return data;
-    }
-  });
 
   const { data: userProfile } = useQuery({
     queryKey: ['user-profile'],
@@ -101,12 +74,6 @@ const Dashboard = () => {
       count: null
     },
     {
-      title: t('today_appointments'),
-      icon: Clock,
-      description: t('today_schedule'),
-      count: todayAppointments?.length || 0
-    },
-    {
       title: t('settings'),
       icon: Settings,
       description: t('app_settings'),
@@ -133,13 +100,13 @@ const Dashboard = () => {
         <div className="px-4 sm:px-0">
           <WelcomeCard 
             userProfile={userProfile}
-            appointmentCount={todayAppointments?.length || 0}
+            appointmentCount={0}
             pinnedPatientsCount={pinnedPatients?.length || 0}
           />
           
           <DashboardGrid items={dashboardItems} />
           
-          <AppointmentsList appointments={todayAppointments} />
+          <AppointmentsList appointments={[]} />
         </div>
       </main>
       <div className="fixed bottom-4 right-4">

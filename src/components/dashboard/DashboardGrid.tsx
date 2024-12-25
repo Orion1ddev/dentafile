@@ -14,12 +14,9 @@ interface DashboardGridProps {
 }
 
 export const DashboardGrid = ({ items }: DashboardGridProps) => {
-  // Filter out the appointments counter item and keep only the other items
-  const filteredItems = items.filter(item => item.title !== 'today_appointments');
-  
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {filteredItems.map((item) => (
+      {items.map((item) => (
         <Card 
           key={item.title}
           className={`hover:shadow-lg transition-shadow ${item.onClick ? 'cursor-pointer' : ''}`}
@@ -32,9 +29,6 @@ export const DashboardGrid = ({ items }: DashboardGridProps) => {
             <item.icon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {item.count !== null ? item.count : ""}
-            </div>
             <p className="text-xs text-muted-foreground">
               {item.description}
             </p>
