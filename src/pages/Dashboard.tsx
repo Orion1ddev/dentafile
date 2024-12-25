@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
@@ -9,6 +8,7 @@ import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
 import { DashboardGrid } from "@/components/dashboard/DashboardGrid";
 import { AppointmentsList } from "@/components/dashboard/AppointmentsList";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -23,6 +23,33 @@ const Dashboard = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const { data: todayAppointments } = useQuery({
+    queryKey: ['today-appointments'],
+    queryFn: async () => {
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+      
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { data, error } = await supabase
+        .from('dental_records')
+        .select(`
+          *,
+          patient:patients(*)
+        `)
+        .eq('patients.user_id', user.id)
+        .gte('visit_date', startOfDay.toISOString())
+        .lte('visit_date', endOfDay.toISOString());
+
+      if (error) throw error;
+      return data;
+    }
+  });
 
   const { data: userProfile } = useQuery({
     queryKey: ['user-profile'],
@@ -69,7 +96,7 @@ const Dashboard = () => {
     {
       title: t('calendar'),
       icon: Calendar,
-      description: t('view_appointments'),
+      description: t('manage_calendar'),
       onClick: () => navigate('/calendar'),
       count: null
     },
@@ -87,7 +114,7 @@ const Dashboard = () => {
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex-shrink-0 flex items-center">
+            <div className="flex items-center">
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 DentaFile
               </h1>
@@ -100,18 +127,15 @@ const Dashboard = () => {
         <div className="px-4 sm:px-0">
           <WelcomeCard 
             userProfile={userProfile}
-            appointmentCount={0}
+            appointmentCount={todayAppointments?.length || 0}
             pinnedPatientsCount={pinnedPatients?.length || 0}
           />
           
           <DashboardGrid items={dashboardItems} />
           
-          <AppointmentsList appointments={[]} />
+          <AppointmentsList appointments={todayAppointments} />
         </div>
       </main>
-      <div className="fixed bottom-4 right-4">
-        <BuyMeCoffeeButton />
-      </div>
       <NavMenu />
     </div>
   );
