@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { exportPatientsToCSV } from "@/utils/exportUtils";
 import { useNavigate } from "react-router-dom";
 
 export const NavMenu = () => {
@@ -28,12 +27,14 @@ export const NavMenu = () => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
+      // Clear any local storage or state if needed
+      localStorage.clear();
+      
       toast.success(t("sign_out"));
-      navigate('/auth');
+      navigate('/auth', { replace: true });
     } catch (error: any) {
       console.error('Sign out error:', error);
       toast.error(error.message || t("sign_out_error"));
-      navigate('/auth');
     }
   };
 

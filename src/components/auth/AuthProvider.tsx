@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let mounted = true;
@@ -24,6 +26,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
           if (mounted) {
             setIsAuthenticated(false);
             onAuthStateChange(false);
+            navigate('/auth');
           }
           return;
         }
@@ -32,6 +35,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
           if (mounted) {
             setIsAuthenticated(false);
             onAuthStateChange(false);
+            navigate('/auth');
           }
           return;
         }
@@ -40,10 +44,10 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         
         if (userError || !user) {
           console.error('User error:', userError);
-          await supabase.auth.signOut();
           if (mounted) {
             setIsAuthenticated(false);
             onAuthStateChange(false);
+            navigate('/auth');
           }
           return;
         }
@@ -52,50 +56,40 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
           setIsAuthenticated(true);
           onAuthStateChange(true);
         }
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-          console.log('Auth event:', event);
-          
-          if (!mounted) return;
-
-          if (event === 'SIGNED_OUT') {
-            setIsAuthenticated(false);
-            onAuthStateChange(false);
-            queryClient.clear();
-          } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-            try {
-              const { data: { user }, error } = await supabase.auth.getUser();
-              if (error || !user) throw error;
-              setIsAuthenticated(true);
-              onAuthStateChange(true);
-            } catch (error) {
-              console.error('Auth state change error:', error);
-              setIsAuthenticated(false);
-              onAuthStateChange(false);
-            }
-          }
-        });
-
-        return () => {
-          mounted = false;
-          subscription.unsubscribe();
-        };
       } catch (error) {
         console.error('Auth initialization error:', error);
         if (mounted) {
           setIsAuthenticated(false);
           onAuthStateChange(false);
-          toast.error("Authentication error. Please try logging in again.");
+          navigate('/auth');
         }
       }
     };
 
     initializeAuth();
 
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth event:', event);
+      
+      if (!mounted) return;
+
+      if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+        onAuthStateChange(false);
+        queryClient.clear();
+        navigate('/auth');
+      } else if (event === 'SIGNED_IN' && session) {
+        setIsAuthenticated(true);
+        onAuthStateChange(true);
+        navigate('/');
+      }
+    });
+
     return () => {
       mounted = false;
+      subscription.unsubscribe();
     };
-  }, [onAuthStateChange, queryClient]);
+  }, [onAuthStateChange, queryClient, navigate]);
 
   if (isAuthenticated === null) {
     return (
