@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const SignupForm = () => {
   const { t } = useLanguage();
@@ -29,6 +30,12 @@ const SignupForm = () => {
     e.preventDefault();
     setIsLoading(true);
 
+    if (!email || !password || !firstName || !lastName) {
+      toast.error(t('all_fields_required'));
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -36,17 +43,24 @@ const SignupForm = () => {
         options: {
           data: {
             first_name: firstName,
-            last_name: lastName
-          }
+            last_name: lastName,
+          },
+          emailRedirectTo: window.location.origin + '/auth'
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Signup error:', error);
+        throw error;
+      }
 
-      toast.success(t('check_email_verification'));
-      navigate('/auth');
+      if (data?.user) {
+        toast.success(t('check_email_verification'));
+        navigate('/auth');
+      }
     } catch (error: any) {
-      toast.error(error.message);
+      console.error('Signup error:', error);
+      toast.error(error.message || t('signup_error'));
     } finally {
       setIsLoading(false);
     }
@@ -68,6 +82,7 @@ const SignupForm = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
               required
             />
           </div>
@@ -80,17 +95,26 @@ const SignupForm = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
               required
             />
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {t('continue')}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t('loading')}
+              </>
+            ) : (
+              t('continue')
+            )}
           </Button>
           <Button
             type="button"
             variant="outline"
             className="w-full"
             onClick={() => navigate('/auth')}
+            disabled={isLoading}
           >
             {t('back_to_login')}
           </Button>
@@ -113,6 +137,7 @@ const SignupForm = () => {
             id="firstName"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
+            disabled={isLoading}
             required
           />
         </div>
@@ -124,17 +149,26 @@ const SignupForm = () => {
             id="lastName"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
+            disabled={isLoading}
             required
           />
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {t('complete_signup')}
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {t('signing_up')}
+            </>
+          ) : (
+            t('complete_signup')
+          )}
         </Button>
         <Button
           type="button"
           variant="outline"
           className="w-full"
           onClick={() => setShowAdditionalFields(false)}
+          disabled={isLoading}
         >
           {t('back')}
         </Button>
