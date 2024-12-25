@@ -67,10 +67,9 @@ export const CalendarView = () => {
             weekends={true}
             allDaySlot={false}
             slotDuration="00:30:00"
-            slotHeight={50}
             firstDay={1}
             businessHours={{
-              daysOfWeek: [0, 1, 2, 3, 4, 5, 6], // Sunday (0) to Saturday (6)
+              daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
               startTime: '08:00',
               endTime: '24:00',
             }}

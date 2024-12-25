@@ -15,6 +15,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLanguage } from "@/stores/useLanguage";
 import { Edit2 } from "lucide-react";
+import { PatientFormData } from "./patient-form/types";
 
 const patientFormSchema = z.object({
   first_name: z.string().min(1, "First name is required"),
