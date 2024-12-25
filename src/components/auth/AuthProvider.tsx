@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 interface AuthProviderProps {
@@ -19,7 +18,6 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
 
     const initializeAuth = async () => {
       try {
-        // Get the current session and refresh if needed
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -41,12 +39,10 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
           return;
         }
 
-        // Verify the session is still valid
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         
         if (userError) {
           console.error('User error:', userError);
-          // Try to refresh the session
           const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
           
           if (refreshError || !refreshData.session) {
@@ -59,7 +55,6 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
             return;
           }
 
-          // Session refreshed successfully
           if (mounted) {
             setIsAuthenticated(true);
             onAuthStateChange(true);
@@ -92,13 +87,12 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
 
     initializeAuth();
 
-    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event);
       
       if (!mounted) return;
 
-      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+      if (event === 'SIGNED_OUT' || !session) {
         setIsAuthenticated(false);
         onAuthStateChange(false);
         queryClient.clear();
