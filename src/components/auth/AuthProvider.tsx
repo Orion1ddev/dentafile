@@ -19,6 +19,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
 
     const initializeAuth = async () => {
       try {
+        // Get the current session and refresh if needed
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -26,7 +27,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
           if (mounted) {
             setIsAuthenticated(false);
             onAuthStateChange(false);
-            navigate('/auth');
+            navigate('/auth', { replace: true });
           }
           return;
         }
@@ -35,19 +36,42 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
           if (mounted) {
             setIsAuthenticated(false);
             onAuthStateChange(false);
-            navigate('/auth');
+            navigate('/auth', { replace: true });
           }
           return;
         }
 
+        // Verify the session is still valid
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         
-        if (userError || !user) {
+        if (userError) {
           console.error('User error:', userError);
+          // Try to refresh the session
+          const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+          
+          if (refreshError || !refreshData.session) {
+            console.error('Session refresh error:', refreshError);
+            if (mounted) {
+              setIsAuthenticated(false);
+              onAuthStateChange(false);
+              navigate('/auth', { replace: true });
+            }
+            return;
+          }
+
+          // Session refreshed successfully
+          if (mounted) {
+            setIsAuthenticated(true);
+            onAuthStateChange(true);
+          }
+          return;
+        }
+
+        if (!user) {
           if (mounted) {
             setIsAuthenticated(false);
             onAuthStateChange(false);
-            navigate('/auth');
+            navigate('/auth', { replace: true });
           }
           return;
         }
@@ -61,27 +85,31 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         if (mounted) {
           setIsAuthenticated(false);
           onAuthStateChange(false);
-          navigate('/auth');
+          navigate('/auth', { replace: true });
         }
       }
     };
 
     initializeAuth();
 
+    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event);
       
       if (!mounted) return;
 
-      if (event === 'SIGNED_OUT') {
+      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
         setIsAuthenticated(false);
         onAuthStateChange(false);
         queryClient.clear();
-        navigate('/auth');
+        navigate('/auth', { replace: true });
       } else if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
         onAuthStateChange(true);
-        navigate('/');
+        navigate('/', { replace: true });
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        setIsAuthenticated(true);
+        onAuthStateChange(true);
       }
     });
 
