@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useAppointments } from "@/hooks/useAppointments";
-import { ScheduleComponent, Day, Week, Month, Inject, ViewsDirective, ViewDirective } from '@syncfusion/ej2-react-schedule';
+import { ScheduleComponent, Day, Week, Month, Inject } from '@syncfusion/ej2-react-schedule';
 import { format } from "date-fns";
 import { AppointmentsList } from "./appointments/AppointmentsList";
 import '@syncfusion/ej2-base/styles/material.css';
@@ -17,14 +17,12 @@ export const CalendarView = () => {
     }
   };
 
-  // Transform appointments for Syncfusion Scheduler
+  // Transform appointments for scheduler
   const schedulerData = monthlyAppointments?.map(appointment => ({
     Id: appointment.id,
-    Subject: appointment.title,
+    Subject: `${appointment.title}`,
     StartTime: new Date(appointment.start),
     EndTime: new Date(new Date(appointment.start).setHours(new Date(appointment.start).getHours() + 1)),
-    Description: appointment.extendedProps?.operationType || '',
-    PatientId: appointment.extendedProps?.patientId,
     IsReadonly: true
   })) || [];
 
@@ -32,27 +30,27 @@ export const CalendarView = () => {
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex flex-col gap-6">
         <Card className="p-4 w-full">
-          <div className="w-full">
-            <ScheduleComponent 
-              height='550px'
-              selectedDate={selectedDate}
-              eventSettings={{ dataSource: schedulerData }}
-              eventClick={handleDateSelect}
-              readonly={true}
-              firstDayOfWeek={1}
-              workDays={[1, 2, 3, 4, 5, 6]}
-              startHour='09:00'
-              endHour='18:00'
-              currentView='Week'
-            >
-              <ViewsDirective>
-                <ViewDirective option='Day' />
-                <ViewDirective option='Week' />
-                <ViewDirective option='Month' />
-              </ViewsDirective>
-              <Inject services={[Day, Week, Month]} />
-            </ScheduleComponent>
-          </div>
+          <ScheduleComponent 
+            height='500px'
+            selectedDate={selectedDate}
+            eventSettings={{ 
+              dataSource: schedulerData,
+              fields: {
+                id: 'Id',
+                subject: { name: 'Subject' },
+                startTime: { name: 'StartTime' },
+                endTime: { name: 'EndTime' }
+              }
+            }}
+            eventClick={handleDateSelect}
+            readonly={true}
+            workDays={[1, 2, 3, 4, 5, 6]}
+            startHour='09:00'
+            endHour='18:00'
+            currentView='Week'
+          >
+            <Inject services={[Day, Week, Month]} />
+          </ScheduleComponent>
         </Card>
 
         <Card className="p-4 w-full">
