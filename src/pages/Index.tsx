@@ -125,21 +125,6 @@ const Index = ({ view = "list" }: IndexProps) => {
         </div>
       </main>
       <NavMenu />
-      
-      {/* Buy Me Coffee Button */}
-      <a 
-        href="https://buymeacoffee.com/dentafile" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="fixed right-4 bottom-20 z-50"
-      >
-        <Button 
-          variant="default" 
-          className="shadow-lg hover:shadow-xl transition-shadow"
-        >
-          Support us here☕
-        </Button>
-      </a>
     </div>
   );
 };
