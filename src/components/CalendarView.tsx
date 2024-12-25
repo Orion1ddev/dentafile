@@ -40,7 +40,7 @@ export const CalendarView = () => {
             eventClick={handleDateSelect}
             height="500px"
             slotMinTime="09:00:00"
-            slotMaxTime="18:00:00"
+            slotMaxTime="24:00:00"
             weekends={false}
             allDaySlot={false}
           />
