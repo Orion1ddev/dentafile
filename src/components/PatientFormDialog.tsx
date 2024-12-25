@@ -1,69 +1,60 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
 import { PatientBasicInfo } from "./patient-form/PatientBasicInfo";
 import { PatientContactInfo } from "./patient-form/PatientContactInfo";
+import { Button } from "./ui/button";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/stores/useLanguage";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
-import { PatientFormData, PatientFormDialogProps } from "./patient-form/types";
+import { useLanguage } from "@/stores/useLanguage";
 
-export const PatientFormDialog = ({
-  mode = "create",
-  patientId,
-  defaultValues,
-  onSubmitSuccess,
-  trigger
-}: PatientFormDialogProps) => {
+export interface PatientFormDialogProps {
+  mode: "create" | "edit";
+  patientId?: string;
+  trigger?: React.ReactNode;
+}
+
+export const PatientFormDialog = ({ mode, patientId, trigger }: PatientFormDialogProps) => {
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
   const { t } = useLanguage();
 
-  const form = useForm<PatientFormData>({
-    defaultValues: defaultValues || {
-      first_name: "",
-      last_name: "",
-      medical_history: [],
-      email: "",
-      phone: "",
-    },
-  });
-
-  const onSubmit = async (data: PatientFormData) => {
+  const handleSubmit = async (data: any) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
       const patientData = {
-        ...data,
         user_id: user.id,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        medical_history: data.medical_history || [],
+        email: data.email,
+        phone: data.phone,
+        avatar_url: data.avatar_url,
       };
 
-      let error;
       if (mode === "create") {
-        const { error: createError } = await supabase
-          .from("patients")
+        const { error } = await supabase
+          .from('patients')
           .insert([patientData]);
-        error = createError;
+
+        if (error) throw error;
+        toast.success(t('patient_created'));
       } else {
-        const { error: updateError } = await supabase
-          .from("patients")
+        const { error } = await supabase
+          .from('patients')
           .update(patientData)
-          .eq("id", patientId);
-        error = updateError;
+          .eq('id', patientId);
+
+        if (error) throw error;
+        toast.success(t('patient_updated'));
       }
 
-      if (error) throw error;
-
-      toast.success(t(mode === "create" ? "patient_created" : "patient_updated"));
+      queryClient.invalidateQueries({ queryKey: ['patients'] });
       setOpen(false);
-      form.reset();
-      onSubmitSuccess?.();
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error(t("error_occurred"));
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
@@ -72,26 +63,20 @@ export const PatientFormDialog = ({
       <DialogTrigger asChild>
         {trigger || (
           <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            {t("add_patient")}
+            {mode === "create" ? t('add_patient') : t('edit_patient')}
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? t("add_patient") : t("edit_patient")}
+            {mode === "create" ? t('add_patient') : t('edit_patient')}
           </DialogTitle>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <PatientBasicInfo form={form} />
-            <PatientContactInfo form={form} />
-            <Button type="submit" className="w-full">
-              {mode === "create" ? t("add_patient") : t("save_changes")}
-            </Button>
-          </form>
-        </Form>
+        <div className="grid gap-6">
+          <PatientBasicInfo onSubmit={handleSubmit} mode={mode} patientId={patientId} />
+          <PatientContactInfo />
+        </div>
       </DialogContent>
     </Dialog>
   );
