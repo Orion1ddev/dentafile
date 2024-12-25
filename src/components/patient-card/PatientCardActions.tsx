@@ -67,7 +67,7 @@ export const PatientCardActions = ({ patient, onEditClick }: PatientCardActionsP
         )}
       </Button>
       <PatientFormDialog 
-        patient={patient} 
+        patientId={patient.id} 
         mode="edit"
         trigger={
           <Button

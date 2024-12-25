@@ -38,7 +38,7 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
           </div>
           <div className="flex items-center gap-2">
             <PatientFormDialog 
-              patient={patient} 
+              patientId={patient.id} 
               mode="edit" 
             />
             <DentalNoteFormDialog patientId={patient.id} />

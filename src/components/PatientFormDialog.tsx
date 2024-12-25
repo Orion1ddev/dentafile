@@ -9,20 +9,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
-import { PatientFormData } from "./patient-form/types";
-
-interface PatientFormDialogProps {
-  mode?: "create" | "edit";
-  patientId?: string;
-  defaultValues?: PatientFormData;
-  onSubmitSuccess?: () => void;
-}
+import { PatientFormData, PatientFormDialogProps } from "./patient-form/types";
 
 export const PatientFormDialog = ({
   mode = "create",
   patientId,
   defaultValues,
   onSubmitSuccess,
+  trigger
 }: PatientFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const { t } = useLanguage();
@@ -76,10 +70,12 @@ export const PatientFormDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          {t("add_patient")}
-        </Button>
+        {trigger || (
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            {t("add_patient")}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

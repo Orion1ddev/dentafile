@@ -6,3 +6,11 @@ export interface PatientFormData {
   phone?: string;
   avatar_url?: string;
 }
+
+export interface PatientFormDialogProps {
+  mode?: "create" | "edit";
+  patientId?: string;
+  defaultValues?: PatientFormData;
+  onSubmitSuccess?: () => void;
+  trigger?: React.ReactNode;
+}
