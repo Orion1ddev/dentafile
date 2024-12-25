@@ -13,7 +13,6 @@ import { NavMenu } from "@/components/NavMenu";
 import { CalendarView } from "@/components/CalendarView";
 import { ChevronLeft } from "lucide-react";
 import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
-import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 
@@ -126,7 +125,21 @@ const Index = ({ view = "list" }: IndexProps) => {
         </div>
       </main>
       <NavMenu />
-      <BuyMeCoffeeButton />
+      
+      {/* Buy Me Coffee Button */}
+      <a 
+        href="https://buymeacoffee.com/dentafile" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed right-4 bottom-20 z-50"
+      >
+        <Button 
+          variant="default" 
+          className="shadow-lg hover:shadow-xl transition-shadow"
+        >
+          Support us here☕
+        </Button>
+      </a>
     </div>
   );
 };
