@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useAppointments } from "@/hooks/useAppointments";
 import FullCalendar from '@fullcalendar/react';
