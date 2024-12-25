@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PatientCardActions } from "./patient-card/PatientCardActions";
@@ -7,8 +6,6 @@ type Patient = {
   id: string;
   first_name: string;
   last_name: string;
-  date_of_birth: string;
-  gender: string;
   phone?: string | null;
   email?: string | null;
   dental_records?: any[];
@@ -43,9 +40,6 @@ export const PatientCard = ({ patient, onClick }: PatientCardProps) => {
             <h3 className="text-lg font-semibold">
               {patient.first_name} {patient.last_name}
             </h3>
-            <p className="text-sm text-muted-foreground">
-              {format(new Date(patient.date_of_birth), 'dd.MM.yyyy')}
-            </p>
           </div>
         </div>
         <PatientCardActions patient={patient} onEditClick={handleEdit} />

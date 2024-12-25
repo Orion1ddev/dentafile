@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
 import { LucideIcon } from "lucide-react";
 
 interface DashboardItemProps {
@@ -15,9 +14,12 @@ interface DashboardGridProps {
 }
 
 export const DashboardGrid = ({ items }: DashboardGridProps) => {
+  // Filter out the appointments counter item and keep only the other items
+  const filteredItems = items.filter(item => item.title !== 'today_appointments');
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {items.map((item) => (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {filteredItems.map((item) => (
         <Card 
           key={item.title}
           className={`hover:shadow-lg transition-shadow ${item.onClick ? 'cursor-pointer' : ''}`}
