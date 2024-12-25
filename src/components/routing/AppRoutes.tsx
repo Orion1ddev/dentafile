@@ -26,6 +26,7 @@ export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
       <Route path="/calendar" element={<Index view="calendar" />} />
       <Route path="/patient/:id" element={<PatientDetails />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/auth/*" element={<Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

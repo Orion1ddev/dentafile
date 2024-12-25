@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -12,6 +12,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let mounted = true;
@@ -23,7 +24,11 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         setIsAuthenticated(false);
         onAuthStateChange(false);
         queryClient.clear();
-        navigate('/auth', { replace: true });
+        
+        // Only navigate to /auth if we're not already on an auth route
+        if (!location.pathname.startsWith('/auth')) {
+          navigate('/auth', { replace: true });
+        }
         return;
       }
 
@@ -35,18 +40,31 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
           setIsAuthenticated(false);
           onAuthStateChange(false);
           queryClient.clear();
-          navigate('/auth', { replace: true });
+          
+          // Only navigate to /auth if we're not already on an auth route
+          if (!location.pathname.startsWith('/auth')) {
+            navigate('/auth', { replace: true });
+          }
           return;
         }
 
         setIsAuthenticated(true);
         onAuthStateChange(true);
+        
+        // If we're on an auth route and we're authenticated, navigate to home
+        if (location.pathname.startsWith('/auth')) {
+          navigate('/', { replace: true });
+        }
       } catch (error) {
         console.error('Auth error:', error);
         setIsAuthenticated(false);
         onAuthStateChange(false);
         queryClient.clear();
-        navigate('/auth', { replace: true });
+        
+        // Only navigate to /auth if we're not already on an auth route
+        if (!location.pathname.startsWith('/auth')) {
+          navigate('/auth', { replace: true });
+        }
       }
     };
 
@@ -59,7 +77,9 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         if (mounted) {
           setIsAuthenticated(false);
           onAuthStateChange(false);
-          navigate('/auth', { replace: true });
+          if (!location.pathname.startsWith('/auth')) {
+            navigate('/auth', { replace: true });
+          }
         }
       }
     };
@@ -75,7 +95,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [onAuthStateChange, queryClient, navigate]);
+  }, [onAuthStateChange, queryClient, navigate, location.pathname]);
 
   if (isAuthenticated === null) {
     return (
