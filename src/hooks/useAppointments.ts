@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
+import { startOfDay, endOfDay } from "date-fns";
 
 interface DentalRecord {
   id: string;
@@ -28,12 +28,6 @@ export const useAppointments = (selectedDate: Date) => {
   const { data: appointments } = useQuery<DentalRecord[]>({
     queryKey: ['appointments', selectedDate],
     queryFn: async () => {
-      const startOfDay = new Date(selectedDate);
-      startOfDay.setHours(0, 0, 0, 0);
-      
-      const endOfDay = new Date(selectedDate);
-      endOfDay.setHours(23, 59, 59, 999);
-
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
@@ -47,8 +41,8 @@ export const useAppointments = (selectedDate: Date) => {
           patient:patients(*)
         `)
         .eq('patients.user_id', user.id)
-        .gte('visit_date', startOfDay.toISOString())
-        .lte('visit_date', endOfDay.toISOString());
+        .gte('visit_date', startOfDay(selectedDate).toISOString())
+        .lte('visit_date', endOfDay(selectedDate).toISOString());
 
       if (error) throw error;
       return data;
@@ -56,8 +50,8 @@ export const useAppointments = (selectedDate: Date) => {
     enabled: !!selectedDate
   });
 
-  const { data: monthlyAppointments } = useQuery({
-    queryKey: ['monthly-appointments', selectedDate],
+  const { data: monthlyAppointments } = useQuery<DentalRecord[]>({
+    queryKey: ['monthly-appointments'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
@@ -74,16 +68,7 @@ export const useAppointments = (selectedDate: Date) => {
         .eq('patients.user_id', user.id);
 
       if (error) throw error;
-      
-      return data?.map(record => ({
-        id: record.id,
-        title: `${format(new Date(`2000-01-01T${record.appointment_time}`), 'HH:mm')} - ${record.patient.first_name} ${record.patient.last_name}`,
-        start: new Date(`${record.visit_date.split('T')[0]}T${record.appointment_time}`).toISOString(),
-        extendedProps: {
-          patientId: record.patient.id,
-          operationType: record.operation_type
-        }
-      })) || [];
+      return data;
     }
   });
 

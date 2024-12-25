@@ -5,7 +5,6 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { format } from "date-fns";
 import { AppointmentsList } from "./appointments/AppointmentsList";
 
 export const CalendarView = () => {
@@ -19,9 +18,14 @@ export const CalendarView = () => {
   // Transform appointments for calendar
   const calendarEvents = monthlyAppointments?.map(appointment => ({
     id: appointment.id,
-    title: appointment.title,
-    start: appointment.start,
-    allDay: false
+    title: `${appointment.patient.first_name} ${appointment.patient.last_name} - ${appointment.operation_type || 'Consultation'}`,
+    start: new Date(`${appointment.visit_date.split('T')[0]}T${appointment.appointment_time}`).toISOString(),
+    end: new Date(`${appointment.visit_date.split('T')[0]}T${appointment.appointment_time}`).toISOString(),
+    allDay: false,
+    extendedProps: {
+      patientId: appointment.patient.id,
+      operationType: appointment.operation_type
+    }
   })) || [];
 
   return (
@@ -38,11 +42,17 @@ export const CalendarView = () => {
             }}
             events={calendarEvents}
             eventClick={handleDateSelect}
-            height="500px"
+            height="600px"
             slotMinTime="09:00:00"
-            slotMaxTime="24:00:00"
+            slotMaxTime="18:00:00"
             weekends={false}
             allDaySlot={false}
+            slotDuration="00:30:00"
+            businessHours={{
+              daysOfWeek: [1, 2, 3, 4, 5],
+              startTime: '09:00',
+              endTime: '18:00',
+            }}
           />
         </Card>
 
