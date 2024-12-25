@@ -99,6 +99,7 @@ export const PatientFormDialog = ({ patient, mode, trigger }: PatientFormDialogP
 
         if (error) throw error;
         toast.success(t("patient_created"));
+        navigate('/patients');
       } else {
         const { error } = await supabase
           .from('patients')

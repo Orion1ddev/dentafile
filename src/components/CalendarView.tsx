@@ -62,15 +62,15 @@ export const CalendarView = () => {
             events={calendarEvents}
             eventClick={handleDateSelect}
             height="600px"
-            slotMinTime="09:00:00"
-            slotMaxTime="18:00:00"
-            weekends={false}
+            slotMinTime="00:00:00"
+            slotMaxTime="24:00:00"
+            weekends={true}
             allDaySlot={false}
             slotDuration="00:30:00"
             businessHours={{
-              daysOfWeek: [1, 2, 3, 4, 5],
-              startTime: '09:00',
-              endTime: '18:00',
+              daysOfWeek: [0, 1, 2, 3, 4, 5, 6], // Sunday (0) to Saturday (6)
+              startTime: '00:00',
+              endTime: '24:00',
             }}
           />
         </Card>
