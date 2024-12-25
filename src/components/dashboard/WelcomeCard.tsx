@@ -19,46 +19,40 @@ export const WelcomeCard = ({ userProfile, appointmentCount, pinnedPatientsCount
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardContent className="pt-6">
-          <p className="text-xl">
-            {getGreeting()}, Dr. {userProfile?.first_name}.{' '}
-            {appointmentCount ? (
-              <span>
-                {t('you_have')} {appointmentCount} {t('appointments_today')}.
-              </span>
-            ) : (
-              <span>{t('no_appointments_today')}.</span>
-            )}
+    <Card>
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <p className="text-xl">
+              {getGreeting()}, Dr. {userProfile?.first_name}.{' '}
+              {appointmentCount ? (
+                <span>
+                  {t('you_have')} {appointmentCount} {t('appointments_today')}.
+                </span>
+              ) : (
+                <span>{t('no_appointments_today')}.</span>
+              )}
+            </p>
             {pinnedPatientsCount > 0 && (
-              <span className="block mt-2 text-muted-foreground">
+              <p className="text-muted-foreground">
                 {t('you_have')} {pinnedPatientsCount} {t('pinned_patients')}.
-              </span>
+              </p>
             )}
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <p className="text-lg text-muted-foreground">Support DentaFile</p>
-            <a 
-              href="https://buymeacoffee.com/dentafile" 
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
-              <Button 
-                variant="default" 
-                className="shadow-sm hover:shadow-md transition-shadow"
-              >
-                Support us here ☕
-              </Button>
-            </a>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+          <a 
+            href="https://buymeacoffee.com/dentafile" 
+            target="_blank" 
+            rel="noopener noreferrer"
+          >
+            <Button 
+              variant="default" 
+              className="shadow-sm hover:shadow-md transition-shadow"
+            >
+              Support us here ☕
+            </Button>
+          </a>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
