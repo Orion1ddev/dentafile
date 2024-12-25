@@ -24,16 +24,41 @@ export const NavMenu = () => {
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      // First check if we have a session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      // Clear any local storage or state if needed
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        // If there's no session, just clear everything and redirect
+        localStorage.clear();
+        navigate('/auth', { replace: true });
+        return;
+      }
+
+      if (!session) {
+        // No session found, just clear and redirect
+        localStorage.clear();
+        navigate('/auth', { replace: true });
+        return;
+      }
+
+      // If we have a session, attempt to sign out
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Sign out error:', error);
+        throw error;
+      }
+      
+      // Clear any local storage or state
       localStorage.clear();
       
       toast.success(t("sign_out"));
       navigate('/auth', { replace: true });
     } catch (error: any) {
       console.error('Sign out error:', error);
+      // Even if there's an error, we should clear local state and redirect
+      localStorage.clear();
+      navigate('/auth', { replace: true });
       toast.error(error.message || t("sign_out_error"));
     }
   };
