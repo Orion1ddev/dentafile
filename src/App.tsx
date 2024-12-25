@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { ThemeProvider } from "next-themes";
 import { useLanguage } from "@/stores/useLanguage";
+import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { AppRoutes } from "@/components/routing/AppRoutes";
 
@@ -31,12 +32,14 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <AuthProvider 
-            queryClient={queryClient}
-            onAuthStateChange={setIsAuthenticated}
-          >
-            <AppRoutes isAuthenticated={isAuthenticated} />
-          </AuthProvider>
+          <BrowserRouter>
+            <AuthProvider 
+              queryClient={queryClient}
+              onAuthStateChange={setIsAuthenticated}
+            >
+              <AppRoutes isAuthenticated={isAuthenticated} />
+            </AuthProvider>
+          </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
     </ThemeProvider>
