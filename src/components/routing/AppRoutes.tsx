@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import Dashboard from "@/pages/Dashboard";
-import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
+import Index from "@/pages/Index";
+import Dashboard from "@/pages/Dashboard";
 import Settings from "@/pages/Settings";
 import PatientDetails from "@/pages/PatientDetails";
 
@@ -10,32 +10,23 @@ interface AppRoutesProps {
 }
 
 export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
+  if (!isAuthenticated) {
+    return (
+      <Routes>
+        <Route path="/auth" element={<Auth />} />
+        <Route path="*" element={<Navigate to="/auth" replace />} />
+      </Routes>
+    );
+  }
+
   return (
     <Routes>
-      <Route 
-        path="/" 
-        element={isAuthenticated ? <Dashboard /> : <Navigate to="/auth" replace />} 
-      />
-      <Route 
-        path="/patients" 
-        element={isAuthenticated ? <Index /> : <Navigate to="/auth" replace />} 
-      />
-      <Route 
-        path="/calendar" 
-        element={isAuthenticated ? <Index view="calendar" /> : <Navigate to="/auth" replace />} 
-      />
-      <Route 
-        path="/settings" 
-        element={isAuthenticated ? <Settings /> : <Navigate to="/auth" replace />} 
-      />
-      <Route 
-        path="/auth/*" 
-        element={!isAuthenticated ? <Auth /> : <Navigate to="/" replace />} 
-      />
-      <Route 
-        path="/patient/:id" 
-        element={isAuthenticated ? <PatientDetails /> : <Navigate to="/auth" replace />} 
-      />
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/patients" element={<Index />} />
+      <Route path="/calendar" element={<Index view="calendar" />} />
+      <Route path="/patient/:id" element={<PatientDetails />} />
+      <Route path="/settings" element={<Settings />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
