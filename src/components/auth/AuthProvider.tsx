@@ -16,67 +16,46 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
   useEffect(() => {
     let mounted = true;
 
-    const initializeAuth = async () => {
+    const handleAuthChange = async (session: any) => {
+      if (!mounted) return;
+
+      if (!session) {
+        setIsAuthenticated(false);
+        onAuthStateChange(false);
+        queryClient.clear();
+        navigate('/auth', { replace: true });
+        return;
+      }
+
       try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          console.error('Session error:', sessionError);
-          if (mounted) {
-            setIsAuthenticated(false);
-            onAuthStateChange(false);
-            navigate('/auth', { replace: true });
-          }
-          return;
-        }
-
-        if (!session) {
-          if (mounted) {
-            setIsAuthenticated(false);
-            onAuthStateChange(false);
-            navigate('/auth', { replace: true });
-          }
-          return;
-        }
-
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         
-        if (userError) {
+        if (userError || !user) {
           console.error('User error:', userError);
-          const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
-          
-          if (refreshError || !refreshData.session) {
-            console.error('Session refresh error:', refreshError);
-            if (mounted) {
-              setIsAuthenticated(false);
-              onAuthStateChange(false);
-              navigate('/auth', { replace: true });
-            }
-            return;
-          }
-
-          if (mounted) {
-            setIsAuthenticated(true);
-            onAuthStateChange(true);
-          }
+          setIsAuthenticated(false);
+          onAuthStateChange(false);
+          queryClient.clear();
+          navigate('/auth', { replace: true });
           return;
         }
 
-        if (!user) {
-          if (mounted) {
-            setIsAuthenticated(false);
-            onAuthStateChange(false);
-            navigate('/auth', { replace: true });
-          }
-          return;
-        }
-
-        if (mounted) {
-          setIsAuthenticated(true);
-          onAuthStateChange(true);
-        }
+        setIsAuthenticated(true);
+        onAuthStateChange(true);
       } catch (error) {
-        console.error('Auth initialization error:', error);
+        console.error('Auth error:', error);
+        setIsAuthenticated(false);
+        onAuthStateChange(false);
+        queryClient.clear();
+        navigate('/auth', { replace: true });
+      }
+    };
+
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        await handleAuthChange(session);
+      } catch (error) {
+        console.error('Init auth error:', error);
         if (mounted) {
           setIsAuthenticated(false);
           onAuthStateChange(false);
@@ -89,22 +68,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event);
-      
-      if (!mounted) return;
-
-      if (event === 'SIGNED_OUT' || !session) {
-        setIsAuthenticated(false);
-        onAuthStateChange(false);
-        queryClient.clear();
-        navigate('/auth', { replace: true });
-      } else if (event === 'SIGNED_IN' && session) {
-        setIsAuthenticated(true);
-        onAuthStateChange(true);
-        navigate('/', { replace: true });
-      } else if (event === 'TOKEN_REFRESHED' && session) {
-        setIsAuthenticated(true);
-        onAuthStateChange(true);
-      }
+      await handleAuthChange(session);
     });
 
     return () => {
