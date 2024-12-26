@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,10 +27,10 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         onAuthStateChange(false);
         queryClient.clear();
         
-        // Only navigate to /auth if we're not already on an auth route
         if (!location.pathname.startsWith('/auth')) {
           navigate('/auth', { replace: true });
         }
+        setIsLoading(false);
         return;
       }
 
@@ -41,30 +43,30 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
           onAuthStateChange(false);
           queryClient.clear();
           
-          // Only navigate to /auth if we're not already on an auth route
           if (!location.pathname.startsWith('/auth')) {
             navigate('/auth', { replace: true });
           }
+          setIsLoading(false);
           return;
         }
 
         setIsAuthenticated(true);
         onAuthStateChange(true);
         
-        // If we're on an auth route and we're authenticated, navigate to home
         if (location.pathname.startsWith('/auth')) {
           navigate('/', { replace: true });
         }
+        setIsLoading(false);
       } catch (error) {
         console.error('Auth error:', error);
         setIsAuthenticated(false);
         onAuthStateChange(false);
         queryClient.clear();
         
-        // Only navigate to /auth if we're not already on an auth route
         if (!location.pathname.startsWith('/auth')) {
           navigate('/auth', { replace: true });
         }
+        setIsLoading(false);
       }
     };
 
@@ -77,6 +79,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         if (mounted) {
           setIsAuthenticated(false);
           onAuthStateChange(false);
+          setIsLoading(false);
           if (!location.pathname.startsWith('/auth')) {
             navigate('/auth', { replace: true });
           }
@@ -97,10 +100,13 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
     };
   }, [onAuthStateChange, queryClient, navigate, location.pathname]);
 
-  if (isAuthenticated === null) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">Loading...</div>
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <span className="text-muted-foreground">Loading...</span>
+        </div>
       </div>
     );
   }
