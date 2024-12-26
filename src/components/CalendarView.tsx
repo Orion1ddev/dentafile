@@ -48,9 +48,9 @@ export const CalendarView = () => {
   }).filter(Boolean) || [];
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <div className="flex flex-col gap-6">
-        <Card className="p-4 w-full">
+    <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="p-4 lg:col-span-2">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="timeGridWeek"
@@ -66,7 +66,8 @@ export const CalendarView = () => {
             slotMaxTime="24:00:00"
             weekends={true}
             allDaySlot={false}
-            slotDuration="00:30:00"
+            slotDuration="00:20:00"
+            slotHeight={60}
             firstDay={1}
             businessHours={{
               daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
@@ -76,7 +77,7 @@ export const CalendarView = () => {
           />
         </Card>
 
-        <Card className="p-4 w-full">
+        <Card className="p-4">
           <AppointmentsList 
             appointments={appointments}
             selectedDate={selectedDate}
