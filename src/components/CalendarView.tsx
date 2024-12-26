@@ -51,30 +51,31 @@ export const CalendarView = () => {
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="p-4 lg:col-span-2">
-          <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="timeGridWeek"
-            headerToolbar={{
-              left: 'prev,next today',
-              center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            }}
-            events={calendarEvents}
-            eventClick={handleDateSelect}
-            height="800px"
-            slotMinTime="08:00:00"
-            slotMaxTime="24:00:00"
-            weekends={true}
-            allDaySlot={false}
-            slotDuration="00:20:00"
-            slotMinHeight={60}
-            firstDay={1}
-            businessHours={{
-              daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
-              startTime: '08:00',
-              endTime: '24:00',
-            }}
-          />
+          <div style={{ '--fc-timegrid-slot-height': '80px' } as React.CSSProperties}>
+            <FullCalendar
+              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+              initialView="timeGridWeek"
+              headerToolbar={{
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              }}
+              events={calendarEvents}
+              eventClick={handleDateSelect}
+              height="800px"
+              slotMinTime="08:00:00"
+              slotMaxTime="24:00:00"
+              weekends={true}
+              allDaySlot={false}
+              slotDuration="00:20:00"
+              firstDay={1}
+              businessHours={{
+                daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+                startTime: '08:00',
+                endTime: '24:00',
+              }}
+            />
+          </div>
         </Card>
 
         <Card className="p-4">
