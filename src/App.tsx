@@ -14,6 +14,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
@@ -30,14 +31,14 @@ const App = () => {
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
           <BrowserRouter>
             <AuthProvider 
               queryClient={queryClient}
               onAuthStateChange={setIsAuthenticated}
             >
               <AppRoutes isAuthenticated={isAuthenticated} />
+              <Toaster />
+              <Sonner />
             </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>

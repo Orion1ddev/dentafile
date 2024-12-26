@@ -19,79 +19,72 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
   useEffect(() => {
     let mounted = true;
 
-    const handleAuthChange = async (session: any) => {
-      if (!mounted) return;
-
-      if (!session) {
-        setIsAuthenticated(false);
-        onAuthStateChange(false);
-        queryClient.clear();
-        
-        if (!location.pathname.startsWith('/auth')) {
-          navigate('/auth', { replace: true });
-        }
-        setIsLoading(false);
-        return;
-      }
-
+    const initializeAuth = async () => {
       try {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          handleUnauthenticated();
+          return;
+        }
+
+        if (!session) {
+          handleUnauthenticated();
+          return;
+        }
+
+        // Verify user exists
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         
         if (userError || !user) {
           console.error('User error:', userError);
-          setIsAuthenticated(false);
-          onAuthStateChange(false);
-          queryClient.clear();
-          
-          if (!location.pathname.startsWith('/auth')) {
-            navigate('/auth', { replace: true });
-          }
-          setIsLoading(false);
+          handleUnauthenticated();
           return;
         }
 
-        setIsAuthenticated(true);
-        onAuthStateChange(true);
-        
-        if (location.pathname.startsWith('/auth')) {
-          navigate('/', { replace: true });
-        }
-        setIsLoading(false);
+        handleAuthenticated();
       } catch (error) {
-        console.error('Auth error:', error);
-        setIsAuthenticated(false);
-        onAuthStateChange(false);
-        queryClient.clear();
-        
-        if (!location.pathname.startsWith('/auth')) {
-          navigate('/auth', { replace: true });
-        }
-        setIsLoading(false);
+        console.error('Auth initialization error:', error);
+        handleUnauthenticated();
       }
     };
 
-    const initializeAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        await handleAuthChange(session);
-      } catch (error) {
-        console.error('Init auth error:', error);
-        if (mounted) {
-          setIsAuthenticated(false);
-          onAuthStateChange(false);
-          setIsLoading(false);
-          if (!location.pathname.startsWith('/auth')) {
-            navigate('/auth', { replace: true });
-          }
-        }
+    const handleAuthenticated = () => {
+      if (!mounted) return;
+      setIsAuthenticated(true);
+      onAuthStateChange(true);
+      setIsLoading(false);
+      
+      if (location.pathname.startsWith('/auth')) {
+        navigate('/', { replace: true });
       }
     };
 
+    const handleUnauthenticated = () => {
+      if (!mounted) return;
+      setIsAuthenticated(false);
+      onAuthStateChange(false);
+      queryClient.clear();
+      setIsLoading(false);
+      
+      if (!location.pathname.startsWith('/auth')) {
+        navigate('/auth', { replace: true });
+      }
+    };
+
+    // Initialize auth state
     initializeAuth();
 
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event);
-      await handleAuthChange(session);
+      
+      if (event === 'SIGNED_IN' && session) {
+        handleAuthenticated();
+      } else if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+        handleUnauthenticated();
+      }
     });
 
     return () => {
