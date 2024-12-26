@@ -48,9 +48,9 @@ export const CalendarView = () => {
   }).filter(Boolean) || [];
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="p-4 lg:col-span-2">
+    <div className="w-full max-w-[2000px] mx-auto px-2">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <Card className="p-2 lg:col-span-3">
           <div style={{ '--fc-timegrid-slot-height': '80px' } as React.CSSProperties}>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -78,7 +78,7 @@ export const CalendarView = () => {
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-2">
           <AppointmentsList 
             appointments={appointments}
             selectedDate={selectedDate}
