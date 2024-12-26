@@ -68,7 +68,7 @@ const Index = ({ view = "list" }: IndexProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
       <BackgroundEffect />
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,14 +76,14 @@ const Index = ({ view = "list" }: IndexProps) => {
             <div className="flex items-center space-x-4">
               <Button
                 variant="ghost"
-                onClick={handleBackToDashboard}
+                onClick={() => navigate('/')}
                 className="mr-2"
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
                 {t('back_to_dashboard')}
               </Button>
               <h1 
-                onClick={handleBackToDashboard}
+                onClick={() => navigate('/')}
                 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
               >
                 DentaFile
@@ -96,8 +96,8 @@ const Index = ({ view = "list" }: IndexProps) => {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 sm:px-0">
+      <main className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
           {view === "list" && (
             <>
               <PatientFilter
@@ -108,7 +108,7 @@ const Index = ({ view = "list" }: IndexProps) => {
               {isLoading ? (
                 <div className="text-center py-12">{t('loading')}</div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                   {patients?.map((patient) => (
                     <PatientCard
                       key={patient.id}

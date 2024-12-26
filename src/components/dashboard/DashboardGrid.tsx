@@ -15,11 +15,13 @@ interface DashboardGridProps {
 
 export const DashboardGrid = ({ items }: DashboardGridProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
       {items.map((item) => (
         <Card 
           key={item.title}
-          className={`hover:shadow-lg transition-shadow ${item.onClick ? 'cursor-pointer' : ''}`}
+          className={`hover:shadow-lg transition-all duration-300 ${
+            item.onClick ? 'cursor-pointer transform hover:-translate-y-1' : ''
+          }`}
           onClick={item.onClick}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
