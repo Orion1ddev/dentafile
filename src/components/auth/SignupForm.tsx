@@ -37,6 +37,10 @@ const SignupForm = () => {
     }
 
     try {
+      // Get the current origin without any trailing slashes
+      const origin = window.location.origin.replace(/\/$/, '');
+      const redirectTo = `${origin}/auth`;
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -45,7 +49,7 @@ const SignupForm = () => {
             first_name: firstName,
             last_name: lastName,
           },
-          emailRedirectTo: window.location.origin + '/auth'
+          emailRedirectTo: redirectTo
         }
       });
 
@@ -66,111 +70,97 @@ const SignupForm = () => {
     }
   };
 
-  if (!showAdditionalFields) {
-    return (
-      <div className="w-full max-w-md">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-          {t('sign_up_title')}
-        </h2>
-        <form onSubmit={handleInitialSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="email">
-              {t('email')}
-            </label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="password">
-              {t('password')}
-            </label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoading}
-              required
-            />
-          </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('loading')}
-              </>
-            ) : (
-              t('continue')
-            )}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            onClick={() => navigate('/auth')}
-            disabled={isLoading}
-          >
-            {t('back_to_login')}
-          </Button>
-        </form>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full max-w-md">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-        {t('additional_info')}
+        {!showAdditionalFields ? t('sign_up_title') : t('additional_info')}
       </h2>
-      <form onSubmit={handleSignUp} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="firstName">
-            {t('first_name')}
-          </label>
-          <Input
-            id="firstName"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            disabled={isLoading}
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="lastName">
-            {t('last_name')}
-          </label>
-          <Input
-            id="lastName"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            disabled={isLoading}
-            required
-          />
-        </div>
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t('signing_up')}
-            </>
-          ) : (
-            t('complete_signup')
-          )}
-        </Button>
+      <form onSubmit={!showAdditionalFields ? handleInitialSubmit : handleSignUp} className="space-y-4">
+        {!showAdditionalFields ? (
+          <>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="email">
+                {t('email')}
+              </label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="password">
+                {t('password')}
+              </label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('loading')}
+                </>
+              ) : (
+                t('continue')
+              )}
+            </Button>
+          </>
+        ) : (
+          <>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="firstName">
+                {t('first_name')}
+              </label>
+              <Input
+                id="firstName"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="lastName">
+                {t('last_name')}
+              </label>
+              <Input
+                id="lastName"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('signing_up')}
+                </>
+              ) : (
+                t('complete_signup')
+              )}
+            </Button>
+          </>
+        )}
         <Button
           type="button"
           variant="outline"
           className="w-full"
-          onClick={() => setShowAdditionalFields(false)}
+          onClick={() => !showAdditionalFields ? navigate('/auth') : setShowAdditionalFields(false)}
           disabled={isLoading}
         >
-          {t('back')}
+          {!showAdditionalFields ? t('back_to_login') : t('back')}
         </Button>
       </form>
     </div>
