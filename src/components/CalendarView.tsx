@@ -67,7 +67,7 @@ export const CalendarView = () => {
             weekends={true}
             allDaySlot={false}
             slotDuration="00:20:00"
-            slotHeight={60}
+            slotMinHeight={60}
             firstDay={1}
             businessHours={{
               daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
