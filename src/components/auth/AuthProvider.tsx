@@ -17,44 +17,27 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
   const location = useLocation();
 
   useEffect(() => {
-    let mounted = true;
-
     const initializeAuth = async () => {
       try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        // Get the initial session
+        const { data: { session } } = await supabase.auth.getSession();
         
-        if (sessionError) {
-          console.error('Session error:', sessionError);
+        if (session) {
+          handleAuthenticated();
+        } else {
           handleUnauthenticated();
-          return;
         }
-
-        if (!session) {
-          handleUnauthenticated();
-          return;
-        }
-
-        // Verify user exists
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        
-        if (userError || !user) {
-          console.error('User error:', userError);
-          handleUnauthenticated();
-          return;
-        }
-
-        handleAuthenticated();
       } catch (error) {
         console.error('Auth initialization error:', error);
         handleUnauthenticated();
+      } finally {
+        setIsLoading(false);
       }
     };
 
     const handleAuthenticated = () => {
-      if (!mounted) return;
       setIsAuthenticated(true);
       onAuthStateChange(true);
-      setIsLoading(false);
       
       if (location.pathname.startsWith('/auth')) {
         navigate('/', { replace: true });
@@ -62,11 +45,9 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
     };
 
     const handleUnauthenticated = () => {
-      if (!mounted) return;
       setIsAuthenticated(false);
       onAuthStateChange(false);
       queryClient.clear();
-      setIsLoading(false);
       
       if (!location.pathname.startsWith('/auth')) {
         navigate('/auth', { replace: true });
@@ -77,18 +58,17 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
     initializeAuth();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth event:', event);
       
       if (event === 'SIGNED_IN' && session) {
         handleAuthenticated();
-      } else if (event === 'SIGNED_OUT') {
+      } else if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
         handleUnauthenticated();
       }
     });
 
     return () => {
-      mounted = false;
       subscription.unsubscribe();
     };
   }, [onAuthStateChange, queryClient, navigate, location.pathname]);
