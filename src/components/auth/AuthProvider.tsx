@@ -63,7 +63,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       
       if (event === 'SIGNED_IN' && session) {
         handleAuthenticated();
-      } else if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+      } else if (event === 'SIGNED_OUT') {
         handleUnauthenticated();
       }
     });
