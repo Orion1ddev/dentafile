@@ -94,11 +94,18 @@ const Dashboard = () => {
     },
     {
       Icon: Search,
-      name: t('patient_cards_title'),
-      description: t('patient_cards_desc'),
+      name: t('search_patients'),
+      description: t('search_patients_desc'),
       href: '/patients',
-      cta: t('view_records'),
+      cta: t('search_now'),
       className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
+      welcomeMessage: (
+        <WelcomeCard 
+          userProfile={userProfile}
+          appointmentCount={todayAppointments?.length || 0}
+          pinnedPatientsCount={pinnedPatients?.length || 0}
+        />
+      ),
     },
     {
       Icon: Settings,
@@ -141,11 +148,6 @@ const Dashboard = () => {
 
       <main className="max-w-[2000px] mx-auto p-4">
         <div className="space-y-8">
-          <WelcomeCard 
-            userProfile={userProfile}
-            appointmentCount={todayAppointments?.length || 0}
-            pinnedPatientsCount={pinnedPatients?.length || 0}
-          />
           <BentoGrid className="lg:grid-rows-3">
             {features.map((feature) => (
               <BentoCard key={feature.name} {...feature} />
