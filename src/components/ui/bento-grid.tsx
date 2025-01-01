@@ -1,32 +1,15 @@
 import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
-
-interface BentoGridProps {
-  className?: string;
-  children: React.ReactNode;
-}
-
-export function BentoGrid({ className, children }: BentoGridProps) {
-  return (
-    <div
-      className={cn(
-        "grid grid-cols-1 gap-4 md:auto-rows-[28rem] md:grid-cols-3",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-}
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 interface BentoCardProps {
   className?: string;
-  Icon?: LucideIcon;
-  name: string;
-  description: string;
-  href: string;
+  Icon?: React.ComponentType<{ className?: string }>;
+  name?: string;
+  description?: string;
+  href?: string;
   cta?: string;
-  background?: React.ReactNode;
+  isWelcomeCard?: boolean;
   welcomeMessage?: React.ReactNode;
 }
 
@@ -36,38 +19,82 @@ export function BentoCard({
   name,
   description,
   href,
-  cta = "Learn More",
-  background,
+  cta,
+  isWelcomeCard,
   welcomeMessage,
 }: BentoCardProps) {
+  const CardWrapper = ({ children }: { children: React.ReactNode }) => {
+    if (isWelcomeCard) {
+      return (
+        <div className={cn(
+          "group relative overflow-hidden rounded-lg border bg-background p-6",
+          className
+        )}>
+          {children}
+        </div>
+      );
+    }
+
+    return (
+      <Link
+        to={href || "#"}
+        className={cn(
+          "group relative overflow-hidden rounded-lg border bg-background p-6 transition-all hover:shadow-xl",
+          className
+        )}
+      >
+        {children}
+      </Link>
+    );
+  };
+
   return (
-    <a
-      href={href}
+    <CardWrapper>
+      <div className="relative z-10 space-y-4">
+        {Icon && !isWelcomeCard && (
+          <Icon className="h-12 w-12 transition-transform group-hover:scale-110" />
+        )}
+        {Icon && isWelcomeCard && (
+          <div className="flex justify-end">
+            <Icon className="h-12 w-12" />
+          </div>
+        )}
+        {welcomeMessage}
+        {!isWelcomeCard && (
+          <>
+            <div>
+              <h3 className="font-medium leading-none tracking-tight text-lg">
+                {name}
+              </h3>
+              <p className="text-sm text-muted-foreground mt-2">{description}</p>
+            </div>
+            {cta && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-primary">{cta}</span>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </CardWrapper>
+  );
+}
+
+export function BentoGrid({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
       className={cn(
-        "group relative overflow-hidden rounded-xl border bg-background p-6 shadow-md transition-all hover:shadow-xl hover:scale-[1.02] hover:bg-accent/5",
+        "grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3",
         className
       )}
     >
-      <div className="relative z-10 flex h-full flex-col">
-        <div className="flex items-center justify-between">
-          <div className="space-y-4">
-            {Icon && (
-              <Icon className="h-12 w-12 transition-transform group-hover:scale-110" />
-            )}
-            <h3 className="font-semibold leading-none tracking-tight">
-              {name}
-            </h3>
-          </div>
-        </div>
-        {welcomeMessage}
-        <p className="mb-4 text-sm text-muted-foreground">{description}</p>
-        <div className="mt-auto">
-          <span className="text-sm font-medium text-foreground/80 transition-colors group-hover:text-primary">
-            {cta}
-          </span>
-        </div>
-      </div>
-      {background}
-    </a>
+      {children}
+    </div>
   );
 }

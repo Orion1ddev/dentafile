@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
-import { FileText, Search, Settings, Calendar } from "lucide-react";
+import { FileText, Settings, Calendar, Sun, Moon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
@@ -93,12 +93,16 @@ const Dashboard = () => {
       className: "lg:row-start-1 lg:row-end-4 lg:col-start-2 lg:col-end-3",
     },
     {
-      Icon: Search,
-      name: t('search_patients'),
-      description: t('search_patients_desc'),
-      href: '/patients',
-      cta: t('search_now'),
+      Icon: () => {
+        const hour = new Date().getHours();
+        return hour >= 6 && hour < 18 ? 
+          <Sun className="h-12 w-12" /> : 
+          <Moon className="h-12 w-12" />;
+      },
+      name: "",
+      description: "",
       className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
+      isWelcomeCard: true,
       welcomeMessage: (
         <WelcomeCard 
           userProfile={userProfile}
@@ -150,7 +154,7 @@ const Dashboard = () => {
         <div className="space-y-8">
           <BentoGrid className="lg:grid-rows-3">
             {features.map((feature) => (
-              <BentoCard key={feature.name} {...feature} />
+              <BentoCard key={feature.name || 'welcome'} {...feature} />
             ))}
           </BentoGrid>
         </div>
