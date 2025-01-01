@@ -2,12 +2,10 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
-import { Users, Calendar, Settings } from "lucide-react";
+import { Users, Calendar, Settings, FileText, Bell, Globe, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
-import { DashboardGrid } from "@/components/dashboard/DashboardGrid";
-import { AppointmentsList } from "@/components/dashboard/AppointmentsList";
+import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -23,6 +21,23 @@ const Dashboard = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    }
+  });
 
   const { data: todayAppointments } = useQuery({
     queryKey: ['today-appointments'],
@@ -51,23 +66,6 @@ const Dashboard = () => {
     }
   });
 
-  const { data: userProfile } = useQuery({
-    queryKey: ['user-profile'],
-    queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (error) throw error;
-      return data;
-    }
-  });
-
   const { data: pinnedPatients } = useQuery({
     queryKey: ['pinned-patients'],
     queryFn: async () => {
@@ -85,28 +83,47 @@ const Dashboard = () => {
     }
   });
 
-  const dashboardItems = [
+  const features = [
     {
-      title: t('patient_list'),
-      icon: Users,
+      Icon: FileText,
+      name: t('patient_records'),
       description: t('manage_patients'),
-      onClick: () => navigate('/patients'),
-      count: null
+      href: '/patients',
+      cta: t('view_records'),
+      className: "lg:row-start-1 lg:row-end-4 lg:col-start-2 lg:col-end-3",
     },
     {
-      title: t('calendar'),
-      icon: Calendar,
+      Icon: Search,
+      name: t('search_patients'),
+      description: t('search_patients_desc'),
+      href: '/patients',
+      cta: t('search_now'),
+      className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
+    },
+    {
+      Icon: Globe,
+      name: t('language_settings'),
+      description: t('language_settings_desc'),
+      href: '/settings',
+      cta: t('change_language'),
+      className: "lg:col-start-1 lg:col-end-2 lg:row-start-3 lg:row-end-4",
+    },
+    {
+      Icon: Calendar,
+      name: t('calendar'),
       description: t('manage_calendar'),
-      onClick: () => navigate('/calendar'),
-      count: null
+      href: '/calendar',
+      cta: t('view_calendar'),
+      className: "lg:col-start-3 lg:col-end-3 lg:row-start-1 lg:row-end-2",
     },
     {
-      title: t('settings'),
-      icon: Settings,
-      description: t('app_settings'),
-      onClick: () => navigate('/settings'),
-      count: null
-    }
+      Icon: Bell,
+      name: t('notifications'),
+      description: t('notifications_desc'),
+      href: '/notifications',
+      cta: t('view_notifications'),
+      className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
+    },
   ];
 
   return (
@@ -123,17 +140,19 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 sm:px-0">
+      <main className="max-w-[2000px] mx-auto p-4">
+        <div className="space-y-8">
           <WelcomeCard 
             userProfile={userProfile}
             appointmentCount={todayAppointments?.length || 0}
             pinnedPatientsCount={pinnedPatients?.length || 0}
           />
           
-          <DashboardGrid items={dashboardItems} />
-          
-          <AppointmentsList appointments={todayAppointments} />
+          <BentoGrid className="lg:grid-rows-3">
+            {features.map((feature) => (
+              <BentoCard key={feature.name} {...feature} />
+            ))}
+          </BentoGrid>
         </div>
       </main>
       <NavMenu />
