@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
-import { Users, Calendar, Settings, FileText, Bell, Globe, Search } from "lucide-react";
+import { FileText, Search, Settings, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
@@ -101,11 +101,11 @@ const Dashboard = () => {
       className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
     },
     {
-      Icon: Globe,
-      name: t('language_settings'),
-      description: t('language_settings_desc'),
+      Icon: Settings,
+      name: t('settings'),
+      description: t('settings_desc'),
       href: '/settings',
-      cta: t('change_language'),
+      cta: t('change_settings'),
       className: "lg:col-start-1 lg:col-end-2 lg:row-start-3 lg:row-end-4",
     },
     {
@@ -117,11 +117,11 @@ const Dashboard = () => {
       className: "lg:col-start-3 lg:col-end-3 lg:row-start-1 lg:row-end-2",
     },
     {
-      Icon: Bell,
-      name: t('notifications'),
-      description: t('notifications_desc'),
-      href: '/notifications',
-      cta: t('view_notifications'),
+      Icon: FileText,
+      name: "Support DentaFile",
+      description: "Help us improve DentaFile by supporting our development.",
+      href: "https://buymeacoffee.com/dentafile",
+      cta: "Support us ☕",
       className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
     },
   ];

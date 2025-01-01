@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/stores/useLanguage";
 
 interface WelcomeCardProps {
@@ -21,36 +20,22 @@ export const WelcomeCard = ({ userProfile, appointmentCount, pinnedPatientsCount
   return (
     <Card className="w-full max-w-4xl mx-auto mb-8 shadow-md hover:shadow-lg transition-shadow">
       <CardContent className="p-8">
-        <div className="flex items-center justify-between">
-          <div className="space-y-3">
-            <p className="text-2xl font-medium text-foreground/90">
-              {getGreeting()}, Dr. {userProfile?.first_name}.{' '}
-              {appointmentCount ? (
-                <span className="text-foreground/80">
-                  {t('you_have')} {appointmentCount} {t('appointments_today')}.
-                </span>
-              ) : (
-                <span className="text-foreground/80">{t('no_appointments_today')}.</span>
-              )}
-            </p>
-            {pinnedPatientsCount > 0 && (
-              <p className="text-muted-foreground text-lg">
-                {t('you_have')} {pinnedPatientsCount} {t('pinned_patients')}.
-              </p>
+        <div className="space-y-3">
+          <p className="text-2xl font-medium text-foreground/90">
+            {getGreeting()}, Dr. {userProfile?.first_name}.{' '}
+            {appointmentCount ? (
+              <span className="text-foreground/80">
+                {t('you_have')} {appointmentCount} {t('appointments_today')}.
+              </span>
+            ) : (
+              <span className="text-foreground/80">{t('no_appointments_today')}.</span>
             )}
-          </div>
-          <a 
-            href="https://buymeacoffee.com/dentafile" 
-            target="_blank" 
-            rel="noopener noreferrer"
-          >
-            <Button 
-              variant="default" 
-              className="shadow-sm hover:shadow-md transition-shadow"
-            >
-              Support us here ☕
-            </Button>
-          </a>
+          </p>
+          {pinnedPatientsCount > 0 && (
+            <p className="text-muted-foreground text-lg">
+              {t('you_have')} {pinnedPatientsCount} {t('pinned_patients')}.
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

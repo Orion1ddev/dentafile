@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
-import { Button } from "./button";
 
 interface BentoGridProps {
   className?: string;
@@ -40,7 +39,8 @@ export function BentoCard({
   background,
 }: BentoCardProps) {
   return (
-    <div
+    <a
+      href={href}
       className={cn(
         "group relative overflow-hidden rounded-xl border bg-background p-6 shadow-md transition-all hover:shadow-xl",
         className
@@ -50,9 +50,7 @@ export function BentoCard({
         <div className="flex items-center justify-between">
           <div>
             {Icon && (
-              <div className="mb-4 rounded-full border bg-background p-3.5 shadow-sm">
-                <Icon className="h-6 w-6" />
-              </div>
+              <Icon className="h-8 w-8 mb-4" />
             )}
             <h3 className="mb-2 font-semibold leading-none tracking-tight">
               {name}
@@ -61,16 +59,12 @@ export function BentoCard({
         </div>
         <p className="mb-4 text-sm text-muted-foreground">{description}</p>
         <div className="mt-auto">
-          <Button
-            variant="ghost"
-            className="group-hover:bg-primary group-hover:text-primary-foreground"
-            onClick={() => window.location.href = href}
-          >
+          <span className="text-sm font-medium group-hover:text-primary">
             {cta}
-          </Button>
+          </span>
         </div>
       </div>
       {background}
-    </div>
+    </a>
   );
 }
