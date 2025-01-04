@@ -18,7 +18,6 @@ export const CalendarView = () => {
 
   // Transform appointments for calendar
   const calendarEvents = monthlyAppointments?.map(appointment => {
-    // Skip appointments without time
     if (!appointment.appointment_time || !appointment.visit_date) return null;
 
     try {
@@ -26,8 +25,6 @@ export const CalendarView = () => {
       const [hours, minutes] = appointment.appointment_time.split(':');
       const startDate = new Date(baseDate);
       startDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
-      
-      // Set end time to 1 hour after start time
       const endDate = addHours(startDate, 1);
 
       return {
@@ -47,38 +44,47 @@ export const CalendarView = () => {
     }
   }).filter(Boolean) || [];
 
+  const isMobile = window.innerWidth < 768;
+
   return (
     <div className="w-full max-w-[2000px] mx-auto px-2">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        <Card className="p-2 lg:col-span-3">
-          <div style={{ '--fc-timegrid-slot-height': '80px' } as React.CSSProperties}>
+        <Card className="p-2 lg:col-span-3 overflow-hidden">
+          <div style={{ '--fc-timegrid-slot-height': isMobile ? '50px' : '80px' } as React.CSSProperties}>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
+              initialView={isMobile ? "timeGridDay" : "timeGridWeek"}
               headerToolbar={{
-                left: 'prev,next today',
+                left: isMobile ? 'prev,next' : 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                right: isMobile ? 'timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
               }}
               events={calendarEvents}
               eventClick={handleDateSelect}
-              height="800px"
+              height={isMobile ? "600px" : "800px"}
               slotMinTime="08:00:00"
               slotMaxTime="24:00:00"
               weekends={true}
               allDaySlot={false}
-              slotDuration="00:20:00"
+              slotDuration={isMobile ? "00:30:00" : "00:20:00"}
               firstDay={1}
               businessHours={{
                 daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
                 startTime: '08:00',
                 endTime: '24:00',
               }}
+              eventDisplay={isMobile ? "block" : "auto"}
+              dayMaxEvents={isMobile ? 3 : true}
+              views={{
+                timeGridDay: {
+                  titleFormat: { month: 'long', day: 'numeric' }
+                }
+              }}
             />
           </div>
         </Card>
 
-        <Card className="p-2">
+        <Card className="p-2 lg:static fixed bottom-0 left-0 right-0 lg:relative bg-background/95 backdrop-blur-sm lg:backdrop-blur-none lg:bg-background z-10 max-h-[300px] lg:max-h-none overflow-y-auto">
           <AppointmentsList 
             appointments={appointments}
             selectedDate={selectedDate}
