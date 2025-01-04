@@ -31,7 +31,7 @@ const App = () => {
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <BrowserRouter basename="/">
+          <BrowserRouter>
             <AuthProvider 
               queryClient={queryClient}
               onAuthStateChange={setIsAuthenticated}
