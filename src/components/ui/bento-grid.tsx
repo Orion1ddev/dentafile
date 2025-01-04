@@ -1,10 +1,9 @@
-import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 
 interface BentoCardProps {
   className?: string;
-  Icon?: React.ComponentType<{ className?: string }>;
+  Icon?: any;
   name?: string;
   description?: string;
   href?: string;
@@ -21,39 +20,28 @@ export function BentoCard({
   isWelcomeCard,
   welcomeMessage,
 }: BentoCardProps) {
-  const CardWrapper = ({ children }: { children: React.ReactNode }) => {
-    if (isWelcomeCard) {
-      return (
-        <div className={cn(
-          "group relative overflow-hidden rounded-lg border bg-background p-6",
-          className
-        )}>
-          {children}
-        </div>
-      );
-    }
+  const CardWrapper = href
+    ? motion.a
+    : motion.div;
 
-    return (
-      <Link
-        to={href || "#"}
-        className={cn(
-          "group relative overflow-hidden rounded-lg border bg-background p-6 transition-all hover:shadow-xl",
-          className
-        )}
-      >
-        {children}
-      </Link>
-    );
-  };
+  const cardProps = href
+    ? {
+        href,
+        target: "_blank",
+        rel: "noopener noreferrer",
+      }
+    : {};
 
   return (
-    <CardWrapper>
-      <div className="relative z-10 space-y-4">
-        {Icon && !isWelcomeCard && (
-          <Icon className="h-12 w-12 transition-transform group-hover:scale-110" />
-        )}
-        {Icon && isWelcomeCard && (
-          <div className="flex justify-end">
+    <CardWrapper
+      className={`row-span-1 rounded-xl group/bento hover:shadow-xl transition duration-200 shadow-input dark:shadow-none p-4 dark:bg-black dark:border-white/[0.2] bg-white border border-transparent justify-between flex flex-col space-y-4 ${className}`}
+      {...cardProps}
+      whileHover={href ? { scale: 0.98 } : {}}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      <div className="group-hover/bento:translate-x-2 transition duration-200">
+        {Icon && (
+          <div className="flex items-center">
             <Icon className="h-12 w-12" />
           </div>
         )}
@@ -73,19 +61,15 @@ export function BentoCard({
   );
 }
 
-export function BentoGrid({
-  className,
-  children,
-}: {
+interface BentoGridProps {
   className?: string;
-  children: React.ReactNode;
-}) {
+  children?: React.ReactNode;
+}
+
+export function BentoGrid({ className, children }: BentoGridProps) {
   return (
     <div
-      className={cn(
-        "grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3",
-        className
-      )}
+      className={`grid grid-cols-1 md:grid-cols-3 lg:auto-rows-[28rem] gap-4 max-w-7xl mx-auto md:p-4 ${className}`}
     >
       {children}
     </div>
