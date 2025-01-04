@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
-import { FileText, Settings, Calendar, Sun, Moon } from "lucide-react";
+import { FileText, Calendar, Settings, Sun, Moon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
@@ -90,6 +90,7 @@ const Dashboard = () => {
       description: t('manage_patients'),
       href: '/patients',
       cta: t('view_records'),
+      background: null,
       className: "lg:row-start-1 lg:row-end-4 lg:col-start-2 lg:col-end-3",
     },
     {
@@ -101,15 +102,16 @@ const Dashboard = () => {
       },
       name: "",
       description: "",
-      className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
-      isWelcomeCard: true,
-      welcomeMessage: (
+      href: "#",
+      cta: "",
+      background: (
         <WelcomeCard 
           userProfile={userProfile}
           appointmentCount={todayAppointments?.length || 0}
           pinnedPatientsCount={pinnedPatients?.length || 0}
         />
       ),
+      className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
     },
     {
       Icon: Settings,
@@ -117,6 +119,7 @@ const Dashboard = () => {
       description: t('settings_desc'),
       href: '/settings',
       cta: t('change_settings'),
+      background: null,
       className: "lg:col-start-1 lg:col-end-2 lg:row-start-3 lg:row-end-4",
     },
     {
@@ -125,13 +128,16 @@ const Dashboard = () => {
       description: t('manage_calendar'),
       href: '/calendar',
       cta: t('view_calendar'),
+      background: null,
       className: "lg:col-start-3 lg:col-end-3 lg:row-start-1 lg:row-end-2",
     },
     {
+      Icon: () => null,
       name: "Support DentaFile",
       description: "Help us improve DentaFile by supporting our development.",
       href: "https://buymeacoffee.com/dentafile",
       cta: "Support us ☕",
+      background: null,
       className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
     },
   ];
