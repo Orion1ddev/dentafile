@@ -77,7 +77,7 @@ const Index = ({ view = "list" }: IndexProps) => {
               <Button
                 variant="ghost"
                 onClick={() => navigate('/')}
-                className="mr-2"
+                className="hidden md:flex items-center"
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
                 {t('back_to_dashboard')}
@@ -89,7 +89,7 @@ const Index = ({ view = "list" }: IndexProps) => {
                 DentaFile
               </h1>
             </div>
-            <div className="flex items-center space-x-2 mr-12">
+            <div className="flex items-center space-x-2">
               {view === "list" && <PatientFormDialog mode="create" />}
             </div>
           </div>

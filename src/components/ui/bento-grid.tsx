@@ -8,7 +8,6 @@ interface BentoCardProps {
   name?: string;
   description?: string;
   href?: string;
-  cta?: string;
   isWelcomeCard?: boolean;
   welcomeMessage?: React.ReactNode;
 }
@@ -19,7 +18,6 @@ export function BentoCard({
   name,
   description,
   href,
-  cta,
   isWelcomeCard,
   welcomeMessage,
 }: BentoCardProps) {
@@ -61,19 +59,14 @@ export function BentoCard({
         )}
         {welcomeMessage}
         {!isWelcomeCard && (
-          <>
-            <div>
-              <h3 className="font-medium leading-none tracking-tight text-lg">
-                {name}
-              </h3>
+          <div>
+            <h3 className="font-medium leading-none tracking-tight text-lg">
+              {name}
+            </h3>
+            {description && (
               <p className="text-sm text-muted-foreground mt-2">{description}</p>
-            </div>
-            {cta && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-primary">{cta}</span>
-              </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </CardWrapper>
