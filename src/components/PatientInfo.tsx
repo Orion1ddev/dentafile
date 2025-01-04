@@ -19,11 +19,11 @@ export const PatientInfo = ({ patient }: PatientInfoProps) => {
 
   return (
     <Card className="mb-6">
-      <CardHeader>
-        <CardTitle className="text-xl sm:text-2xl">
+      <CardHeader className="relative">
+        <CardTitle className="text-xl sm:text-2xl pr-12">
           {patient.first_name} {patient.last_name}
         </CardTitle>
-        <div className="text-muted-foreground">
+        <div className="text-muted-foreground mt-2">
           <p>{capitalizeFirstLetter(t('contact'))}: {patient.phone || 'N/A'} • {patient.email || 'N/A'}</p>
         </div>
       </CardHeader>

@@ -19,7 +19,7 @@ export const WelcomeCard = ({ userProfile, appointmentCount, pinnedPatientsCount
 
   return (
     <div className="mb-4">
-      <div className="space-y-3">
+      <div className="flex flex-col items-center justify-center space-y-3 text-center">
         <p className="text-xl font-medium text-foreground/90">
           {getGreeting()}, Dr. {userProfile?.first_name}.{' '}
           {appointmentCount ? (
