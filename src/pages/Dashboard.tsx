@@ -7,10 +7,13 @@ import { useQuery } from "@tanstack/react-query";
 import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { useNavigate } from "react-router-dom";
+import { Particles } from "@/components/ui/particles";
+import { useTheme } from "@/components/theme-provider";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -143,7 +146,16 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background flex flex-col">
+      <Particles
+        className="absolute inset-0"
+        quantity={50}
+        ease={80}
+        size={0.5}
+        color={theme === "dark" ? "#ffffff" : "#000000"}
+        refresh={false}
+      />
+      
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -156,8 +168,8 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      <main className="max-w-[2000px] mx-auto p-4">
-        <div className="space-y-8">
+      <main className="flex-1 flex items-center justify-center max-w-[2000px] mx-auto p-4">
+        <div className="w-full space-y-8">
           <BentoGrid className="lg:grid-rows-3">
             {features.map((feature) => (
               <BentoCard key={feature.name || 'welcome'} {...feature} />
@@ -165,6 +177,7 @@ const Dashboard = () => {
           </BentoGrid>
         </div>
       </main>
+      
       <NavMenu />
     </div>
   );
