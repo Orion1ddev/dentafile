@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { PatientFilter } from "@/components/PatientFilter";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { PatientCard } from "@/components/PatientCard";
+import { PatientFilter } from "@/components/PatientFilter";
 import { PatientFormDialog } from "@/components/PatientFormDialog";
 import { useQuery } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
 import { CalendarView } from "@/components/CalendarView";
+import { ChevronLeft } from "lucide-react";
 import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
-import { Sun, Moon } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 
@@ -24,7 +24,6 @@ const Index = ({ view = "list" }: IndexProps) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const { t } = useLanguage();
-  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -60,6 +59,14 @@ const Index = ({ view = "list" }: IndexProps) => {
     },
   });
 
+  if (error) {
+    toast.error("Error loading patients");
+  }
+
+  const handleBackToDashboard = () => {
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
       <BackgroundEffect />
@@ -67,23 +74,22 @@ const Index = ({ view = "list" }: IndexProps) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/')}
+                className="hidden md:flex items-center"
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                {t('back_to_dashboard')}
+              </Button>
+              <h1 
+                onClick={() => navigate('/')}
+                className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
+              >
                 DentaFile
               </h1>
             </div>
             <div className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="h-8 w-8"
-              >
-                {theme === "dark" ? (
-                  <Sun className="h-4 w-4" />
-                ) : (
-                  <Moon className="h-4 w-4" />
-                )}
-              </Button>
               {view === "list" && <PatientFormDialog mode="create" />}
             </div>
           </div>

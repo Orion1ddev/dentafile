@@ -15,6 +15,7 @@ interface LanguageState {
   fetchTranslations: () => Promise<void>;
 }
 
+// Fallback translations for critical UI elements
 const fallbackTranslations: Translation[] = [
   // Auth related translations
   { key: 'login_title', en: 'Welcome Back', tr: 'Tekrar Hoşgeldiniz' },
@@ -64,14 +65,16 @@ const fallbackTranslations: Translation[] = [
   { key: 'today_schedule', en: 'Today\'s Schedule', tr: 'Bugünkü Program' },
   { key: 'view_appointments', en: 'View Appointments', tr: 'Randevuları Görüntüle' },
   { key: 'calendar', en: 'Calendar', tr: 'Takvim' },
-  { key: 'manage_calendar', en: 'Manage your appointments and schedule', tr: 'Randevularınızı ve programınızı yönetin' },
-  { key: 'view_calendar', en: 'View Calendar', tr: 'Takvimi Görüntüle' },
-  { key: 'patient_records', en: 'Patient Records', tr: 'Hasta Kayıtları' },
-  { key: 'manage_patients', en: 'Manage your patient records and history', tr: 'Hasta kayıtlarınızı ve geçmişini yönetin' },
-  { key: 'view_records', en: 'View Records', tr: 'Kayıtları Görüntüle' },
-  { key: 'settings_desc', en: 'Customize your application settings', tr: 'Uygulama ayarlarınızı özelleştirin' },
-  { key: 'change_settings', en: 'Change Settings', tr: 'Ayarları Değiştir' },
-  { key: 'back_to_dashboard', en: 'Back to Dashboard', tr: 'Panele Dön' },
+  { key: 'user_not_authenticated', en: 'User not authenticated', tr: 'Kullanıcı kimliği doğrulanmadı' },
+  { key: 'failed_load_profile', en: 'Failed to load profile', tr: 'Profil yüklenemedi' },
+  { key: 'failed_create_profile', en: 'Failed to create profile', tr: 'Profil oluşturulamadı' },
+  { key: 'profile_updated', en: 'Profile updated successfully', tr: 'Profil başarıyla güncellendi' },
+  { key: 'profile_update_error', en: 'Failed to update profile', tr: 'Profil güncellenemedi' },
+  { key: 'enter_first_name', en: 'Enter your first name', tr: 'Adınızı girin' },
+  { key: 'enter_last_name', en: 'Enter your last name', tr: 'Soyadınızı girin' },
+  { key: 'select_gender', en: 'Select your gender', tr: 'Cinsiyetinizi seçin' },
+  { key: 'saving', en: 'Saving...', tr: 'Kaydediliyor...' },
+  { key: 'save_changes', en: 'Save Changes', tr: 'Değişiklikleri Kaydet' },
   { key: 'good_morning', en: 'Good morning', tr: 'Günaydın' },
   { key: 'good_afternoon', en: 'Good afternoon', tr: 'İyi günler' },
   { key: 'good_evening', en: 'Good evening', tr: 'İyi akşamlar' },
@@ -81,6 +84,15 @@ const fallbackTranslations: Translation[] = [
   { key: 'appointments_today', en: 'appointments today', tr: 'randevunuz var bugün' },
   { key: 'no_appointments_today', en: 'You have no appointments today', tr: 'Bugün randevunuz yok' },
   { key: 'pinned_patients', en: 'pinned patients', tr: 'önemli hasta' },
+  { key: 'personal_info', en: 'Personal Information', tr: 'Kişisel Bilgiler' },
+  { key: 'current_password', en: 'Current Password', tr: 'Mevcut Şifre' },
+  { key: 'new_password', en: 'New Password', tr: 'Yeni Şifre' },
+  { key: 'confirm_password', en: 'Confirm Password', tr: 'Şifreyi Onayla' },
+  { key: 'update_password', en: 'Update Password', tr: 'Şifreyi Güncelle' },
+  { key: 'updating', en: 'Updating...', tr: 'Güncelleniyor...' },
+  { key: 'passwords_dont_match', en: 'Passwords do not match', tr: 'Şifreler eşleşmiyor' },
+  { key: 'current_password_incorrect', en: 'Current password is incorrect', tr: 'Mevcut şifre yanlış' },
+  { key: 'password_updated', en: 'Password updated successfully', tr: 'Şifre başarıyla güncellendi' },
 ];
 
 export const useLanguage = create<LanguageState>((set, get) => ({
