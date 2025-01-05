@@ -8,7 +8,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
 import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
-import { useTheme } from "next-themes";
 import { FallingIcons } from "@/components/effects/FallingIcons";
 import {
   DropdownMenu,
@@ -21,13 +20,12 @@ const Auth = () => {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const isMobile = useIsMobile();
-  const { setTheme } = useTheme();
 
   useEffect(() => {
-    setTheme('light');
-  }, [setTheme]);
+    // Force light mode on auth pages
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
 
-  useEffect(() => {
     const checkSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (session && !error) {
@@ -49,7 +47,7 @@ const Auth = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col md:flex-row font-['Roboto']">
+    <div className="min-h-screen bg-white flex flex-col md:flex-row font-['General_Sans']">
       {/* Left side - Welcome content */}
       {!isMobile && (
         <div className="w-full md:w-1/2 bg-blue-600 p-6 md:p-12 text-white flex flex-col justify-center relative overflow-hidden">
