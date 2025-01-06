@@ -1,4 +1,5 @@
 import { useLanguage } from "@/stores/useLanguage";
+import { DayCycle } from "./DayCycle";
 
 interface WelcomeCardProps {
   userProfile: any;
@@ -17,7 +18,7 @@ export const WelcomeCard = ({ userProfile, appointmentCount, pinnedPatientsCount
   };
 
   return (
-    <div className="h-full flex flex-col justify-center p-6 bg-gradient-to-br from-background/50 to-background/10 backdrop-blur-sm rounded-lg border">
+    <div className="h-full flex flex-col justify-between p-6 bg-gradient-to-br from-background/50 to-background/10 backdrop-blur-sm rounded-lg border">
       <div className="space-y-4">
         <h2 className="text-3xl font-semibold text-foreground/90 tracking-tight">
           {getGreeting()}, 
@@ -40,6 +41,7 @@ export const WelcomeCard = ({ userProfile, appointmentCount, pinnedPatientsCount
           )}
         </div>
       </div>
+      <DayCycle />
     </div>
   );
 };
