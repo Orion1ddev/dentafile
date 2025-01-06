@@ -24,7 +24,16 @@ const App = () => {
   const { fetchTranslations } = useLanguage();
 
   useEffect(() => {
-    fetchTranslations();
+    // Wrap the fetchTranslations call in a try-catch to handle any potential errors
+    const initTranslations = async () => {
+      try {
+        await fetchTranslations();
+      } catch (error) {
+        console.error('Failed to fetch translations:', error);
+      }
+    };
+
+    initTranslations();
   }, [fetchTranslations]);
 
   return (

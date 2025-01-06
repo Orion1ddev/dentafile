@@ -86,7 +86,7 @@ const fallbackTranslations: Translation[] = [
   { key: 'password_updated', en: 'Password updated successfully', tr: 'Şifre başarıyla güncellendi' },
 ];
 
-export const useLanguage = create<LanguageState>((set, get) => ({
+export const useLanguage = create<LanguageState>()((set, get) => ({
   language: localStorage.getItem("language") || "en",
   translations: fallbackTranslations,
   setLanguage: (language: string) => {
