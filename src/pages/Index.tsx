@@ -12,8 +12,7 @@ import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
 import { CalendarView } from "@/components/CalendarView";
 import { ChevronLeft } from "lucide-react";
-import { PixelTrail } from "@/components/ui/pixel-trail";
-import { useScreenSize } from "@/components/hooks/use-screen-size";
+import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 
@@ -25,7 +24,6 @@ const Index = ({ view = "list" }: IndexProps) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const { t } = useLanguage();
-  const screenSize = useScreenSize();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -65,17 +63,13 @@ const Index = ({ view = "list" }: IndexProps) => {
     toast.error("Error loading patients");
   }
 
+  const handleBackToDashboard = () => {
+    navigate('/');
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm relative">
-      <div className="absolute inset-0 z-0">
-        <PixelTrail
-          pixelSize={screenSize.lessThan("md") ? 48 : 80}
-          fadeDuration={0}
-          delay={1200}
-          pixelClassName="rounded-full bg-primary/10 dark:bg-primary/20"
-        />
-      </div>
-      
+    <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
+      <BackgroundEffect />
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -102,8 +96,8 @@ const Index = ({ view = "list" }: IndexProps) => {
         </div>
       </nav>
 
-      <main className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-[calc(100vh-4rem)] flex items-center justify-center z-10 relative">
-        <div className="max-w-4xl w-full">
+      <main className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
           {view === "list" && (
             <>
               <PatientFilter
