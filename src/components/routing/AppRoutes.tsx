@@ -4,31 +4,12 @@ import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
 import Settings from "@/pages/Settings";
 import PatientDetails from "@/pages/PatientDetails";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
-export const AppRoutes = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+interface AppRoutesProps {
+  isAuthenticated: boolean;
+}
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsAuthenticated(!!session);
-    };
-
-    checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (isAuthenticated === null) {
-    return null; // or a loading spinner
-  }
-
+export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
   if (!isAuthenticated) {
     return (
       <Routes>

@@ -1,9 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PatientCardActions } from "./patient-card/PatientCardActions";
-import { PatientFormDialog } from "./PatientFormDialog";
-import { Button } from "./ui/button";
-import { Edit2 } from "lucide-react";
 
 type Patient = {
   id: string;
@@ -45,18 +42,7 @@ export const PatientCard = ({ patient, onClick }: PatientCardProps) => {
             </h3>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <PatientFormDialog 
-            mode="edit" 
-            patientId={patient.id}
-            trigger={
-              <Button variant="ghost" size="icon" onClick={handleEdit}>
-                <Edit2 className="h-4 w-4" />
-              </Button>
-            }
-          />
-          <PatientCardActions patient={patient} onEditClick={handleEdit} />
-        </div>
+        <PatientCardActions patient={patient} onEditClick={handleEdit} />
       </CardHeader>
       <CardContent>
       </CardContent>
