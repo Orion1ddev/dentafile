@@ -49,8 +49,8 @@ export const CalendarView = () => {
   }).filter(Boolean) || [];
 
   return (
-    <div className="w-full max-w-[2000px] mx-auto px-2">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+    <div className="w-full max-w-[1800px] mx-auto px-1">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-2">
         <Card className="p-2 lg:col-span-3 overflow-hidden">
           <div style={{ '--fc-timegrid-slot-height': isMobile ? '40px' : '80px' } as React.CSSProperties}>
             <FullCalendar

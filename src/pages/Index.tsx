@@ -96,7 +96,7 @@ const Index = ({ view = "list" }: IndexProps) => {
         </div>
       </nav>
 
-      <main className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <main className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">
         <div className="max-w-4xl mx-auto">
           {view === "list" && (
             <>
