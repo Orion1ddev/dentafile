@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, Plus, StickyNote, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DentalRecordFormDialog } from "@/components/DentalRecordFormDialog";
-import { PatientFormDialog } from "@/components/PatientFormDialog";
 import { NavMenu } from "@/components/NavMenu";
 import { useLanguage } from "@/stores/useLanguage";
 import { DentalNoteFormDialog } from "./dental-records/DentalNoteFormDialog";
@@ -37,10 +36,6 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('patient_details')}</h1>
           </div>
           <div className="flex items-center gap-2">
-            <PatientFormDialog 
-              patientId={patient.id} 
-              mode="edit" 
-            />
             <DentalNoteFormDialog patientId={patient.id} />
             <DentalRecordFormDialog 
               patientId={patient.id} 
