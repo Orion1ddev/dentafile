@@ -6,7 +6,7 @@ import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 const Settings = () => {
   const { t } = useLanguage();
