@@ -74,10 +74,10 @@ export const CalendarView = () => {
               firstDay={1}
               locale={language}
               buttonText={{
-                today: t('today'),
-                month: t('month'),
-                week: t('week'),
-                day: t('day'),
+                today: t('calendar_today'),
+                month: t('calendar_month'),
+                week: t('calendar_week'),
+                day: t('calendar_day'),
               }}
               businessHours={{
                 daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
