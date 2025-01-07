@@ -8,11 +8,13 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { AppointmentsList } from "./appointments/AppointmentsList";
 import { addHours, parseISO } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/stores/useLanguage";
 
 export const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const { appointments, monthlyAppointments } = useAppointments(selectedDate);
   const isMobile = useIsMobile();
+  const { t, language } = useLanguage();
 
   const handleDateSelect = (arg: any) => {
     setSelectedDate(new Date(arg.event.start));
@@ -33,7 +35,7 @@ export const CalendarView = () => {
         id: appointment.id,
         title: isMobile 
           ? `${appointment.patient.first_name} ${appointment.patient.last_name[0]}.`
-          : `${appointment.patient.first_name} ${appointment.patient.last_name} - ${appointment.operation_type || 'Consultation'}`,
+          : `${appointment.patient.first_name} ${appointment.patient.last_name} - ${appointment.operation_type || t('consultation')}`,
         start: startDate.toISOString(),
         end: endDate.toISOString(),
         allDay: false,
@@ -70,6 +72,13 @@ export const CalendarView = () => {
               allDaySlot={false}
               slotDuration="00:30:00"
               firstDay={1}
+              locale={language}
+              buttonText={{
+                today: t('today'),
+                month: t('month'),
+                week: t('week'),
+                day: t('day'),
+              }}
               businessHours={{
                 daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
                 startTime: '08:00',
@@ -87,7 +96,7 @@ export const CalendarView = () => {
                   <div className="font-semibold truncate">{arg.event.title}</div>
                   {!isMobile && arg.event.extendedProps.operationType && (
                     <div className="text-muted-foreground truncate">
-                      {arg.event.extendedProps.operationType}
+                      {arg.event.extendedProps.operationType || t('consultation')}
                     </div>
                   )}
                 </div>
