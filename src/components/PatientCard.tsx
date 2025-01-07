@@ -26,7 +26,7 @@ export const PatientCard = ({ patient, onClick }: PatientCardProps) => {
   return (
     <Card 
       onClick={onClick}
-      className="cursor-pointer hover:shadow-lg transition-shadow group relative"
+      className="cursor-pointer transition-all duration-200 hover:scale-[1.02] group relative bg-gradient-to-br from-card/50 to-accent/30 dark:from-card/80 dark:to-accent/20 backdrop-blur-sm border-accent/20 hover:border-accent/40 dark:border-accent/10 dark:hover:border-accent/30"
     >
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="flex items-center space-x-4">

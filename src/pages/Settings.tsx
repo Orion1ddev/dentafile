@@ -6,24 +6,28 @@ import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
+import { Button } from "./ui/button";
 
 const Settings = () => {
   const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Main Navigation */}
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
-              <Link 
-                to="/" 
-                className="flex items-center text-sm text-muted-foreground hover:text-foreground"
+              <Button
+                variant="ghost"
+                size="icon"
+                asChild
+                className="text-muted-foreground hover:text-foreground"
+                aria-label={t('back_to_dashboard')}
               >
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                {t('back_to_dashboard')}
-              </Link>
+                <Link to="/">
+                  <ChevronLeft className="h-4 w-4" />
+                </Link>
+              </Button>
               <Link to="/" className="flex-shrink-0 flex items-center">
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                   DentaFile
