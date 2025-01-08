@@ -31,15 +31,15 @@ export const FallingIcons = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <FallingIcon delay="0s" iconType="tooth" left="15%" />
-      <FallingIcon delay="2s" iconType="tools" left="35%" />
-      <FallingIcon delay="4s" iconType="tooth" left="55%" />
-      <FallingIcon delay="6s" iconType="tools" left="75%" />
-      <FallingIcon delay="8s" iconType="tooth" left="25%" />
-      <FallingIcon delay="10s" iconType="tools" left="65%" />
-      <FallingIcon delay="12s" iconType="tooth" left="45%" />
-      <FallingIcon delay="14s" iconType="tools" left="85%" />
-      <FallingIcon delay="16s" iconType="tooth" left="5%" />
-      <FallingIcon delay="18s" iconType="tools" left="95%" />
+      <FallingIcon delay="0.5s" iconType="tools" left="35%" />
+      <FallingIcon delay="1s" iconType="tooth" left="55%" />
+      <FallingIcon delay="1.5s" iconType="tools" left="75%" />
+      <FallingIcon delay="2s" iconType="tooth" left="25%" />
+      <FallingIcon delay="2.5s" iconType="tools" left="65%" />
+      <FallingIcon delay="3s" iconType="tooth" left="45%" />
+      <FallingIcon delay="3.5s" iconType="tools" left="85%" />
+      <FallingIcon delay="4s" iconType="tooth" left="5%" />
+      <FallingIcon delay="4.5s" iconType="tools" left="95%" />
     </div>
   );
 };
