@@ -143,7 +143,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -156,8 +156,8 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      <main className="max-w-[2000px] mx-auto p-4">
-        <div className="space-y-8">
+      <main className="max-w-[2000px] mx-auto p-4 flex-1 flex items-center">
+        <div className="space-y-8 w-full">
           <BentoGrid className="lg:grid-rows-3">
             {features.map((feature) => (
               <BentoCard key={feature.name || 'welcome'} {...feature} />
