@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -22,6 +22,7 @@ interface IndexProps {
 
 const Index = ({ view = "list" }: IndexProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const { t } = useLanguage();
 
@@ -63,9 +64,12 @@ const Index = ({ view = "list" }: IndexProps) => {
     toast.error("Error loading patients");
   }
 
-  const handleBackToDashboard = () => {
-    navigate('/');
-  };
+  // If we're at the root path, redirect to /patients
+  useEffect(() => {
+    if (location.pathname === '/') {
+      navigate('/patients');
+    }
+  }, [location.pathname, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
