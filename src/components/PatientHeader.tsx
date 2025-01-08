@@ -23,8 +23,8 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
   return (
     <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:justify-between py-4 sm:h-16 sm:py-0">
-          <div className="flex items-center justify-start w-full sm:w-auto mb-4 sm:mb-0">
+        <div className="flex flex-col py-4">
+          <div className="flex items-center justify-start w-full mb-4">
             <Button
               variant="ghost"
               size="icon"
@@ -36,7 +36,7 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
             </Button>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('patient_details')}</h1>
           </div>
-          <div className="flex items-center justify-center sm:justify-end w-full sm:w-auto gap-2">
+          <div className="flex flex-col gap-2 w-full">
             <DentalNoteFormDialog patientId={patient.id} />
             <DentalRecordFormDialog 
               patientId={patient.id} 
@@ -47,6 +47,8 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
                 </Button>
               }
             />
+          </div>
+          <div className="absolute top-4 right-4">
             <NavMenu />
           </div>
         </div>
