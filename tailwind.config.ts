@@ -22,38 +22,38 @@ export default {
         inter: ['Inter', 'sans-serif'],
       },
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'rgb(var(--background-500))',
-        foreground: 'rgb(var(--text-950))',
+        border: 'rgb(var(--primary) / 0.2)',
+        input: 'rgb(var(--primary) / 0.2)',
+        ring: 'rgb(var(--primary) / 0.5)',
+        background: 'rgb(var(--background))',
+        foreground: 'rgb(var(--text))',
         primary: {
-          DEFAULT: 'rgb(var(--primary-500))',
-          foreground: 'rgb(var(--primary-50))'
+          DEFAULT: 'rgb(var(--primary))',
+          foreground: 'rgb(var(--background))'
         },
         secondary: {
-          DEFAULT: 'rgb(var(--secondary-500))',
-          foreground: 'rgb(var(--secondary-50))'
+          DEFAULT: 'rgb(var(--secondary))',
+          foreground: 'rgb(var(--text))'
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))'
+          DEFAULT: 'rgb(220 38 38)',
+          foreground: 'rgb(var(--background))'
         },
         muted: {
-          DEFAULT: 'rgb(var(--background-200))',
-          foreground: 'rgb(var(--text-500))'
+          DEFAULT: 'rgb(var(--secondary))',
+          foreground: 'rgb(var(--text) / 0.7)'
         },
         accent: {
-          DEFAULT: 'rgb(var(--accent-500))',
-          foreground: 'rgb(var(--accent-50))'
+          DEFAULT: 'rgb(var(--accent))',
+          foreground: 'rgb(var(--background))'
         },
         popover: {
-          DEFAULT: 'rgb(var(--background-50))',
-          foreground: 'rgb(var(--text-900))'
+          DEFAULT: 'rgb(var(--background))',
+          foreground: 'rgb(var(--text))'
         },
         card: {
-          DEFAULT: 'rgb(var(--background-100))',
-          foreground: 'rgb(var(--text-900))'
+          DEFAULT: 'rgb(var(--background))',
+          foreground: 'rgb(var(--text))'
         }
       },
       borderRadius: {
