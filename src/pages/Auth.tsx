@@ -52,7 +52,7 @@ const Auth = () => {
     <div className="min-h-screen bg-white flex flex-col md:flex-row font-['Roboto']">
       {/* Left side - Welcome content */}
       {!isMobile && (
-        <div className="w-full md:w-1/2 bg-blue-600 p-6 md:p-12 text-white flex flex-col justify-center relative overflow-hidden">
+        <div className="w-full md:w-1/2 bg-primary p-6 md:p-12 text-white flex flex-col justify-center relative overflow-hidden">
           <FallingIcons />
           
           <div className="max-w-lg mx-auto relative z-10">

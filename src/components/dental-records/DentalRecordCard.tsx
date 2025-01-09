@@ -36,7 +36,7 @@ export const DentalRecordCard = ({ record, patientId, onDelete, isAppointment = 
   };
 
   return (
-    <Card key={record.id}>
+    <Card key={record.id} className="bg-secondary">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <CardTitle className="text-lg">
           {formatDisplayDate(record.visit_date)}

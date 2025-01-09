@@ -53,7 +53,7 @@ export const CalendarView = () => {
   return (
     <div className="w-full max-w-[1800px] mx-auto px-1">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-2">
-        <Card className="p-2 lg:col-span-3 overflow-hidden">
+        <Card className="p-2 lg:col-span-3 overflow-hidden bg-secondary">
           <div style={{ '--fc-timegrid-slot-height': isMobile ? '40px' : '80px' } as React.CSSProperties}>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -105,7 +105,7 @@ export const CalendarView = () => {
           </div>
         </Card>
 
-        <Card className="p-2 lg:static fixed bottom-0 left-0 right-0 lg:relative bg-background/95 backdrop-blur-sm lg:backdrop-blur-none lg:bg-background z-10 max-h-[250px] lg:max-h-none overflow-y-auto">
+        <Card className="p-2 lg:static fixed bottom-0 left-0 right-0 lg:relative bg-secondary backdrop-blur-sm lg:backdrop-blur-none lg:bg-secondary z-10 max-h-[250px] lg:max-h-none overflow-y-auto">
           <AppointmentsList 
             appointments={appointments}
             selectedDate={selectedDate}
