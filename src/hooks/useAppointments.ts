@@ -14,7 +14,12 @@ export const useAppointments = (selectedDate: Date) => {
         .from('dental_records')
         .select(`
           *,
-          patient:patients(*)
+          patient:patients (
+            id,
+            first_name,
+            last_name,
+            user_id
+          )
         `)
         .eq('patients.user_id', user.id)
         .gte('visit_date', startOfDay(selectedDate).toISOString())
@@ -36,7 +41,12 @@ export const useAppointments = (selectedDate: Date) => {
         .from('dental_records')
         .select(`
           *,
-          patient:patients(*)
+          patient:patients (
+            id,
+            first_name,
+            last_name,
+            user_id
+          )
         `)
         .eq('patients.user_id', user.id);
 
