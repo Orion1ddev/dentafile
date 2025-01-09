@@ -33,7 +33,7 @@ const LoginForm = () => {
         email,
         password,
         options: {
-          redirectTo: `${origin}/auth`
+          emailRedirectTo: `${origin}/auth`
         }
       });
 
