@@ -76,25 +76,40 @@ const Index = ({ view = "list" }: IndexProps) => {
       <BackgroundEffect />
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                onClick={() => navigate('/')}
-                className="hidden md:flex items-center"
-              >
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                {t('back_to_dashboard')}
-              </Button>
-              <h1 
-                onClick={() => navigate('/')}
-                className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
-              >
-                DentaFile
-              </h1>
+          <div className="flex flex-col py-4">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/')}
+                  className="hidden md:flex items-center"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  {t('back_to_dashboard')}
+                </Button>
+                <h1 
+                  onClick={() => navigate('/')}
+                  className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
+                >
+                  DentaFile
+                </h1>
+              </div>
+              
+              {/* Desktop buttons */}
+              <div className="hidden md:flex items-center gap-4">
+                {view === "list" && <PatientFormDialog mode="create" />}
+                <NavMenu />
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
+            
+            {/* Mobile buttons */}
+            <div className="md:hidden flex flex-col gap-2 mt-4">
               {view === "list" && <PatientFormDialog mode="create" />}
+            </div>
+            
+            {/* Mobile NavMenu */}
+            <div className="md:hidden absolute top-4 right-4">
+              <NavMenu />
             </div>
           </div>
         </div>
@@ -128,7 +143,6 @@ const Index = ({ view = "list" }: IndexProps) => {
           {view === "calendar" && <CalendarView />}
         </div>
       </main>
-      <NavMenu />
     </div>
   );
 };
