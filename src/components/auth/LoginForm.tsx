@@ -26,9 +26,15 @@ const LoginForm = () => {
     setIsLoading(true);
 
     try {
+      // Get the current origin without any trailing slashes
+      const origin = window.location.origin.replace(/\/$/, '');
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          redirectTo: `${origin}/auth`
+        }
       });
 
       if (error) {
@@ -45,6 +51,7 @@ const LoginForm = () => {
     } catch (error: any) {
       console.error('Login error:', error);
       toast.error(error.message || t('login_error'));
+    } finally {
       setIsLoading(false);
     }
   };
