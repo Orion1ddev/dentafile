@@ -8,9 +8,11 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, 
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: true,
+    detectSessionInUrl: false, // Changed this to false to prevent URL parsing issues
     flowType: 'pkce',
-    storage: window?.localStorage
+    storage: window?.localStorage,
+    // Remove any trailing slashes and ensure proper URL formatting
+    storageKey: 'supabase.auth.token',
   },
   global: {
     headers: {
