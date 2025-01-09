@@ -8,11 +8,12 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, 
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: false, // Changed this to false to prevent URL parsing issues
+    detectSessionInUrl: false,
     flowType: 'pkce',
     storage: window?.localStorage,
-    // Remove any trailing slashes and ensure proper URL formatting
     storageKey: 'supabase.auth.token',
+    // Adding site URL for production
+    site: 'https://dentafile.com'
   },
   global: {
     headers: {
