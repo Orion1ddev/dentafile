@@ -3,15 +3,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { CardContent } from "@/components/ui/card";
+import type { Database } from "@/integrations/supabase/types";
 import { useLanguage } from "@/stores/useLanguage";
 import { PatientHeader } from "@/components/PatientHeader";
 import { PatientInfo } from "@/components/PatientInfo";
 import { DentalRecordsList } from "@/components/DentalRecordsList";
 import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
-import type { Patient, DentalRecord } from "@/types/supabase";
 
-type PatientWithRecords = Patient & {
-  dental_records: DentalRecord[];
+type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
+  dental_records: Database['public']['Tables']['dental_records']['Row'][];
 };
 
 const PatientDetails = () => {
@@ -29,7 +29,7 @@ const PatientDetails = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const { data: patient, isLoading } = useQuery<PatientWithRecords>({
+  const { data: patient, isLoading } = useQuery({
     queryKey: ['patient', id],
     queryFn: async () => {
       if (!id) throw new Error("No patient ID provided");
@@ -41,7 +41,7 @@ const PatientDetails = () => {
           dental_records (*)
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching patient:', error);

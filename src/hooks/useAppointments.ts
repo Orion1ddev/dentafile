@@ -1,7 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfDay, endOfDay } from "date-fns";
-import type { DentalRecord } from "@/types/supabase";
+
+interface DentalRecord {
+  id: string;
+  visit_date: string;
+  appointment_time: string;
+  operation_type: string | null;
+  patient: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    avatar_url: string | null;
+    created_at: string;
+    date_of_birth: string;
+    email: string | null;
+    gender: string;
+    medical_history: string[] | null;
+    phone: string | null;
+    pinned: boolean | null;
+    updated_at: string;
+    user_id: string | null;
+  };
+}
 
 export const useAppointments = (selectedDate: Date) => {
   const { data: appointments } = useQuery<DentalRecord[]>({
@@ -13,20 +34,18 @@ export const useAppointments = (selectedDate: Date) => {
       const { data, error } = await supabase
         .from('dental_records')
         .select(`
-          *,
-          patient:patients (
-            id,
-            first_name,
-            last_name,
-            user_id
-          )
+          id,
+          visit_date,
+          appointment_time,
+          operation_type,
+          patient:patients(*)
         `)
         .eq('patients.user_id', user.id)
         .gte('visit_date', startOfDay(selectedDate).toISOString())
         .lte('visit_date', endOfDay(selectedDate).toISOString());
 
       if (error) throw error;
-      return data as DentalRecord[];
+      return data;
     },
     enabled: !!selectedDate
   });
@@ -40,18 +59,16 @@ export const useAppointments = (selectedDate: Date) => {
       const { data, error } = await supabase
         .from('dental_records')
         .select(`
-          *,
-          patient:patients (
-            id,
-            first_name,
-            last_name,
-            user_id
-          )
+          id,
+          visit_date,
+          appointment_time,
+          operation_type,
+          patient:patients(*)
         `)
         .eq('patients.user_id', user.id);
 
       if (error) throw error;
-      return data as DentalRecord[];
+      return data;
     }
   });
 
