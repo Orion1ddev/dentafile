@@ -26,15 +26,9 @@ const LoginForm = () => {
     setIsLoading(true);
 
     try {
-      // Get the current origin without any trailing slashes
-      const origin = window.location.origin.replace(/\/$/, '');
-      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        password,
-        options: {
-          emailRedirectTo: `${origin}/auth`
-        }
+        password
       });
 
       if (error) {
