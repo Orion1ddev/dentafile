@@ -36,18 +36,23 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
             </Button>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('patient_details')}</h1>
           </div>
-          <div className="flex flex-col gap-2 w-full">
-            <DentalNoteFormDialog patientId={patient.id} />
-            <DentalRecordFormDialog 
-              patientId={patient.id} 
-              trigger={
-                <Button>
-                  <FileText className="h-4 w-4 mr-2" />
-                  {t('add_dental_record')}
-                </Button>
-              }
-            />
+          
+          {/* Responsive button container */}
+          <div className="flex md:flex-row flex-col gap-2 md:gap-4 w-full md:items-center">
+            <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+              <DentalNoteFormDialog patientId={patient.id} />
+              <DentalRecordFormDialog 
+                patientId={patient.id} 
+                trigger={
+                  <Button>
+                    <FileText className="h-4 w-4 mr-2" />
+                    {t('add_dental_record')}
+                  </Button>
+                }
+              />
+            </div>
           </div>
+          
           <div className="absolute top-4 right-4">
             <NavMenu />
           </div>
