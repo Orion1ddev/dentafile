@@ -19,10 +19,17 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Get the initial session
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Session retrieval error:', error);
+          handleUnauthenticated();
+          return;
+        }
         
         if (session) {
+          // Set the session in the client
+          await supabase.auth.setSession(session);
           handleAuthenticated();
         } else {
           handleUnauthenticated();
@@ -58,13 +65,18 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
     initializeAuth();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event);
       
       if (event === 'SIGNED_IN' && session) {
+        // Explicitly set the session when signing in
+        await supabase.auth.setSession(session);
         handleAuthenticated();
-      } else if (event === 'SIGNED_OUT') {
-        handleUnauthenticated();
+      } else if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+        // Handle sign out and token refresh events
+        if (!session) {
+          handleUnauthenticated();
+        }
       }
     });
 
