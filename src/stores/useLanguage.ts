@@ -31,6 +31,10 @@ const fallbackTranslations: Translation[] = [
   { key: 'patient_records', en: 'Patient Records', tr: 'Hasta Kayıtları' },
   { key: 'manage_patients', en: 'Manage your patients', tr: 'Hastalarınızı yönetin' },
   { key: 'view_records', en: 'View records', tr: 'Kayıtları görüntüle' },
+  { key: 'sign_out', en: 'Sign out', tr: 'Çıkış yap' },
+  { key: 'language', en: 'Language', tr: 'Dil' },
+  { key: 'dark_mode', en: 'Dark mode', tr: 'Karanlık mod' },
+  { key: 'change_settings', en: 'Change settings', tr: 'Ayarları değiştir' },
 ];
 
 export const useLanguage = create<LanguageState>((set, get) => ({
@@ -56,11 +60,17 @@ export const useLanguage = create<LanguageState>((set, get) => ({
         .select('*');
 
       if (error) {
-        throw error;
+        console.error('Error fetching translations:', error);
+        // Fallback to default translations if fetch fails
+        set({ translations: fallbackTranslations });
+        return;
       }
 
-      if (data) {
+      if (data && data.length > 0) {
         set({ translations: data });
+      } else {
+        // If no translations found in database, use fallback
+        set({ translations: fallbackTranslations });
       }
     } catch (error) {
       console.error('Error fetching translations:', error);

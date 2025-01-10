@@ -8,15 +8,18 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, 
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: false, // Changed this to false to prevent URL parsing issues
+    detectSessionInUrl: true,
     flowType: 'pkce',
     storage: window?.localStorage,
-    // Remove any trailing slashes and ensure proper URL formatting
     storageKey: 'supabase.auth.token',
   },
   global: {
     headers: {
-      'X-Client-Info': 'dental-app'
+      'X-Client-Info': 'dental-app',
+      'apikey': SUPABASE_ANON_KEY
     }
+  },
+  db: {
+    schema: 'public'
   }
 });
