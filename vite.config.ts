@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  base: "/", // Ensures proper asset loading with custom domain
   plugins: [
     react(),
     mode === 'development' &&

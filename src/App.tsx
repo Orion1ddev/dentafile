@@ -24,7 +24,6 @@ const App = () => {
   const { fetchTranslations } = useLanguage();
 
   useEffect(() => {
-    // Wrap the fetchTranslations call in a try-catch to handle any potential errors
     const initTranslations = async () => {
       try {
         await fetchTranslations();
@@ -40,7 +39,7 @@ const App = () => {
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <BrowserRouter>
+          <BrowserRouter basename="/">
             <AuthProvider 
               queryClient={queryClient}
               onAuthStateChange={setIsAuthenticated}
