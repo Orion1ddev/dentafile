@@ -61,7 +61,12 @@ export const useAppointments = (selectedDate: Date) => {
         .lte('visit_date', endOfDay(selectedDate).toISOString());
 
       if (error) throw error;
-      return data as DentalRecord[];
+      
+      // Transform the data to match the DentalRecord type
+      return (data as any[]).map(record => ({
+        ...record,
+        patient: record.patient[0] // Supabase returns patient as an array, we take the first item
+      }));
     },
     enabled: !!selectedDate
   });
@@ -98,9 +103,17 @@ export const useAppointments = (selectedDate: Date) => {
         .eq('patients.user_id', user.id);
 
       if (error) throw error;
-      return data as DentalRecord[];
+      
+      // Transform the data to match the DentalRecord type
+      return (data as any[]).map(record => ({
+        ...record,
+        patient: record.patient[0] // Supabase returns patient as an array, we take the first item
+      }));
     }
   });
 
-  return { appointments: appointments || [], monthlyAppointments: monthlyAppointments || [] };
+  return { 
+    appointments: appointments || [], 
+    monthlyAppointments: monthlyAppointments || [] 
+  };
 };
