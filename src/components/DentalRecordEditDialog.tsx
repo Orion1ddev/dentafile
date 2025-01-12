@@ -82,9 +82,8 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="ml-auto">
-          <Pencil className="h-4 w-4 mr-2" />
-          {t('edit_appointment')}
+        <Button variant="outline" size="icon">
+          <Pencil className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { DentalRecordEditDialog } from "../DentalRecordEditDialog";
+import { DentalNoteEditDialog } from "./DentalNoteEditDialog";
 import { useLanguage } from "@/stores/useLanguage";
 
 interface DentalRecord {
@@ -48,7 +49,11 @@ export const DentalRecordCard = ({ record, patientId, onDelete, isAppointment = 
           {isAppointment && record.appointment_time && ` - ${formatTime(record.appointment_time)}`}
         </CardTitle>
         <div className="flex items-center gap-2">
-          <DentalRecordEditDialog record={record} patientId={patientId} />
+          {isAppointment ? (
+            <DentalRecordEditDialog record={record} patientId={patientId} />
+          ) : (
+            <DentalNoteEditDialog record={record} patientId={patientId} />
+          )}
           <Button
             variant="destructive"
             size="icon"
