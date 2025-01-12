@@ -2,28 +2,26 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfDay, endOfDay } from "date-fns";
 
-interface Patient {
-  id: string;
-  first_name: string;
-  last_name: string;
-  avatar_url: string | null;
-  created_at: string;
-  date_of_birth: string;
-  email: string | null;
-  gender: string;
-  medical_history: string[] | null;
-  phone: string | null;
-  pinned: boolean | null;
-  updated_at: string;
-  user_id: string | null;
-}
-
 interface DentalRecord {
   id: string;
   visit_date: string;
-  appointment_time: string | null;
+  appointment_time: string;
   operation_type: string | null;
-  patient: Patient;
+  patient: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    avatar_url: string | null;
+    created_at: string;
+    date_of_birth: string;
+    email: string | null;
+    gender: string;
+    medical_history: string[] | null;
+    phone: string | null;
+    pinned: boolean | null;
+    updated_at: string;
+    user_id: string | null;
+  };
 }
 
 export const useAppointments = (selectedDate: Date) => {
@@ -40,33 +38,14 @@ export const useAppointments = (selectedDate: Date) => {
           visit_date,
           appointment_time,
           operation_type,
-          patient:patients(
-            id,
-            first_name,
-            last_name,
-            avatar_url,
-            created_at,
-            date_of_birth,
-            email,
-            gender,
-            medical_history,
-            phone,
-            pinned,
-            updated_at,
-            user_id
-          )
+          patient:patients(*)
         `)
         .eq('patients.user_id', user.id)
         .gte('visit_date', startOfDay(selectedDate).toISOString())
         .lte('visit_date', endOfDay(selectedDate).toISOString());
 
       if (error) throw error;
-      
-      // Transform the data to match the DentalRecord type
-      return (data as any[]).map(record => ({
-        ...record,
-        patient: record.patient[0] // Supabase returns patient as an array, we take the first item
-      }));
+      return data;
     },
     enabled: !!selectedDate
   });
@@ -84,36 +63,14 @@ export const useAppointments = (selectedDate: Date) => {
           visit_date,
           appointment_time,
           operation_type,
-          patient:patients(
-            id,
-            first_name,
-            last_name,
-            avatar_url,
-            created_at,
-            date_of_birth,
-            email,
-            gender,
-            medical_history,
-            phone,
-            pinned,
-            updated_at,
-            user_id
-          )
+          patient:patients(*)
         `)
         .eq('patients.user_id', user.id);
 
       if (error) throw error;
-      
-      // Transform the data to match the DentalRecord type
-      return (data as any[]).map(record => ({
-        ...record,
-        patient: record.patient[0] // Supabase returns patient as an array, we take the first item
-      }));
+      return data;
     }
   });
 
-  return { 
-    appointments: appointments || [], 
-    monthlyAppointments: monthlyAppointments || [] 
-  };
+  return { appointments, monthlyAppointments };
 };

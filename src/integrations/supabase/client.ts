@@ -1,25 +1,30 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from './types';
 
-const supabaseUrl = 'https://iekkfirlmfwajjgzvota.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlla2tmaXJsbWZ3YWpqZ3p2b3RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQ4MjI0MDAsImV4cCI6MjAyMDM5ODQwMH0.RLpZw4BQlLqXr_vy_MoNQdETXhBhz0ADhcX5JEX0D0k';
+const SUPABASE_URL = "https://iekkfirlmfwajjgzvota.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlla2tmaXJsbWZ3YWpqZ3p2b3RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM2OTE3MDIsImV4cCI6MjA0OTI2NzcwMn0.bSpA7_W6KR52hjotnwWyVQ9-3-G3NZ3kK39cPnai35I";
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    autoRefreshToken: true,
     persistSession: true,
+    autoRefreshToken: true,
     detectSessionInUrl: true,
-    storage: window.localStorage,
-    flowType: 'pkce'
+    flowType: 'pkce',
+    storage: window?.localStorage,
+    storageKey: 'supabase.auth.token',
   },
   global: {
     headers: {
-      'X-Client-Info': 'supabase-js-web',
-      'apikey': supabaseAnonKey
+      'X-Client-Info': 'dental-app',
+      'apikey': SUPABASE_ANON_KEY,
     }
+  },
+  db: {
+    schema: 'public'
   },
   realtime: {
     headers: {
-      apikey: supabaseAnonKey
+      apikey: SUPABASE_ANON_KEY
     }
   }
 });
