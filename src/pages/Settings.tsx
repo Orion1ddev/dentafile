@@ -39,7 +39,7 @@ const Settings = () => {
       </nav>
 
       <div className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-6">{t('settings')}</h1>
+        <div className="text-2xl font-bold mb-6">{t('settings')}</div>
         
         <Tabs defaultValue="personal" className="w-full max-w-3xl mx-auto">
           <TabsList className="w-full">

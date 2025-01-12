@@ -84,8 +84,7 @@ const Index = ({ view = "list" }: IndexProps) => {
                   onClick={() => navigate('/')}
                   className="hidden md:flex items-center"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-2" />
-                  {t('back_to_dashboard')}
+                  <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <h1 
                   onClick={() => navigate('/')}
