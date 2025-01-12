@@ -10,21 +10,10 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, 
     autoRefreshToken: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    storage: window?.localStorage,
-    storageKey: 'supabase.auth.token',
   },
   global: {
     headers: {
       'X-Client-Info': 'dental-app',
-      'apikey': SUPABASE_ANON_KEY,
     }
   },
-  db: {
-    schema: 'public'
-  },
-  realtime: {
-    headers: {
-      apikey: SUPABASE_ANON_KEY
-    }
-  }
 });
