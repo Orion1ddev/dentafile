@@ -58,11 +58,10 @@ export const useAppointments = (selectedDate: Date) => {
         `)
         .eq('patients.user_id', user.id)
         .gte('visit_date', startOfDay(selectedDate).toISOString())
-        .lte('visit_date', endOfDay(selectedDate).toISOString())
-        .single();
+        .lte('visit_date', endOfDay(selectedDate).toISOString());
 
       if (error) throw error;
-      return data ? [data] : [];
+      return data as DentalRecord[];
     },
     enabled: !!selectedDate
   });
@@ -99,9 +98,9 @@ export const useAppointments = (selectedDate: Date) => {
         .eq('patients.user_id', user.id);
 
       if (error) throw error;
-      return data || [];
+      return data as DentalRecord[];
     }
   });
 
-  return { appointments, monthlyAppointments };
+  return { appointments: appointments || [], monthlyAppointments: monthlyAppointments || [] };
 };

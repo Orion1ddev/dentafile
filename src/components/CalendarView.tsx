@@ -21,7 +21,7 @@ export const CalendarView = () => {
   };
 
   // Transform appointments for calendar
-  const calendarEvents = monthlyAppointments?.map(appointment => {
+  const calendarEvents = monthlyAppointments.map(appointment => {
     if (!appointment.appointment_time || !appointment.visit_date) return null;
 
     try {
@@ -48,7 +48,7 @@ export const CalendarView = () => {
       console.error('Error processing appointment:', error);
       return null;
     }
-  }).filter(Boolean) || [];
+  }).filter(Boolean);
 
   return (
     <div className="w-full max-w-[1800px] mx-auto px-1">
