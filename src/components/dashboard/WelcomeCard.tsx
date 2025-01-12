@@ -18,7 +18,7 @@ export const WelcomeCard = ({ userProfile, appointmentCount, pinnedPatientsCount
   };
 
   return (
-    <div className="mb-4">
+    <div className="h-full flex flex-col justify-end pb-6">
       <div className="space-y-3">
         <p className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-gradient">
           {getGreeting()}, Dr. {userProfile?.first_name}.{' '}
