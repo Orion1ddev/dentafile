@@ -35,17 +35,20 @@ export const DentalRecordCard = ({ record, patientId, onDelete, isAppointment = 
     }
   };
 
+  const formatTime = (time: string | null) => {
+    if (!time) return '';
+    return time.substring(0, 5); // Only show HH:mm, removing seconds
+  };
+
   return (
     <Card key={record.id} className="bg-secondary">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <CardTitle className="text-lg">
           {formatDisplayDate(record.visit_date)}
-          {isAppointment && record.appointment_time && ` - ${record.appointment_time}`}
+          {isAppointment && record.appointment_time && ` - ${formatTime(record.appointment_time)}`}
         </CardTitle>
         <div className="flex items-center gap-2">
-          {isAppointment && (
-            <DentalRecordEditDialog record={record} patientId={patientId} />
-          )}
+          <DentalRecordEditDialog record={record} patientId={patientId} />
           <Button
             variant="destructive"
             size="icon"
