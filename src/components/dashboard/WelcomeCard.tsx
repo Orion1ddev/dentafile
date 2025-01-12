@@ -20,14 +20,16 @@ export const WelcomeCard = ({ userProfile, appointmentCount, pinnedPatientsCount
   return (
     <div className="mb-4">
       <div className="space-y-3">
-        <p className="text-xl font-medium text-foreground/90">
+        <p className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-gradient">
           {getGreeting()}, Dr. {userProfile?.first_name}.{' '}
+        </p>
+        <p className="text-lg text-foreground/80">
           {appointmentCount ? (
-            <span className="text-foreground/80">
+            <span>
               {t('you_have')} {appointmentCount} {t('appointments_today')}.
             </span>
           ) : (
-            <span className="text-foreground/80">{t('no_appointments_today')}.</span>
+            <span>{t('no_appointments_today')}.</span>
           )}
         </p>
         {pinnedPatientsCount > 0 && (

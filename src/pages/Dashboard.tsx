@@ -85,22 +85,13 @@ const Dashboard = () => {
 
   const features = [
     {
-      Icon: FileText,
-      name: t('patient_records'),
-      description: t('manage_patients'),
-      href: '/patients',
-      cta: t('view_records'),
-      background: null,
-      className: "lg:row-start-1 lg:row-end-4 lg:col-start-2 lg:col-end-3",
-    },
-    {
       Icon: () => {
         const hour = new Date().getHours();
         return hour >= 6 && hour < 18 ? 
           <Sun className="h-12 w-12" /> : 
           <Moon className="h-12 w-12" />;
       },
-      name: "",
+      name: t('welcome'),
       description: "",
       href: "#",
       cta: "",
@@ -112,6 +103,15 @@ const Dashboard = () => {
         />
       ),
       className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
+    },
+    {
+      Icon: FileText,
+      name: t('patient_records'),
+      description: t('manage_patients'),
+      href: '/patients',
+      cta: t('view_records'),
+      background: null,
+      className: "lg:row-start-1 lg:row-end-4 lg:col-start-2 lg:col-end-3",
     },
     {
       Icon: Settings,
