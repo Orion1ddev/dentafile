@@ -1,3 +1,4 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonalInfoSettings } from "@/components/settings/PersonalInfoSettings";
 import { PasswordSettings } from "@/components/settings/PasswordSettings";
@@ -38,9 +39,7 @@ const Settings = () => {
         </div>
       </nav>
 
-      <div className="container mx-auto p-6">
-        <div className="text-2xl font-bold mb-6">{t('settings')}</div>
-        
+      <div className="container mx-auto p-6">        
         <Tabs defaultValue="personal" className="w-full max-w-3xl mx-auto">
           <TabsList className="w-full">
             <TabsTrigger value="personal">{t('personal_info')}</TabsTrigger>
@@ -66,3 +65,4 @@ const Settings = () => {
 };
 
 export default Settings;
+
