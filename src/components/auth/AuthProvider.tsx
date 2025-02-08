@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
@@ -19,9 +20,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Get the initial session
         const { data: { session } } = await supabase.auth.getSession();
-        
         if (session) {
           handleAuthenticated();
         } else {
@@ -38,7 +37,6 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
     const handleAuthenticated = () => {
       setIsAuthenticated(true);
       onAuthStateChange(true);
-      
       if (location.pathname.startsWith('/auth')) {
         navigate('/', { replace: true });
       }
@@ -48,7 +46,6 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       setIsAuthenticated(false);
       onAuthStateChange(false);
       queryClient.clear();
-      
       if (!location.pathname.startsWith('/auth')) {
         navigate('/auth', { replace: true });
       }
@@ -58,13 +55,19 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
     initializeAuth();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event);
       
       if (event === 'SIGNED_IN' && session) {
         handleAuthenticated();
-      } else if (event === 'SIGNED_OUT') {
-        handleUnauthenticated();
+      } else if (['SIGNED_OUT', 'TOKEN_REFRESHED'].includes(event)) {
+        // Check session after token refresh
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (currentSession) {
+          handleAuthenticated();
+        } else {
+          handleUnauthenticated();
+        }
       }
     });
 
