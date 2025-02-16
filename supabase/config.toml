@@ -1,1 +1,15 @@
+
 project_id = "iekkfirlmfwajjgzvota"
+
+[api]
+enabled = true
+url = "https://iekkfirlmfwajjgzvota.supabase.co"
+service_role_key = "service-role-key"
+
+[db]
+# Refers to the URL of your Supabase project's database
+database_url = "postgres://..."
+
+[[edge_functions]]
+name = "health-check"
+verify_jwt = false
