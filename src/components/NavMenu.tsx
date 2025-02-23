@@ -76,7 +76,7 @@ export const NavMenu = () => {
             <Menu className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48 py-0 px-0 rounded-sm mx-0 my-[36px]">
+        <DropdownMenuContent align="end" className="w-48 py-0 px-0 rounded-sm mx-[2px] my-[16px]">
           <DropdownMenuLabel>{t("settings")}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
