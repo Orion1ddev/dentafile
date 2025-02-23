@@ -69,7 +69,7 @@ export const NavMenu = () => {
       toast.error(error.message || t("sign_out_error"));
     }
   };
-  return <div className="fixed top-4 right-4 z-[100] my-[5px] mx-[14px]">
+  return <div className="fixed top-4 right-4 z-[100] mx-[14px] my-[3px]">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/50 backdrop-blur-sm">
