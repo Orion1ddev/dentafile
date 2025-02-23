@@ -42,7 +42,7 @@ export const ImageUploadField = ({
       <div className="space-y-4 my-[8px]">
         <FormControl>
           <div className="flex gap-2">
-            <Input type="file" accept="image/jpeg,image/png,image/gif" onChange={handleFileUpload} disabled={isUploading} className="file:mr-4 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 my-0 py-0" />
+            <Input type="file" accept="image/jpeg,image/png,image/gif" onChange={handleFileUpload} disabled={isUploading} className="file:mr-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 py-[5px] px-[10px] mx-0 my-0" />
           </div>
         </FormControl>
         <div className="text-sm text-muted-foreground">
