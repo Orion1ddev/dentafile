@@ -66,7 +66,7 @@ export const DentalRecordCard = ({
           {record.images && record.images.length > 0 && <div>
               <h4 className="font-semibold mb-2">{t('photos')}</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {record.images.map((image, index) => <img key={index} src={image} alt={`Dental record ${index + 1}`} className="rounded-lg object-cover w-full aspect-square" />)}
+                {record.images.map((image, index) => <img key={index} src={image} alt={`Dental record ${index + 1}`} className="rounded-lg w-full aspect-square object-contain" />)}
               </div>
             </div>}
         </div>
