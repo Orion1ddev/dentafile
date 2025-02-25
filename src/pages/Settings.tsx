@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonalInfoSettings } from "@/components/settings/PersonalInfoSettings";
 import { PasswordSettings } from "@/components/settings/PasswordSettings";
@@ -8,23 +7,16 @@ import { NavMenu } from "@/components/NavMenu";
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 const Settings = () => {
-  const { t } = useLanguage();
-
-  return (
-    <div className="min-h-screen bg-background">
+  const {
+    t
+  } = useLanguage();
+  return <div className="min-h-screen bg-background">
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-[40px]">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
-              <Button
-                variant="ghost"
-                size="icon"
-                asChild
-                className="text-muted-foreground hover:text-foreground"
-                aria-label={t('back_to_dashboard')}
-              >
+              <Button variant="ghost" size="icon" asChild className="text-muted-foreground hover:text-foreground" aria-label={t('back_to_dashboard')}>
                 <Link to="/">
                   <ChevronLeft className="h-4 w-4" />
                 </Link>
@@ -60,9 +52,6 @@ const Settings = () => {
         </div>
         <NavMenu />
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Settings;
-
