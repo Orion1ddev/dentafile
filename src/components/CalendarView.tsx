@@ -89,7 +89,7 @@ export const CalendarView = () => {
           </div>
         </Card>
 
-        <Card className="p-4 lg:static bg-secondary lg:h-[800px] overflow-y-auto">
+        <Card className="p-4 lg:static bg-secondary lg:h-[800px] overflow-y-auto py-[7px] mx-px px-[8px] my-0">
           <AppointmentsList appointments={appointments} selectedDate={selectedDate} />
         </Card>
       </div>
