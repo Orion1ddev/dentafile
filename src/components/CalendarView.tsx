@@ -54,7 +54,7 @@ export const CalendarView = () => {
       return null;
     }
   }).filter(Boolean) || [];
-  return <div className="w-full max-w-[2800px] pt-4 py-0 px-0 my-0 mx-0">
+  return <div className="w-full max-w-[2000px] pt-4 py-0 px-0 my-0 mx-0">
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         <Card className="p-4 lg:col-span-4 overflow-hidden bg-secondary py-[12px] px-[10px] mx-[5px]">
           <div style={{
