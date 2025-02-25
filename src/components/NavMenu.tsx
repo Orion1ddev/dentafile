@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useLanguage } from "@/stores/useLanguage";
@@ -6,48 +7,33 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+
 export const NavMenu = () => {
-  const {
-    theme,
-    setTheme
-  } = useTheme();
-  const {
-    language,
-    setLanguage,
-    t
-  } = useLanguage();
+  const { theme, setTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
+
   const handleSignOut = async () => {
     try {
       // First check if we have a session
-      const {
-        data: {
-          session
-        },
-        error: sessionError
-      } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) {
         console.error('Session error:', sessionError);
         // If there's no session, just clear everything and redirect
         localStorage.clear();
-        navigate('/auth', {
-          replace: true
-        });
+        navigate('/auth', { replace: true });
         return;
       }
+
       if (!session) {
         // No session found, just clear and redirect
         localStorage.clear();
-        navigate('/auth', {
-          replace: true
-        });
+        navigate('/auth', { replace: true });
         return;
       }
 
       // If we have a session, attempt to sign out
-      const {
-        error
-      } = await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Sign out error:', error);
         throw error;
@@ -56,20 +42,18 @@ export const NavMenu = () => {
       // Clear any local storage or state
       localStorage.clear();
       toast.success(t("sign_out"));
-      navigate('/auth', {
-        replace: true
-      });
+      navigate('/auth', { replace: true });
     } catch (error: any) {
       console.error('Sign out error:', error);
       // Even if there's an error, we should clear local state and redirect
       localStorage.clear();
-      navigate('/auth', {
-        replace: true
-      });
+      navigate('/auth', { replace: true });
       toast.error(error.message || t("sign_out_error"));
     }
   };
-  return <div className="fixed top-4 right-4 z-[100] mx-[14px] my-[3px]">
+
+  return (
+    <div className="fixed top-4 right-4 z-[100] mx-[14px] my-[3px]">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/50 backdrop-blur-sm">
@@ -77,8 +61,6 @@ export const NavMenu = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48 py-0 px-0 rounded-sm mx-[2px] my-[16px]">
-          
-          
           <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
             {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
             {theme === "dark" ? t("light_mode") : t("dark_mode")}
@@ -104,5 +86,6 @@ export const NavMenu = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>;
+    </div>
+  );
 };
