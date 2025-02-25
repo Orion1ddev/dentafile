@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useAppointments } from "@/hooks/useAppointments";
@@ -51,9 +52,9 @@ export const CalendarView = () => {
   }).filter(Boolean) || [];
 
   return (
-    <div className="w-full max-w-[1800px] mx-auto px-1">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-2">
-        <Card className="p-2 lg:col-span-3 overflow-hidden bg-secondary">
+    <div className="w-full max-w-[2000px] mx-auto px-4 pt-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <Card className="p-4 lg:col-span-4 overflow-hidden bg-secondary">
           <div style={{ '--fc-timegrid-slot-height': isMobile ? '40px' : '80px' } as React.CSSProperties}>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -105,7 +106,7 @@ export const CalendarView = () => {
           </div>
         </Card>
 
-        <Card className="p-2 lg:static fixed bottom-0 left-0 right-0 lg:relative bg-secondary backdrop-blur-sm lg:backdrop-blur-none lg:bg-secondary z-10 max-h-[250px] lg:max-h-none overflow-y-auto">
+        <Card className="p-4 lg:static bg-secondary lg:h-[800px] overflow-y-auto">
           <AppointmentsList 
             appointments={appointments}
             selectedDate={selectedDate}
