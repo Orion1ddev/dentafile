@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useLanguage } from "@/stores/useLanguage";
 import { Moon, Sun, Languages, LogOut, Menu } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -15,39 +15,23 @@ export const NavMenu = () => {
 
   const handleSignOut = async () => {
     try {
-      // First check if we have a session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) {
-        console.error('Session error:', sessionError);
-        // If there's no session, just clear everything and redirect
-        localStorage.clear();
-        navigate('/auth', { replace: true });
-        return;
-      }
-
-      if (!session) {
-        // No session found, just clear and redirect
-        localStorage.clear();
-        navigate('/auth', { replace: true });
-        return;
-      }
-
-      // If we have a session, attempt to sign out
+      // Immediately navigate to auth page
+      navigate('/auth', { replace: true });
+      
+      // Clear local storage first
+      localStorage.clear();
+      
+      // Then attempt to sign out from Supabase
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Sign out error:', error);
-        throw error;
+        toast.error(t("sign_out_error"));
+        return;
       }
 
-      // Clear any local storage or state
-      localStorage.clear();
       toast.success(t("sign_out"));
-      navigate('/auth', { replace: true });
     } catch (error: any) {
       console.error('Sign out error:', error);
-      // Even if there's an error, we should clear local state and redirect
-      localStorage.clear();
-      navigate('/auth', { replace: true });
       toast.error(error.message || t("sign_out_error"));
     }
   };
