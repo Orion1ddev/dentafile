@@ -77,8 +77,8 @@ export const NavMenu = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48 py-0 px-0 rounded-sm mx-[2px] my-[16px]">
-          <DropdownMenuLabel>{t("settings")}</DropdownMenuLabel>
-          <DropdownMenuSeparator />
+          
+          
           <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
             {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
             {theme === "dark" ? t("light_mode") : t("dark_mode")}
