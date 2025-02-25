@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +29,9 @@ export const PatientHeader = ({
               <Button variant="ghost" size="icon" className="text-foreground hover:text-foreground/80" onClick={handleBack} aria-label={t('patient_list')}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('patient_details')}</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                DentaFile
+              </h1>
             </div>
             
             {/* Desktop buttons */}
