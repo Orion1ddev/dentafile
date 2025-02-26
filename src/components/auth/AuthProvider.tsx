@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { Loading } from "@/components/ui/loading";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -18,9 +18,25 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
   const location = useLocation();
 
   useEffect(() => {
+    let mounted = true;
+    
     const initializeAuth = async () => {
       try {
+        // Add a timeout to prevent infinite loading
+        const timeoutId = setTimeout(() => {
+          if (mounted && isLoading) {
+            console.log('Auth initialization timed out, proceeding as unauthenticated');
+            handleUnauthenticated();
+          }
+        }, 5000);
+
         const { data: { session } } = await supabase.auth.getSession();
+        
+        // Clear timeout as we got a response
+        clearTimeout(timeoutId);
+        
+        if (!mounted) return;
+        
         if (session) {
           handleAuthenticated();
         } else {
@@ -28,9 +44,13 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
-        handleUnauthenticated();
+        if (mounted) {
+          handleUnauthenticated();
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -58,9 +78,13 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event);
       
+      if (!mounted) return;
+      
       if (event === 'SIGNED_IN' && session) {
         handleAuthenticated();
-      } else if (['SIGNED_OUT', 'TOKEN_REFRESHED'].includes(event)) {
+      } else if (event === 'SIGNED_OUT') {
+        handleUnauthenticated();
+      } else if (event === 'TOKEN_REFRESHED') {
         // Check session after token refresh
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         if (currentSession) {
@@ -72,19 +96,13 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, [onAuthStateChange, queryClient, navigate, location.pathname]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <span className="text-muted-foreground">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Loading fullScreen text="Initializing application..." />;
   }
 
   return <>{children}</>;

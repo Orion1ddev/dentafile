@@ -1,7 +1,7 @@
 
-import { Routes, Route, Navigate } from "react-router-dom";
-import { lazy, Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { Loading } from "@/components/ui/loading";
 
 // Lazy load components
 const Auth = lazy(() => import("@/pages/Auth"));
@@ -10,28 +10,27 @@ const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const PatientDetails = lazy(() => import("@/pages/PatientDetails"));
 
-const LoadingFallback = () => (
-  <div className="min-h-screen bg-background flex items-center justify-center p-4">
-    <div className="w-full max-w-md space-y-4">
-      <Skeleton className="h-8 w-3/4" />
-      <Skeleton className="h-32 w-full" />
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-5/6" />
-        <Skeleton className="h-4 w-4/6" />
-      </div>
-    </div>
-  </div>
-);
-
 interface AppRoutesProps {
   isAuthenticated: boolean;
 }
 
 export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
+  const location = useLocation();
+
+  // Clear any stuck loading states on route changes
+  useEffect(() => {
+    // Force cleanup of any pending operations
+    const timeoutId = setTimeout(() => {
+      // This will trigger a small re-render that can help clear stuck states
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [location.pathname]);
+
   if (!isAuthenticated) {
     return (
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<Loading fullScreen text="Preparing your application..." />}>
         <Routes>
           <Route path="/auth/*" element={<Auth />} />
           <Route path="*" element={<Navigate to="/auth" replace />} />
@@ -41,7 +40,7 @@ export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
   }
 
   return (
-    <Suspense fallback={<LoadingFallback />}>
+    <Suspense fallback={<Loading fullScreen text="Loading your dashboard..." />}>
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/patients" element={<Index />} />
