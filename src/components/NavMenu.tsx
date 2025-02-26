@@ -15,13 +15,9 @@ export const NavMenu = () => {
 
   const handleSignOut = async () => {
     try {
-      // Immediately navigate to auth page
       navigate('/auth', { replace: true });
-      
-      // Clear local storage first
       localStorage.clear();
       
-      // Then attempt to sign out from Supabase
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Sign out error:', error);
@@ -32,44 +28,42 @@ export const NavMenu = () => {
       toast.success(t("sign_out"));
     } catch (error: any) {
       console.error('Sign out error:', error);
-      toast.error(error.message || t("sign_out_error"));
+      toast.error(t("sign_out_error"));
     }
   };
 
   return (
-    <div className="fixed top-4 right-4 z-[100] mx-[14px] my-[3px]">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/50 backdrop-blur-sm">
-            <Menu className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48 py-0 px-0 rounded-sm mx-[2px] my-[16px]">
-          <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-            {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
-            {theme === "dark" ? t("light_mode") : t("dark_mode")}
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <Languages className="mr-2 h-4 w-4" />
-              {t("language")}
-            </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => setLanguage("en")}>
-                English {language === "en" && "✓"}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage("tr")}>
-                Türkçe {language === "tr" && "✓"}
-              </DropdownMenuItem>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-            <LogOut className="mr-2 h-4 w-4" />
-            {t("sign_out")}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/50 backdrop-blur-sm">
+          <Menu className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+          {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+          {theme === "dark" ? t("light_mode") : t("dark_mode")}
+        </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Languages className="mr-2 h-4 w-4" />
+            {t("language")}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem onClick={() => setLanguage("en")}>
+              English {language === "en" && "✓"}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setLanguage("tr")}>
+              Türkçe {language === "tr" && "✓"}
+            </DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+          <LogOut className="mr-2 h-4 w-4" />
+          {t("sign_out")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
