@@ -54,10 +54,11 @@ export const CalendarView = () => {
   }).filter(Boolean) || [];
 
   return (
-    <div className="w-full max-w-[2000px] pt-4 mx-0 px-[29px] py-0">
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        <Card className="p-4 lg:col-span-4 overflow-hidden bg-secondary/50">
-          <div style={{ '--fc-page-bg-color': 'transparent' } as React.CSSProperties}>
+    <div className="w-full h-screen flex flex-col md:flex-row">
+      {/* Calendar Section - Left Side */}
+      <div className="w-full md:w-3/4 p-4 md:p-6 md:pr-3 h-[600px] md:h-screen">
+        <Card className="h-full overflow-hidden bg-secondary/50">
+          <div className="h-full" style={{ '--fc-page-bg-color': 'transparent' } as React.CSSProperties}>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
               initialView="timeGridDay"
@@ -70,7 +71,7 @@ export const CalendarView = () => {
               eventClick={handleDateChange}
               datesSet={handleDateChange}
               select={handleDateChange}
-              height={isMobile ? "500px" : "800px"}
+              height="100%"
               slotMinTime="08:00:00"
               slotMaxTime="24:00:00"
               weekends={true}
@@ -102,9 +103,14 @@ export const CalendarView = () => {
             />
           </div>
         </Card>
+      </div>
 
-        <Card className="p-4 lg:static bg-secondary/50 lg:h-[800px] overflow-y-auto">
-          <AppointmentsList appointments={appointments} selectedDate={selectedDate} />
+      {/* Appointments Section - Right Side */}
+      <div className="w-full md:w-1/4 p-4 md:p-6 md:pl-3 h-[400px] md:h-screen overflow-y-auto">
+        <Card className="h-full bg-secondary/50 overflow-y-auto">
+          <div className="p-4 h-full">
+            <AppointmentsList appointments={appointments} selectedDate={selectedDate} />
+          </div>
         </Card>
       </div>
     </div>
