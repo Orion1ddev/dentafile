@@ -81,7 +81,7 @@ export const CalendarView = () => {
       {/* Appointments Section - Right Side */}
       <div className="w-full md:w-1/2 h-auto md:max-h-[calc(100vh-4rem)]">
         <Card className="h-full bg-secondary/50 shadow-md">
-          <div className="p-4 h-full">
+          <div className="p-4 h-full px-[25px]">
             <AppointmentsList appointments={appointments} selectedDate={selectedDate} />
           </div>
         </Card>
