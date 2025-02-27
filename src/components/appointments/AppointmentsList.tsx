@@ -1,3 +1,4 @@
+
 import { format } from "date-fns";
 import { PatientCard } from "../PatientCard";
 import { useNavigate } from "react-router-dom";
@@ -35,25 +36,33 @@ export const AppointmentsList = ({ appointments, selectedDate }: AppointmentsLis
   const { t } = useLanguage();
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold mb-4">
+    <div className="flex flex-col h-full">
+      <h3 className="text-lg font-semibold mb-4 p-2 bg-primary/10 rounded-md">
         {format(selectedDate, 'MMMM d, yyyy')} - {appointments?.length || 0} {t('appointments')}
       </h3>
       
-      <div className="space-y-4">
-        {appointments?.map((record) => (
-          <div key={record.id} className="space-y-2">
-            <div className="text-sm text-muted-foreground">
-              {record.operation_type}
-            </div>
-            <PatientCard
-              patient={record.patient}
-              onClick={() => navigate(`/patient/${record.patient.id}`)}
-            />
+      <div className="flex-1 overflow-y-auto pr-2">
+        {appointments && appointments.length > 0 ? (
+          <div className="space-y-4">
+            {appointments.map((record) => (
+              <div key={record.id} className="bg-card rounded-md p-3 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex justify-between items-start mb-2">
+                  <div className="text-sm font-medium text-primary">
+                    {record.appointment_time}
+                  </div>
+                  <div className="text-sm px-2 py-1 bg-primary/20 text-primary-foreground rounded-full">
+                    {record.operation_type || t('consultation')}
+                  </div>
+                </div>
+                <PatientCard
+                  patient={record.patient}
+                  onClick={() => navigate(`/patient/${record.patient.id}`)}
+                />
+              </div>
+            ))}
           </div>
-        ))}
-        {appointments?.length === 0 && (
-          <div className="text-center text-muted-foreground">
+        ) : (
+          <div className="text-center bg-card p-6 rounded-md text-muted-foreground h-32 flex items-center justify-center">
             {t('no_appointments')}
           </div>
         )}
