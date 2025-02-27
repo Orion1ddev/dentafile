@@ -60,7 +60,7 @@ const Dashboard = () => {
     }
   });
 
-  // Dashboard tiles configuration with proper ordering for horizontal layout
+  // Dashboard tiles configuration - removed the theme box and rearranged the order
   const dashboardTiles = [
     {
       title: t('welcome'),
@@ -73,7 +73,7 @@ const Dashboard = () => {
         { label: t('today_appointments'), value: todayAppointments?.length || 0 },
         { label: t('pinned_patients'), value: pinnedPatients?.length || 0 }
       ],
-      gridArea: "welcome"
+      colSpan: "col-span-2" // Make welcome box span 2 columns
     },
     {
       title: t('patient_records'),
@@ -81,8 +81,7 @@ const Dashboard = () => {
       icon: <FileText className="h-8 w-8 text-white" />,
       bgColor: "bg-gradient-to-br from-gray-400 to-gray-600",
       pattern: "linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent) 0 0/40px 40px",
-      href: "/patients",
-      gridArea: "patients"
+      href: "/patients"
     },
     {
       title: t('calendar'),
@@ -90,8 +89,7 @@ const Dashboard = () => {
       icon: <Calendar className="h-8 w-8 text-white" />,
       bgColor: "bg-gradient-to-br from-blue-400 to-blue-600",
       pattern: "radial-gradient(circle, rgba(255,255,255,0.2) 25%, transparent 25.5%) 0 0/40px 40px",
-      href: "/calendar",
-      gridArea: "calendar"
+      href: "/calendar"
     },
     {
       title: t('settings'),
@@ -99,8 +97,7 @@ const Dashboard = () => {
       icon: <Settings className="h-8 w-8 text-white" />,
       bgColor: "bg-gradient-to-br from-gray-300 to-gray-500",
       pattern: "repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px)",
-      href: "/settings",
-      gridArea: "settings"
+      href: "/settings"
     },
     {
       title: "Support DentaFile",
@@ -108,8 +105,7 @@ const Dashboard = () => {
       icon: <Heart className="h-8 w-8 text-white" />,
       bgColor: "bg-gradient-to-br from-green-400 to-green-600",
       pattern: "radial-gradient(circle, rgba(255,255,255,0.2) 10%, transparent 10.5%) 0 0/30px 30px",
-      href: "https://buymeacoffee.com/dentafile",
-      gridArea: "support"
+      href: "https://buymeacoffee.com/dentafile"
     }
   ];
 
@@ -131,26 +127,15 @@ const Dashboard = () => {
       </nav>
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        {/* Using grid-template-areas for better layout control */}
-        <div className="grid gap-6 
-          grid-cols-1 md:grid-cols-2 lg:grid-cols-3 
-          md:grid-template-areas:
-            'welcome welcome .'
-            'patients calendar .'
-            'settings support .'
-          lg:grid-template-areas:
-            'welcome welcome welcome'
-            'patients calendar settings'
-            '. support .'">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {dashboardTiles.map((tile, index) => (
             <div 
               key={index}
               onClick={() => tile.href && navigate(tile.href)}
-              style={{ gridArea: tile.gridArea }}
               className={`
                 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300
                 ${tile.href ? 'cursor-pointer transform hover:-translate-y-1' : ''}
-                ${tile.gridArea === 'welcome' ? 'md:col-span-2 lg:col-span-3' : ''}
+                ${tile.colSpan || ''}
               `}
             >
               <div 
