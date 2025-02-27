@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
-import { FileText, Calendar, Settings, Sun, Moon, Heart } from "lucide-react";
+import { FileText, Calendar, Settings, Sun, Heart } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -60,7 +60,7 @@ const Dashboard = () => {
     }
   });
 
-  // Dashboard tiles configuration
+  // Dashboard tiles configuration - removed the theme box and rearranged the order
   const dashboardTiles = [
     {
       title: t('welcome'),
@@ -72,7 +72,8 @@ const Dashboard = () => {
       stats: [
         { label: t('today_appointments'), value: todayAppointments?.length || 0 },
         { label: t('pinned_patients'), value: pinnedPatients?.length || 0 }
-      ]
+      ],
+      colSpan: "col-span-2" // Make welcome box span 2 columns
     },
     {
       title: t('patient_records'),
@@ -96,14 +97,6 @@ const Dashboard = () => {
       icon: <Settings className="h-8 w-8 text-white" />,
       bgColor: "bg-gradient-to-br from-gray-300 to-gray-500",
       pattern: "repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px)",
-      href: "/settings"
-    },
-    {
-      title: t('theme'),
-      description: t('theme_options'),
-      icon: <Moon className="h-8 w-8 text-white" />,
-      bgColor: "bg-gradient-to-br from-blue-300 to-blue-500",
-      pattern: "repeating-linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px)",
       href: "/settings"
     },
     {
@@ -134,7 +127,7 @@ const Dashboard = () => {
       </nav>
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {dashboardTiles.map((tile, index) => (
             <div 
               key={index}
@@ -142,6 +135,7 @@ const Dashboard = () => {
               className={`
                 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300
                 ${tile.href ? 'cursor-pointer transform hover:-translate-y-1' : ''}
+                ${tile.colSpan || ''}
               `}
             >
               <div 
