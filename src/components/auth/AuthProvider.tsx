@@ -28,7 +28,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
             console.log('Auth initialization timed out, proceeding as unauthenticated');
             handleUnauthenticated();
           }
-        }, 5000);
+        }, 3000); // Reduced timeout from 5000ms to 3000ms
 
         const { data: { session } } = await supabase.auth.getSession();
         
@@ -49,6 +49,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         }
       } finally {
         if (mounted) {
+          // Always ensure loading state is set to false
           setIsLoading(false);
         }
       }
@@ -69,6 +70,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       if (!location.pathname.startsWith('/auth')) {
         navigate('/auth', { replace: true });
       }
+      setIsLoading(false); // Ensure loading is always set to false
     };
 
     // Initialize auth state
@@ -102,7 +104,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
   }, [onAuthStateChange, queryClient, navigate, location.pathname]);
 
   if (isLoading) {
-    return <Loading fullScreen text="Initializing application..." />;
+    return <Loading fullScreen text="Initializing application..." size="medium" />;
   }
 
   return <>{children}</>;

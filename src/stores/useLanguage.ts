@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -35,6 +36,19 @@ const fallbackTranslations: Translation[] = [
   { key: 'language', en: 'Language', tr: 'Dil' },
   { key: 'dark_mode', en: 'Dark mode', tr: 'Karanlık mod' },
   { key: 'change_settings', en: 'Change settings', tr: 'Ayarları değiştir' },
+  // Add missing translations that were showing up in console logs
+  { key: 'welcome', en: 'Welcome', tr: 'Hoş geldiniz' },
+  { key: 'welcome_desc', en: 'Welcome to your dental practice dashboard', tr: 'Diş hekimliği uygulaması panelinize hoş geldiniz' },
+  { key: 'today_appointments', en: 'Today\'s appointments', tr: 'Bugünkü randevular' },
+  { key: 'loading', en: 'Loading...', tr: 'Yükleniyor...' },
+  // Calendar related translations
+  { key: 'calendar_today', en: 'Today', tr: 'Bugün' },
+  { key: 'calendar_month', en: 'Month', tr: 'Ay' },
+  { key: 'calendar_week', en: 'Week', tr: 'Hafta' },
+  { key: 'calendar_day', en: 'Day', tr: 'Gün' },
+  { key: 'no_appointments', en: 'No appointments for this day', tr: 'Bu gün için randevu yok' },
+  { key: 'appointments', en: 'Appointments', tr: 'Randevular' },
+  { key: 'consultation', en: 'Consultation', tr: 'Konsültasyon' },
 ];
 
 export const useLanguage = create<LanguageState>((set, get) => ({
@@ -67,7 +81,20 @@ export const useLanguage = create<LanguageState>((set, get) => ({
       }
 
       if (data && data.length > 0) {
-        set({ translations: data });
+        // Merge database translations with fallback translations to ensure all keys exist
+        const mergedTranslations = [...fallbackTranslations];
+        
+        // Add any unique translations from the database
+        data.forEach(dbTranslation => {
+          const existingIndex = mergedTranslations.findIndex(t => t.key === dbTranslation.key);
+          if (existingIndex >= 0) {
+            mergedTranslations[existingIndex] = dbTranslation;
+          } else {
+            mergedTranslations.push(dbTranslation);
+          }
+        });
+        
+        set({ translations: mergedTranslations });
       } else {
         // If no translations found in database, use fallback
         set({ translations: fallbackTranslations });
