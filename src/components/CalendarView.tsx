@@ -57,10 +57,10 @@ export const CalendarView = () => {
   }).filter(Boolean) || [];
   
   return (
-    <div className="w-full h-screen flex flex-col md:flex-row gap-2 p-2 md:p-4">
+    <div className="w-full h-screen flex flex-col md:flex-row gap-1 p-0">
       {/* Calendar Section - Left Side */}
-      <div className="w-full md:w-1/2 h-[600px] md:h-[calc(100vh-2rem)]">
-        <Card className="h-full overflow-hidden bg-secondary/50 shadow-md w-full">
+      <div className="w-full md:w-1/2 h-[600px] md:h-[calc(100vh-1rem)]">
+        <Card className="h-full overflow-hidden bg-secondary/50 shadow-md w-full rounded-none md:rounded-lg">
           <div className="h-full" style={{
             '--fc-page-bg-color': 'transparent'
           } as React.CSSProperties}>
@@ -111,9 +111,9 @@ export const CalendarView = () => {
       </div>
 
       {/* Appointments Section - Right Side */}
-      <div className="w-full md:w-1/2 h-auto md:max-h-[calc(100vh-2rem)]">
-        <Card className="h-full bg-secondary/50 shadow-md">
-          <div className="p-3 h-full">
+      <div className="w-full md:w-1/2 h-auto md:h-[calc(100vh-1rem)]">
+        <Card className="h-full bg-secondary/50 shadow-md rounded-none md:rounded-lg">
+          <div className="p-2 h-full">
             <AppointmentsList appointments={appointments} selectedDate={selectedDate} />
           </div>
         </Card>
