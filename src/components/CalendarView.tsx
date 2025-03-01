@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useAppointments } from "@/hooks/useAppointments";
@@ -9,6 +10,7 @@ import { AppointmentsList } from "./appointments/AppointmentsList";
 import { addHours, parseISO } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLanguage } from "@/stores/useLanguage";
+
 export const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const {
@@ -28,6 +30,7 @@ export const CalendarView = () => {
       setSelectedDate(new Date(newDate));
     }
   };
+
   const calendarEvents = monthlyAppointments?.map(appointment => {
     if (!appointment.appointment_time || !appointment.visit_date) return null;
     try {
@@ -52,36 +55,61 @@ export const CalendarView = () => {
       return null;
     }
   }).filter(Boolean) || [];
-  return <div className="w-full h-screen flex flex-col md:flex-row gap-4 p-4">
+
+  return <div className="w-full h-screen flex flex-col md:flex-row gap-2 p-2 md:px-3">
       {/* Calendar Section - Left Side */}
-      <div className="w-full md:w-1/2 h-[600px] md:h-[calc(100vh-4rem)]">
-        <Card className="h-full overflow-hidden bg-secondary/50 shadow-md w-[400px]  ">
+      <div className="w-full md:w-1/2 h-[600px] md:h-[calc(100vh-2rem)]">
+        <Card className="h-full overflow-hidden bg-secondary/50 shadow-md w-full">
           <div className="h-full" style={{
           '--fc-page-bg-color': 'transparent'
         } as React.CSSProperties}>
-            <FullCalendar plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]} initialView="timeGridDay" headerToolbar={{
-            left: 'prev,next today',
-            center: 'title',
-            right: isMobile ? 'timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
-          }} events={calendarEvents} eventClick={handleDateChange} datesSet={handleDateChange} select={handleDateChange} height="100%" slotMinTime="08:00:00" slotMaxTime="24:00:00" weekends={true} allDaySlot={false} slotDuration="00:30:00" firstDay={1} locale={language} selectable={true} selectMirror={true} dayMaxEvents={true} nowIndicator={true} buttonText={{
-            today: t('calendar_today'),
-            month: t('calendar_month'),
-            week: t('calendar_week'),
-            day: t('calendar_day')
-          }} eventDisplay="block" eventContent={arg => <div className="text-xs p-1 overflow-hidden">
-                  <div className="font-semibold truncate">{arg.event.title}</div>
-                  {!isMobile && arg.event.extendedProps.operationType && <div className="text-muted-foreground truncate">
-                      {arg.event.extendedProps.operationType}
-                    </div>}
-                </div>} />
+            <FullCalendar plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]} 
+              initialView="timeGridDay" 
+              headerToolbar={{
+                left: 'prev,next today',
+                center: 'title',
+                right: isMobile ? 'timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
+              }} 
+              events={calendarEvents} 
+              eventClick={handleDateChange} 
+              datesSet={handleDateChange} 
+              select={handleDateChange} 
+              height="100%" 
+              slotMinTime="08:00:00" 
+              slotMaxTime="24:00:00" 
+              weekends={true} 
+              allDaySlot={false} 
+              slotDuration="00:30:00" 
+              firstDay={1} 
+              locale={language} 
+              selectable={true} 
+              selectMirror={true} 
+              dayMaxEvents={true} 
+              nowIndicator={true} 
+              buttonText={{
+                today: t('calendar_today'),
+                month: t('calendar_month'),
+                week: t('calendar_week'),
+                day: t('calendar_day')
+              }} 
+              eventDisplay="block" 
+              eventContent={arg => <div className="text-xs p-1 overflow-hidden">
+                <div className="font-semibold truncate">{arg.event.title}</div>
+                {!isMobile && arg.event.extendedProps.operationType && 
+                  <div className="text-muted-foreground truncate">
+                    {arg.event.extendedProps.operationType}
+                  </div>
+                }
+              </div>} 
+            />
           </div>
         </Card>
       </div>
 
       {/* Appointments Section - Right Side */}
-      <div className="w-full md:w-1/2 h-auto md:max-h-[calc(100vh-4rem)]">
+      <div className="w-full md:w-1/2 h-auto md:max-h-[calc(100vh-2rem)]">
         <Card className="h-full bg-secondary/50 shadow-md">
-          <div className="p-4 h-full px-[25px]">
+          <div className="p-3 h-full">
             <AppointmentsList appointments={appointments} selectedDate={selectedDate} />
           </div>
         </Card>
