@@ -30,6 +30,7 @@ const Index = ({
   const [searchQuery, setSearchQuery] = useState("");
   const { t } = useLanguage();
   const [pageReady, setPageReady] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     // Set page as ready after a small delay to prevent flash of loading state
@@ -49,6 +50,15 @@ const Index = ({
       subscription.unsubscribe();
     };
   }, [navigate]);
+
+  // Track when user is actively searching
+  useEffect(() => {
+    if (searchQuery) {
+      setIsSearching(true);
+    } else {
+      setIsSearching(false);
+    }
+  }, [searchQuery]);
 
   const {
     data: patients,
@@ -90,8 +100,8 @@ const Index = ({
     }
   }, [location.pathname, navigate]);
 
-  // Show loading state when both conditions are true
-  if (!pageReady || isInitialLoading) {
+  // Show loading state only when page is first loading, not during search
+  if (!pageReady || (isInitialLoading && !isSearching)) {
     return <Loading text={view === "list" ? "Loading patients..." : "Loading calendar..."} />;
   }
 
@@ -136,7 +146,7 @@ const Index = ({
           {view === "list" && (
             <>
               <PatientFilter searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-              {isLoading ? (
+              {isLoading && !isSearching ? (
                 <div className="text-center py-12">
                   <Loading size="small" text={t('loading')} />
                 </div>
