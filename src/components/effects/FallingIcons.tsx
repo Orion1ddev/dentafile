@@ -1,10 +1,12 @@
+
 interface FallingIconProps {
-  delay?: string;
   iconType?: "tooth" | "tools";
-  left?: string;
+  left: string;
+  delay: string;
+  duration: string;
 }
 
-const FallingIcon = ({ delay = "0s", iconType = "tooth", left = "50%" }: FallingIconProps) => {
+const FallingIcon = ({ iconType = "tooth", left, delay, duration }: FallingIconProps) => {
   const iconSrc = iconType === "tooth" 
     ? "/lovable-uploads/8352edea-6585-4245-80e1-e9058d16e7be.png"
     : "/lovable-uploads/59206af8-de49-412c-95ca-b26114eeb916.png";
@@ -13,9 +15,11 @@ const FallingIcon = ({ delay = "0s", iconType = "tooth", left = "50%" }: Falling
     <div 
       className="absolute animate-fall"
       style={{ 
-        animationDelay: delay,
         left,
-        top: '-50px'
+        top: '-50px',
+        animationDelay: delay,
+        animationDuration: duration,
+        animationIterationCount: 'infinite'
       }}
     >
       <img 
@@ -28,18 +32,33 @@ const FallingIcon = ({ delay = "0s", iconType = "tooth", left = "50%" }: Falling
 };
 
 export const FallingIcons = () => {
+  // Create an array of icons with varied positions, delays and durations
+  const icons = [
+    { id: 1, type: "tooth", left: "10%", delay: "0s", duration: "15s" },
+    { id: 2, type: "tools", left: "25%", delay: "2s", duration: "18s" },
+    { id: 3, type: "tooth", left: "35%", delay: "0.7s", duration: "12s" },
+    { id: 4, type: "tools", left: "48%", delay: "1.2s", duration: "20s" },
+    { id: 5, type: "tooth", left: "60%", delay: "3.1s", duration: "17s" },
+    { id: 6, type: "tools", left: "75%", delay: "0.3s", duration: "13s" },
+    { id: 7, type: "tooth", left: "85%", delay: "2.5s", duration: "16s" },
+    { id: 8, type: "tools", left: "15%", delay: "4s", duration: "19s" },
+    { id: 9, type: "tooth", left: "40%", delay: "1.8s", duration: "14s" },
+    { id: 10, type: "tools", left: "65%", delay: "0.5s", duration: "16s" },
+    { id: 11, type: "tooth", left: "90%", delay: "1.5s", duration: "18s" },
+    { id: 12, type: "tools", left: "5%", delay: "3.5s", duration: "15s" },
+  ];
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <FallingIcon delay="0s" iconType="tooth" left="15%" />
-      <FallingIcon delay="0.5s" iconType="tools" left="35%" />
-      <FallingIcon delay="1s" iconType="tooth" left="55%" />
-      <FallingIcon delay="1.5s" iconType="tools" left="75%" />
-      <FallingIcon delay="2s" iconType="tooth" left="25%" />
-      <FallingIcon delay="2.5s" iconType="tools" left="65%" />
-      <FallingIcon delay="3s" iconType="tooth" left="45%" />
-      <FallingIcon delay="3.5s" iconType="tools" left="85%" />
-      <FallingIcon delay="4s" iconType="tooth" left="5%" />
-      <FallingIcon delay="4.5s" iconType="tools" left="95%" />
+      {icons.map((icon) => (
+        <FallingIcon 
+          key={icon.id}
+          iconType={icon.type as "tooth" | "tools"} 
+          left={icon.left} 
+          delay={icon.delay}
+          duration={icon.duration}
+        />
+      ))}
     </div>
   );
 };
