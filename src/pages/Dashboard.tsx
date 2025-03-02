@@ -149,7 +149,7 @@ const Dashboard = () => {
       </nav>
 
       <main className="flex-1 container px-[190px]">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-0 px-0 py-[25px]">
           {dashboardTiles.map((tile, index) => <div key={index} onClick={() => tile.href && navigate(tile.href)} className={`
                 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300
                 ${tile.href ? 'cursor-pointer transform hover:-translate-y-1' : ''}
