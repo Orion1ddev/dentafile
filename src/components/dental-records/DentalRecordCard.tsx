@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
@@ -5,6 +6,9 @@ import { format } from "date-fns";
 import { DentalRecordEditDialog } from "../DentalRecordEditDialog";
 import { DentalNoteEditDialog } from "./DentalNoteEditDialog";
 import { useLanguage } from "@/stores/useLanguage";
+import { useState } from "react";
+import { ImageViewer } from "./ImageViewer";
+
 interface DentalRecord {
   id: string;
   visit_date: string;
@@ -15,21 +19,23 @@ interface DentalRecord {
   appointment_time: string | null;
   operation_type: string | null;
 }
+
 interface DentalRecordCardProps {
   record: DentalRecord;
   patientId: string;
   onDelete: (recordId: string) => void;
   isAppointment?: boolean;
 }
+
 export const DentalRecordCard = ({
   record,
   patientId,
   onDelete,
   isAppointment = false
 }: DentalRecordCardProps) => {
-  const {
-    t
-  } = useLanguage();
+  const { t } = useLanguage();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  
   const formatDisplayDate = (dateString: string) => {
     try {
       return format(new Date(dateString), 'dd.MM.yyyy');
@@ -38,11 +44,22 @@ export const DentalRecordCard = ({
       return dateString;
     }
   };
+  
   const formatTime = (time: string | null) => {
     if (!time) return '';
     return time.substring(0, 5); // Only show HH:mm, removing seconds
   };
-  return <Card key={record.id} className="bg-secondary">
+  
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+  };
+  
+  const closeImageViewer = () => {
+    setSelectedImage(null);
+  };
+
+  return (
+    <Card key={record.id} className="bg-secondary">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <CardTitle className="text-lg">
           {formatDisplayDate(record.visit_date)}
@@ -57,19 +74,44 @@ export const DentalRecordCard = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {isAppointment && <div>
+          {isAppointment && (
+            <div>
               <p><strong>{t('operation_type')}:</strong> {record.operation_type || 'N/A'}</p>
               <p><strong>{t('diagnosis')}:</strong> {record.diagnosis || 'N/A'}</p>
               <p><strong>{t('treatment')}:</strong> {record.treatment || 'N/A'}</p>
-            </div>}
+            </div>
+          )}
           <p className="my-[4px]"><strong>{t('notes')}:</strong> {record.notes || 'N/A'}</p>
-          {record.images && record.images.length > 0 && <div>
+          {record.images && record.images.length > 0 && (
+            <div>
               <h4 className="font-semibold mb-2">{t('photos')}</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {record.images.map((image, index) => <img key={index} src={image} alt={`Dental record ${index + 1}`} className="rounded-lg w-full aspect-square object-contain" />)}
+                {record.images.map((image, index) => (
+                  <div 
+                    key={index} 
+                    className="cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity border border-gray-200"
+                    onClick={() => handleImageClick(image)}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`Dental record ${index + 1}`} 
+                      className="rounded-lg w-full aspect-square object-contain" 
+                    />
+                  </div>
+                ))}
               </div>
-            </div>}
+            </div>
+          )}
         </div>
       </CardContent>
-    </Card>;
+      
+      {selectedImage && (
+        <ImageViewer 
+          isOpen={!!selectedImage} 
+          onClose={closeImageViewer} 
+          imageUrl={selectedImage} 
+        />
+      )}
+    </Card>
+  );
 };
