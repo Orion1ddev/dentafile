@@ -1,13 +1,17 @@
+
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { PatientFormData } from "./types";
+import { useLanguage } from "@/stores/useLanguage";
 
 interface PatientBasicInfoProps {
   form: UseFormReturn<PatientFormData>;
 }
 
 export const PatientBasicInfo = ({ form }: PatientBasicInfoProps) => {
+  const { t } = useLanguage();
+  
   return (
     <>
       <FormField
@@ -15,7 +19,7 @@ export const PatientBasicInfo = ({ form }: PatientBasicInfoProps) => {
         name="first_name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>First Name</FormLabel>
+            <FormLabel>{t('first_name')}</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -28,7 +32,7 @@ export const PatientBasicInfo = ({ form }: PatientBasicInfoProps) => {
         name="last_name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Last Name</FormLabel>
+            <FormLabel>{t('last_name')}</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>

@@ -49,6 +49,35 @@ const fallbackTranslations: Translation[] = [
   { key: 'no_appointments', en: 'No appointments for this day', tr: 'Bu gün için randevu yok' },
   { key: 'appointments', en: 'Appointments', tr: 'Randevular' },
   { key: 'consultation', en: 'Consultation', tr: 'Konsültasyon' },
+  
+  // Patient Form translations
+  { key: 'add_patient', en: 'Add Patient', tr: 'Hasta Ekle' },
+  { key: 'edit_patient', en: 'Edit Patient', tr: 'Hastayı Düzenle' },
+  { key: 'patient_created', en: 'Patient created successfully', tr: 'Hasta başarıyla oluşturuldu' },
+  { key: 'patient_updated', en: 'Patient updated successfully', tr: 'Hasta başarıyla güncellendi' },
+  { key: 'first_name', en: 'First Name', tr: 'Ad' },
+  { key: 'last_name', en: 'Last Name', tr: 'Soyad' },
+  { key: 'email', en: 'Email', tr: 'E-posta' },
+  { key: 'phone', en: 'Phone', tr: 'Telefon' },
+  { key: 'save_changes', en: 'Save Changes', tr: 'Değişiklikleri Kaydet' },
+  
+  // Dental Record Form translations
+  { key: 'add_dental_record', en: 'Add Dental Record', tr: 'Diş Kaydı Ekle' },
+  { key: 'edit_dental_record', en: 'Edit Dental Record', tr: 'Diş Kaydını Düzenle' },
+  { key: 'add_record', en: 'Add Record', tr: 'Kayıt Ekle' },
+  { key: 'record_added', en: 'Dental record added successfully', tr: 'Diş kaydı başarıyla eklendi' },
+  { key: 'visit_date', en: 'Visit Date', tr: 'Ziyaret Tarihi' },
+  { key: 'time', en: 'Time', tr: 'Zaman' },
+  { key: 'operation_type', en: 'Operation Type', tr: 'İşlem Türü' },
+  { key: 'diagnosis', en: 'Diagnosis', tr: 'Teşhis' },
+  { key: 'treatment', en: 'Treatment', tr: 'Tedavi' },
+  { key: 'notes', en: 'Notes', tr: 'Notlar' },
+  { key: 'images', en: 'Images', tr: 'Resimler' },
+  { key: 'appointment_updated', en: 'Appointment updated successfully', tr: 'Randevu başarıyla güncellendi' },
+  { key: 'edit_appointment', en: 'Edit Appointment', tr: 'Randevuyu Düzenle' },
+  { key: 'update_appointment', en: 'Update Appointment', tr: 'Randevuyu Güncelle' },
+  { key: 'light_mode', en: 'Light mode', tr: 'Aydınlık mod' },
+  { key: 'sign_out_error', en: 'Error signing out', tr: 'Çıkış yaparken hata oluştu' },
 ];
 
 export const useLanguage = create<LanguageState>((set, get) => ({

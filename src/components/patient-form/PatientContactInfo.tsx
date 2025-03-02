@@ -1,13 +1,17 @@
+
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { PatientFormData } from "./types";
+import { useLanguage } from "@/stores/useLanguage";
 
 interface PatientContactInfoProps {
   form: UseFormReturn<PatientFormData>;
 }
 
 export const PatientContactInfo = ({ form }: PatientContactInfoProps) => {
+  const { t } = useLanguage();
+  
   return (
     <>
       <FormField
@@ -15,7 +19,7 @@ export const PatientContactInfo = ({ form }: PatientContactInfoProps) => {
         name="email"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Email</FormLabel>
+            <FormLabel>{t('email')}</FormLabel>
             <FormControl>
               <Input type="email" {...field} />
             </FormControl>
@@ -28,7 +32,7 @@ export const PatientContactInfo = ({ form }: PatientContactInfoProps) => {
         name="phone"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Phone</FormLabel>
+            <FormLabel>{t('phone')}</FormLabel>
             <FormControl>
               <Input type="tel" {...field} />
             </FormControl>
