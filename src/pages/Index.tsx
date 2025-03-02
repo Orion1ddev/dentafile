@@ -31,6 +31,7 @@ const Index = ({
   const { t } = useLanguage();
   const [pageReady, setPageReady] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     // Set page as ready after a small delay to prevent flash of loading state
@@ -40,6 +41,7 @@ const Index = ({
 
     // Cleanup auth subscription
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state change in Index page:', event);
       if (!session) {
         navigate("/auth");
       }
@@ -49,6 +51,19 @@ const Index = ({
       clearTimeout(timer);
       subscription.unsubscribe();
     };
+  }, [navigate]);
+
+  // Verify auth state on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        console.log('No session found in Index page, redirecting to auth');
+        navigate("/auth");
+      }
+    };
+    
+    checkAuth();
   }, [navigate]);
 
   // Track when user is actively searching
@@ -64,34 +79,61 @@ const Index = ({
     data: patients,
     isLoading,
     error,
-    isInitialLoading
+    isInitialLoading,
+    refetch
   } = useQuery({
     queryKey: ['patients', searchQuery],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-      
-      let query = supabase.from('patients')
-        .select('*, dental_records(*)')
-        .eq('user_id', user.id)
-        .order('pinned', { ascending: false })
-        .order('created_at', { ascending: false });
-      
-      if (searchQuery) {
-        query = query.or(`first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%`);
+      try {
+        console.log('Fetching patients data, search query:', searchQuery);
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          console.error('No authenticated user found when fetching patients');
+          throw new Error("Not authenticated");
+        }
+        
+        console.log('User authenticated, user ID:', user.id);
+        let query = supabase.from('patients')
+          .select('*, dental_records(*)')
+          .eq('user_id', user.id)
+          .order('pinned', { ascending: false })
+          .order('created_at', { ascending: false });
+        
+        if (searchQuery) {
+          query = query.or(`first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%`);
+        }
+        
+        const { data, error } = await query;
+        
+        if (error) {
+          console.error('Supabase query error:', error);
+          throw error;
+        }
+        
+        console.log(`Successfully fetched ${data?.length || 0} patients`);
+        return data as Patient[];
+      } catch (error) {
+        console.error('Error in patients query:', error);
+        throw error;
       }
-      
-      const { data, error } = await query;
-      if (error) throw error;
-      return data as Patient[];
     },
-    retry: 1,
+    retry: 2,
     staleTime: 60000 // 1 minute
   });
 
-  if (error) {
-    toast.error("Error loading patients");
-  }
+  // Handle error with retry button
+  useEffect(() => {
+    if (error) {
+      console.error('Error loading patients:', error);
+      toast.error("Error loading patients. Please try again.");
+    }
+  }, [error]);
+
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    refetch();
+  };
 
   // If we're at the root path, redirect to /patients
   useEffect(() => {
@@ -103,6 +145,22 @@ const Index = ({
   // Show loading state only when page is first loading, not during search
   if (!pageReady || (isInitialLoading && !isSearching)) {
     return <Loading text={view === "list" ? "Loading patients..." : "Loading calendar..."} />;
+  }
+
+  // If there's an error, show an error message with a retry button
+  if (error && !isSearching) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+        <BackgroundEffect />
+        <div className="text-center max-w-md">
+          <h2 className="text-xl font-semibold mb-4">Unable to load data</h2>
+          <p className="mb-6 text-muted-foreground">There was a problem connecting to the database. Please check your connection and try again.</p>
+          <Button onClick={handleRetry}>
+            Retry Connection
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -152,13 +210,23 @@ const Index = ({
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                  {patients?.map(patient => (
-                    <PatientCard 
-                      key={patient.id} 
-                      patient={patient} 
-                      onClick={() => navigate(`/patient/${patient.id}`)} 
-                    />
-                  ))}
+                  {patients?.length ? (
+                    patients.map(patient => (
+                      <PatientCard 
+                        key={patient.id} 
+                        patient={patient} 
+                        onClick={() => navigate(`/patient/${patient.id}`)} 
+                      />
+                    ))
+                  ) : (
+                    <div className="col-span-2 text-center py-12">
+                      {searchQuery ? (
+                        <p className="text-muted-foreground">No patients found matching your search</p>
+                      ) : (
+                        <p className="text-muted-foreground">No patients found. Add your first patient to get started.</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </>

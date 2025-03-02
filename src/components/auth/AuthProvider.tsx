@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Loading } from "@/components/ui/loading";
+import { toast } from "sonner";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -22,29 +23,41 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
     
     const initializeAuth = async () => {
       try {
+        console.log('Initializing authentication state...');
+        
         // Add a timeout to prevent infinite loading
         const timeoutId = setTimeout(() => {
           if (mounted && isLoading) {
             console.log('Auth initialization timed out, proceeding as unauthenticated');
             handleUnauthenticated();
           }
-        }, 3000); // Reduced timeout from 5000ms to 3000ms
+        }, 3000);
 
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
         
         // Clear timeout as we got a response
         clearTimeout(timeoutId);
         
         if (!mounted) return;
         
+        if (error) {
+          console.error('Error getting session:', error);
+          toast.error('Failed to authenticate. Please try again.');
+          handleUnauthenticated();
+          return;
+        }
+        
         if (session) {
+          console.log('Session found, user is authenticated');
           handleAuthenticated();
         } else {
+          console.log('No session found, user is unauthenticated');
           handleUnauthenticated();
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
         if (mounted) {
+          toast.error('Authentication error. Please reload the page.');
           handleUnauthenticated();
         }
       } finally {
