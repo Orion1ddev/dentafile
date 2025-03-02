@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Loading } from "@/components/ui/loading";
 import { toast } from "sonner";
 
 interface AuthProviderProps {
@@ -117,7 +116,17 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
   }, [onAuthStateChange, queryClient, navigate, location.pathname]);
 
   if (isLoading) {
-    return <Loading fullScreen text="Initializing application..." size="medium" />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background/50">
+        <div className="relative flex flex-col items-center">
+          <div className="h-16 w-16 relative">
+            <div className="absolute inset-0 rounded-full border-t-2 border-primary animate-spin"></div>
+            <div className="absolute inset-0 rounded-full border-t-2 border-primary/30 animate-pulse"></div>
+          </div>
+          <p className="mt-4 text-muted-foreground animate-pulse">Loading application...</p>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;

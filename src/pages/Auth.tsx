@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,7 +50,7 @@ const Auth = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col md:flex-row font-['Roboto']">
+    <div className="min-h-screen bg-white flex flex-col md:flex-row font-['Roboto'] animate-fade-in">
       {/* Left side - Welcome content */}
       {!isMobile && (
         <div className="w-full md:w-1/2 bg-primary p-6 md:p-12 text-white flex flex-col justify-center relative overflow-hidden">
