@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
+import { Loading } from "@/components/ui/loading";
 
 interface AuthProviderProps {
   children: React.ReactNode;

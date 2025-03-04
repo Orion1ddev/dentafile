@@ -62,12 +62,14 @@ export const useAppointments = (selectedDate: Date) => {
         return data || [];
       } catch (error) {
         console.error('Error in appointments query:', error);
-        return [];
+        throw error;
       }
     },
     enabled: !!selectedDate,
-    retry: 2,
-    staleTime: 30000
+    retry: 3,
+    retryDelay: (attempt) => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
+    staleTime: 30000,
+    refetchOnMount: true
   });
 
   const { data: monthlyAppointments, isLoading: monthlyLoading, error: monthlyError } = useQuery<DentalRecord[]>({
@@ -102,11 +104,13 @@ export const useAppointments = (selectedDate: Date) => {
         return data || [];
       } catch (error) {
         console.error('Error in monthly appointments query:', error);
-        return [];
+        throw error;
       }
     },
-    retry: 2,
-    staleTime: 60000
+    retry: 3,
+    retryDelay: (attempt) => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
+    staleTime: 60000,
+    refetchOnMount: true
   });
 
   // Log errors to help with debugging
