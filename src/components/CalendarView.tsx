@@ -11,6 +11,9 @@ import { addHours, parseISO } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLanguage } from "@/stores/useLanguage";
 import { Loading } from "@/components/ui/loading";
+import { Button } from "./ui/button";
+import { CalendarPlus } from "lucide-react";
+import { DentalRecordFormDialog } from "./DentalRecordFormDialog";
 
 export const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -76,79 +79,94 @@ export const CalendarView = () => {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col md:flex-row gap-1 p-0">
-      {/* Calendar Section - Left Side - Now 2/3 width */}
-      <div className="w-full md:w-2/3 h-[600px] md:h-[calc(100vh-1rem)]">
-        <Card className="h-full overflow-hidden bg-secondary/50 shadow-md w-full rounded-none md:rounded-lg">
-          <div className="h-full" style={{
-            '--fc-page-bg-color': 'transparent'
-          } as React.CSSProperties}>
-            {isLoading && !isDataReady ? (
-              <div className="h-full flex items-center justify-center">
-                <Loading text={t('loading_calendar')} size="medium" />
-              </div>
-            ) : (
-              <FullCalendar 
-                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]} 
-                initialView="timeGridDay" 
-                headerToolbar={{
-                  left: 'prev,next today',
-                  center: 'title',
-                  right: isMobile ? 'timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
-                }} 
-                events={calendarEvents} 
-                eventClick={handleDateChange} 
-                datesSet={handleDateChange} 
-                select={handleDateChange} 
-                height="100%" 
-                slotMinTime="08:00:00" 
-                slotMaxTime="24:00:00" 
-                weekends={true} 
-                allDaySlot={false} 
-                slotDuration="00:30:00" 
-                firstDay={1} 
-                locale={language} 
-                selectable={true} 
-                selectMirror={true} 
-                dayMaxEvents={true} 
-                nowIndicator={true} 
-                buttonText={{
-                  today: t('calendar_today'),
-                  month: t('calendar_month'),
-                  week: t('calendar_week'),
-                  day: t('calendar_day')
-                }} 
-                eventDisplay="block" 
-                eventContent={arg => (
-                  <div className="text-xs p-1 overflow-hidden">
-                    <div className="font-semibold truncate">{arg.event.title}</div>
-                    {!isMobile && arg.event.extendedProps.operationType && (
-                      <div className="text-muted-foreground truncate">
-                        {arg.event.extendedProps.operationType}
-                      </div>
-                    )}
-                  </div>
-                )} 
-              />
-            )}
-          </div>
-        </Card>
+    <>
+      {/* Add Appointment Button at the top */}
+      <div className="w-full flex justify-end p-2 bg-background">
+        <DentalRecordFormDialog 
+          patientId="" 
+          trigger={
+            <Button>
+              <CalendarPlus className="h-4 w-4 mr-2" />
+              {t('add_appointment')}
+            </Button>
+          }
+        />
       </div>
+      
+      <div className="w-full h-screen flex flex-col md:flex-row gap-1 p-0">
+        {/* Calendar Section - Left Side - Now 2/3 width */}
+        <div className="w-full md:w-2/3 h-[600px] md:h-[calc(100vh-1rem)]">
+          <Card className="h-full overflow-hidden bg-secondary/50 shadow-md w-full rounded-none md:rounded-lg">
+            <div className="h-full" style={{
+              '--fc-page-bg-color': 'transparent'
+            } as React.CSSProperties}>
+              {isLoading && !isDataReady ? (
+                <div className="h-full flex items-center justify-center">
+                  <Loading text={t('loading_calendar')} size="medium" />
+                </div>
+              ) : (
+                <FullCalendar 
+                  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]} 
+                  initialView="timeGridDay" 
+                  headerToolbar={{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: isMobile ? 'timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
+                  }} 
+                  events={calendarEvents} 
+                  eventClick={handleDateChange} 
+                  datesSet={handleDateChange} 
+                  select={handleDateChange} 
+                  height="100%" 
+                  slotMinTime="08:00:00" 
+                  slotMaxTime="24:00:00" 
+                  weekends={true} 
+                  allDaySlot={false} 
+                  slotDuration="00:30:00" 
+                  firstDay={1} 
+                  locale={language} 
+                  selectable={true} 
+                  selectMirror={true} 
+                  dayMaxEvents={true} 
+                  nowIndicator={true} 
+                  buttonText={{
+                    today: t('calendar_today'),
+                    month: t('calendar_month'),
+                    week: t('calendar_week'),
+                    day: t('calendar_day')
+                  }} 
+                  eventDisplay="block" 
+                  eventContent={arg => (
+                    <div className="text-xs p-1 overflow-hidden">
+                      <div className="font-semibold truncate">{arg.event.title}</div>
+                      {!isMobile && arg.event.extendedProps.operationType && (
+                        <div className="text-muted-foreground truncate">
+                          {arg.event.extendedProps.operationType}
+                        </div>
+                      )}
+                    </div>
+                  )} 
+                />
+              )}
+            </div>
+          </Card>
+        </div>
 
-      {/* Appointments Section - Right Side - Now 1/3 width */}
-      <div className="w-full md:w-1/3 h-auto md:h-[calc(100vh-1rem)]">
-        <Card className="h-full bg-secondary/50 shadow-md rounded-none md:rounded-lg">
-          <div className="p-2 h-full">
-            {isLoading && !isDataReady ? (
-              <div className="h-full flex items-center justify-center">
-                <Loading text={t('loading_appointments')} size="medium" />
-              </div>
-            ) : (
-              <AppointmentsList appointments={appointments} selectedDate={selectedDate} />
-            )}
-          </div>
-        </Card>
+        {/* Appointments Section - Right Side - Now 1/3 width */}
+        <div className="w-full md:w-1/3 h-auto md:h-[calc(100vh-1rem)]">
+          <Card className="h-full bg-secondary/50 shadow-md rounded-none md:rounded-lg">
+            <div className="p-2 h-full">
+              {isLoading && !isDataReady ? (
+                <div className="h-full flex items-center justify-center">
+                  <Loading text={t('loading_appointments')} size="medium" />
+                </div>
+              ) : (
+                <AppointmentsList appointments={appointments} selectedDate={selectedDate} />
+              )}
+            </div>
+          </Card>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

@@ -1,8 +1,6 @@
+
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/stores/useLanguage";
-import { PatientFormDialog } from "./PatientFormDialog";
-import { Button } from "./ui/button";
-import { Pencil } from "lucide-react";
 
 interface PatientInfoProps {
   patient: {
@@ -33,16 +31,6 @@ export const PatientInfo = ({ patient }: PatientInfoProps) => {
               <p>{capitalizeFirstLetter(t('contact'))}: {patient.phone || 'N/A'} • {patient.email || 'N/A'}</p>
             </div>
           </div>
-          <PatientFormDialog 
-            patientId={patient.id} 
-            mode="edit"
-            trigger={
-              <Button variant="outline" size="sm">
-                <Pencil className="h-4 w-4 mr-2" />
-                {t('edit_patient')}
-              </Button>
-            }
-          />
         </div>
       </CardHeader>
     </Card>

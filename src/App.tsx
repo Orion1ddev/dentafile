@@ -26,7 +26,9 @@ const queryClient = new QueryClient({
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [translationsLoaded, setTranslationsLoaded] = useState(false);
-  const { fetchTranslations, isLoading: translationsLoading } = useLanguage();
+  const { fetchTranslations } = useLanguage();
+  const languageState = useLanguage();
+  const translationsLoading = 'isLoading' in languageState ? languageState.isLoading : false;
 
   useEffect(() => {
     const initTranslations = async () => {

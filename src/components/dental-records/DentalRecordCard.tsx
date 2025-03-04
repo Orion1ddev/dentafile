@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { format } from "date-fns";
-import { DentalRecordEditDialog } from "../DentalRecordEditDialog";
 import { DentalNoteEditDialog } from "./DentalNoteEditDialog";
 import { useLanguage } from "@/stores/useLanguage";
 import { useState } from "react";
@@ -66,7 +65,8 @@ export const DentalRecordCard = ({
           {isAppointment && record.appointment_time && ` - ${formatTime(record.appointment_time)}`}
         </CardTitle>
         <div className="flex items-center gap-2">
-          {isAppointment ? <DentalRecordEditDialog record={record} patientId={patientId} /> : <DentalNoteEditDialog record={record} patientId={patientId} />}
+          {/* Only show edit button for notes, not appointments */}
+          {!isAppointment && <DentalNoteEditDialog record={record} patientId={patientId} />}
           <Button variant="destructive" size="icon" onClick={() => onDelete(record.id)}>
             <Trash2 className="h-4 w-4" />
           </Button>
