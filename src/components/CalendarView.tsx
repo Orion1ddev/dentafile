@@ -58,8 +58,8 @@ export const CalendarView = () => {
   
   return (
     <div className="w-full h-screen flex flex-col md:flex-row gap-1 p-0">
-      {/* Calendar Section - Left Side */}
-      <div className="w-full md:w-1/2 h-[600px] md:h-[calc(100vh-1rem)]">
+      {/* Calendar Section - Left Side - Now 2/3 width */}
+      <div className="w-full md:w-2/3 h-[600px] md:h-[calc(100vh-1rem)]">
         <Card className="h-full overflow-hidden bg-secondary/50 shadow-md w-full rounded-none md:rounded-lg">
           <div className="h-full" style={{
             '--fc-page-bg-color': 'transparent'
@@ -110,8 +110,8 @@ export const CalendarView = () => {
         </Card>
       </div>
 
-      {/* Appointments Section - Right Side */}
-      <div className="w-full md:w-1/2 h-auto md:h-[calc(100vh-1rem)]">
+      {/* Appointments Section - Right Side - Now 1/3 width */}
+      <div className="w-full md:w-1/3 h-auto md:h-[calc(100vh-1rem)]">
         <Card className="h-full bg-secondary/50 shadow-md rounded-none md:rounded-lg">
           <div className="p-2 h-full">
             <AppointmentsList appointments={appointments} selectedDate={selectedDate} />
