@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
@@ -6,6 +7,19 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+
+// Add missing translations to the store
+const loginTranslations = {
+  login_title: { en: "Sign in to your account", tr: "Hesabınıza giriş yapın" },
+  login: { en: "Sign in", tr: "Giriş yap" },
+  logging_in: { en: "Signing in...", tr: "Giriş yapılıyor..." },
+  email: { en: "Email", tr: "E-posta" },
+  password: { en: "Password", tr: "Şifre" },
+  create_account: { en: "Create account", tr: "Hesap oluştur" },
+  login_success: { en: "Successfully signed in", tr: "Başarıyla giriş yapıldı" },
+  login_error: { en: "Failed to sign in", tr: "Giriş yapılamadı" },
+  all_fields_required: { en: "All fields are required", tr: "Tüm alanlar gereklidir" }
+};
 
 const LoginForm = () => {
   const { t } = useLanguage();

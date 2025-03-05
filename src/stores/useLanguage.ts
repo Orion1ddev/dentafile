@@ -16,6 +16,17 @@ interface LanguageState {
   fetchTranslations: () => Promise<void>;
 }
 
+// Auth page translations hardcoded to overcome placeholder issues
+const authPageTranslations: Translation[] = [
+  { key: 'welcome_title', en: 'Welcome to DentaFile - Your Partner in Dental Practice Management', tr: 'DentaFile\'a Hoş Geldiniz - Dental Muayene Yönetiminde Ortağınız' },
+  { key: 'patient_cards_title', en: 'Customizable Patient Cards', tr: 'Özelleştirilebilir Hasta Kartları' },
+  { key: 'patient_cards_desc', en: 'Design patient profiles to suit your needs with flexible, personalized fields', tr: 'İhtiyaçlarınıza uygun esnek ve kişiselleştirilmiş hasta profilleri oluşturun' },
+  { key: 'record_keeping_title', en: 'Seamless Dental Record Keeping', tr: 'Kesintisiz Randevu Kaydı Tutma' },
+  { key: 'record_keeping_desc', en: 'Organize and access comprehensive patient records securely and effortlessly', tr: 'Kapsamlı hasta kayıtlarını güvenli ve zahmetsizce düzenleyin ve erişin' },
+  { key: 'photo_storage_title', en: 'Secure Photo Storage', tr: 'Güvenli Fotoğraf Depolama' },
+  { key: 'photo_storage_desc', en: 'Store and manage dental images with HIPAA-compliant security', tr: 'Diş görüntülerini HIPAA uyumlu güvenlikle saklayın ve yönetin' },
+];
+
 const fallbackTranslations: Translation[] = [
   { key: 'good_morning', en: 'Good morning', tr: 'Günaydın' },
   { key: 'good_afternoon', en: 'Good afternoon', tr: 'İyi öğleden sonra' },
@@ -80,9 +91,12 @@ const fallbackTranslations: Translation[] = [
   { key: 'sign_out_error', en: 'Error signing out', tr: 'Çıkış yaparken hata oluştu' },
 ];
 
+// Combine auth-specific translations with fallback translations
+const allTranslations = [...authPageTranslations, ...fallbackTranslations];
+
 export const useLanguage = create<LanguageState>((set, get) => ({
   language: localStorage.getItem("language") || "en",
-  translations: fallbackTranslations,
+  translations: allTranslations, // Use combined translations as initial state
   setLanguage: (language: string) => {
     localStorage.setItem("language", language);
     set({ language });
@@ -104,34 +118,41 @@ export const useLanguage = create<LanguageState>((set, get) => ({
 
       if (error) {
         console.error('Error fetching translations:', error);
-        // Fallback to default translations if fetch fails
-        set({ translations: fallbackTranslations });
+        // Fallback to combined translations if fetch fails
+        set({ translations: allTranslations });
         return;
       }
 
       if (data && data.length > 0) {
-        // Merge database translations with fallback translations to ensure all keys exist
-        const mergedTranslations = [...fallbackTranslations];
+        // Create a map of all existing translations for quick lookups
+        const existingTranslationsMap = allTranslations.reduce((map, t) => {
+          map[t.key] = true;
+          return map;
+        }, {} as Record<string, boolean>);
         
-        // Add any unique translations from the database
+        // Start with our predefined translations
+        const mergedTranslations = [...allTranslations];
+        
+        // Add any unique translations from the database that aren't in our predefined list
         data.forEach(dbTranslation => {
-          const existingIndex = mergedTranslations.findIndex(t => t.key === dbTranslation.key);
-          if (existingIndex >= 0) {
-            mergedTranslations[existingIndex] = dbTranslation;
-          } else {
+          // Skip if it's an auth page translation we already have hardcoded
+          const isAuthTranslation = authPageTranslations.some(t => t.key === dbTranslation.key);
+          
+          if (!existingTranslationsMap[dbTranslation.key] && !isAuthTranslation) {
             mergedTranslations.push(dbTranslation);
+            existingTranslationsMap[dbTranslation.key] = true;
           }
         });
         
         set({ translations: mergedTranslations });
       } else {
-        // If no translations found in database, use fallback
-        set({ translations: fallbackTranslations });
+        // If no translations found in database, use combined translations
+        set({ translations: allTranslations });
       }
     } catch (error) {
       console.error('Error fetching translations:', error);
-      // Fallback to default translations if fetch fails
-      set({ translations: fallbackTranslations });
+      // Fallback to combined translations if fetch fails
+      set({ translations: allTranslations });
     }
   },
 }));
