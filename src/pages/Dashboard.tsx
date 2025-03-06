@@ -168,8 +168,8 @@ const Dashboard = () => {
                 
                 {tile.stats && <div className="grid grid-cols-2 gap-4 mt-4">
                     {tile.stats.map((stat, statIndex) => <div key={statIndex} className="text-center">
-                        <div className="text-2xl font-bold">{stat.value}</div>
-                        <div className="text-xs text-muted-foreground">{stat.label}</div>
+                        
+                        
                       </div>)}
                   </div>}
               </div>
