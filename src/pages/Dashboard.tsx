@@ -158,7 +158,7 @@ const Dashboard = () => {
               <div className={`h-48 ${tile.bgColor} relative`} style={{
             backgroundImage: tile.pattern
           }}>
-                <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center justify-center py-0">
                   {tile.icon}
                 </div>
               </div>
