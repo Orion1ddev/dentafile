@@ -5,11 +5,14 @@ import { NavMenu } from "@/components/NavMenu";
 import { FileText, Calendar, Settings, Sun, Heart } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const {
     t
   } = useLanguage();
+  
   useEffect(() => {
     const {
       data: {
@@ -22,6 +25,7 @@ const Dashboard = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
+
   const {
     data: userProfile
   } = useQuery({
@@ -41,6 +45,7 @@ const Dashboard = () => {
       return data;
     }
   });
+
   const {
     data: todayAppointments
   } = useQuery({
@@ -67,6 +72,7 @@ const Dashboard = () => {
       return data;
     }
   });
+
   const {
     data: pinnedPatients
   } = useQuery({
@@ -87,52 +93,66 @@ const Dashboard = () => {
     }
   });
 
-  // Dashboard tiles configuration - removed the theme box and rearranged the order
-  const dashboardTiles = [{
-    title: t('welcome'),
-    description: t('welcome_desc'),
-    icon: <Sun className="h-8 w-8 text-white" />,
-    bgColor: "bg-gradient-to-br from-pink-400 to-pink-600",
-    pattern: "radial-gradient(circle, rgba(255,255,255,0.2) 10%, transparent 10.5%) 0 0/20px 20px",
-    href: "",
-    stats: [{
-      label: t('today_appointments'),
-      value: todayAppointments?.length || 0
-    }, {
-      label: t('pinned_patients'),
-      value: pinnedPatients?.length || 0
-    }],
-    colSpan: "col-span-2" // Make welcome box span 2 columns
-  }, {
-    title: t('patient_records'),
-    description: t('manage_patients'),
-    icon: <FileText className="h-8 w-8 text-white" />,
-    bgColor: "bg-gradient-to-br from-gray-400 to-gray-600",
-    pattern: "linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent) 0 0/40px 40px",
-    href: "/patients"
-  }, {
-    title: t('calendar'),
-    description: t('manage_calendar'),
-    icon: <Calendar className="h-8 w-8 text-white" />,
-    bgColor: "bg-gradient-to-br from-blue-400 to-blue-600",
-    pattern: "radial-gradient(circle, rgba(255,255,255,0.2) 25%, transparent 25.5%) 0 0/40px 40px",
-    href: "/calendar"
-  }, {
-    title: t('settings'),
-    description: t('settings_desc'),
-    icon: <Settings className="h-8 w-8 text-white" />,
-    bgColor: "bg-gradient-to-br from-gray-300 to-gray-500",
-    pattern: "repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px)",
-    href: "/settings"
-  }, {
-    title: "Support DentaFile",
-    description: "Help us improve DentaFile by supporting our development.",
-    icon: <Heart className="h-8 w-8 text-white" />,
-    bgColor: "bg-gradient-to-br from-green-400 to-green-600",
-    pattern: "radial-gradient(circle, rgba(255,255,255,0.2) 10%, transparent 10.5%) 0 0/30px 30px",
-    href: "https://buymeacoffee.com/dentafile"
-  }];
-  return <div className="min-h-screen bg-background flex flex-col">
+  const dashboardTiles = [
+    {
+      title: t('welcome'),
+      description: t('welcome_desc'),
+      icon: <Sun className="h-8 w-8 text-white" />,
+      bgColor: "bg-gradient-to-br from-pink-400 to-pink-600",
+      pattern: "radial-gradient(circle, rgba(255,255,255,0.2) 10%, transparent 10.5%) 0 0/20px 20px",
+      href: "",
+      stats: [{
+        label: t('today_appointments'),
+        value: todayAppointments?.length || 0
+      }, {
+        label: t('pinned_patients'),
+        value: pinnedPatients?.length || 0
+      }],
+      colSpan: "col-span-2"
+    },
+    {
+      title: t('patient_records'),
+      description: t('manage_patients'),
+      icon: <FileText className="h-8 w-8 text-white" />,
+      bgColor: "bg-gradient-to-br from-gray-400 to-gray-600",
+      pattern: "linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent) 0 0/40px 40px",
+      href: "/patients"
+    },
+    {
+      title: t('calendar'),
+      description: t('manage_calendar'),
+      icon: <Calendar className="h-8 w-8 text-white" />,
+      bgColor: "bg-gradient-to-br from-blue-400 to-blue-600",
+      pattern: "radial-gradient(circle, rgba(255,255,255,0.2) 25%, transparent 25.5%) 0 0/40px 40px",
+      href: "/calendar"
+    },
+    {
+      title: t('settings'),
+      description: t('settings_desc'),
+      icon: <Settings className="h-8 w-8 text-white" />,
+      bgColor: "bg-gradient-to-br from-gray-300 to-gray-500",
+      pattern: "repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px)",
+      href: "/settings"
+    },
+    {
+      title: "Support DentaFile",
+      description: "Help us improve DentaFile by supporting our development.",
+      icon: <Heart className="h-8 w-8 text-white" />,
+      bgColor: "bg-gradient-to-br from-green-400 to-green-600",
+      pattern: "radial-gradient(circle, rgba(255,255,255,0.2) 10%, transparent 10.5%) 0 0/30px 30px",
+      href: "https://buymeacoffee.com/dentafile"
+    }
+  ];
+
+  return <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+      <div className="absolute inset-0 w-full h-full -z-10 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1920' height='1000' preserveAspectRatio='none' viewBox='0 0 1920 1000'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1026%26quot%3b)' fill='none'%3e%3crect width='1920' height='1000' x='0' y='0' fill='url(%26quot%3b%23SvgjsLinearGradient1027%26quot%3b)'%3e%3c/rect%3e%3cpath d='M1920 0L996.49 0L1920 271.72z' fill='rgba(255%2c 255%2c 255%2c .1)'%3e%3c/path%3e%3cpath d='M996.49 0L1920 271.72L1920 451.33000000000004L805.2 0z' fill='rgba(255%2c 255%2c 255%2c .075)'%3e%3c/path%3e%3cpath d='M805.2 0L1920 451.33000000000004L1920 789.07L773.3000000000001 0z' fill='rgba(255%2c 255%2c 255%2c .05)'%3e%3c/path%3e%3cpath d='M773.3 0L1920 789.07L1920 849.0500000000001L248.92999999999995 0z' fill='rgba(255%2c 255%2c 255%2c .025)'%3e%3c/path%3e%3cpath d='M0 1000L602.01 1000L0 838.37z' fill='rgba(0%2c 0%2c 0%2c .1)'%3e%3c/path%3e%3cpath d='M0 838.37L602.01 1000L1173.77 1000L0 657.21z' fill='rgba(0%2c 0%2c 0%2c .075)'%3e%3c/path%3e%3cpath d='M0 657.21L1173.77 1000L1568.02 1000L0 522.1700000000001z' fill='rgba(0%2c 0%2c 0%2c .05)'%3e%3c/path%3e%3cpath d='M0 522.1700000000001L1568.02 1000L1600.68 1000L0 239.3400000000001z' fill='rgba(0%2c 0%2c 0%2c .025)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1026'%3e%3crect width='1920' height='1000' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='11.98%25' y1='-23%25' x2='88.02%25' y2='123%25' gradientUnits='userSpaceOnUse' id='SvgjsLinearGradient1027'%3e%3cstop stop-color='%230e2a47' offset='0'%3e%3c/stop%3e%3cstop stop-color='%2300459e' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      ></div>
+      
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 px-[40px]">
@@ -148,7 +168,7 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      <main className="flex-1 container px-[190px]">
+      <main className="flex-1 container px-4 sm:px-6 md:px-[100px] lg:px-[190px] relative z-0">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-0 px-0 py-[25px]">
           {dashboardTiles.map((tile, index) => <div key={index} onClick={() => tile.href && navigate(tile.href)} className={`
                 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300
