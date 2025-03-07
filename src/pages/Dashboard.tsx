@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
@@ -144,14 +145,9 @@ const Dashboard = () => {
     }
   ];
 
-  return <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
-      <div className="absolute inset-0 w-full h-full -z-10 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1920' height='1000' preserveAspectRatio='none' viewBox='0 0 1920 1000'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1026%26quot%3b)' fill='none'%3e%3crect width='1920' height='1000' x='0' y='0' fill='url(%26quot%3b%23SvgjsLinearGradient1027%26quot%3b)'%3e%3c/rect%3e%3cpath d='M1920 0L996.49 0L1920 271.72z' fill='rgba(255%2c 255%2c 255%2c .1)'%3e%3c/path%3e%3cpath d='M996.49 0L1920 271.72L1920 451.33000000000004L805.2 0z' fill='rgba(255%2c 255%2c 255%2c .075)'%3e%3c/path%3e%3cpath d='M805.2 0L1920 451.33000000000004L1920 789.07L773.3000000000001 0z' fill='rgba(255%2c 255%2c 255%2c .05)'%3e%3c/path%3e%3cpath d='M773.3 0L1920 789.07L1920 849.0500000000001L248.92999999999995 0z' fill='rgba(255%2c 255%2c 255%2c .025)'%3e%3c/path%3e%3cpath d='M0 1000L602.01 1000L0 838.37z' fill='rgba(0%2c 0%2c 0%2c .1)'%3e%3c/path%3e%3cpath d='M0 838.37L602.01 1000L1173.77 1000L0 657.21z' fill='rgba(0%2c 0%2c 0%2c .075)'%3e%3c/path%3e%3cpath d='M0 657.21L1173.77 1000L1568.02 1000L0 522.1700000000001z' fill='rgba(0%2c 0%2c 0%2c .05)'%3e%3c/path%3e%3cpath d='M0 522.1700000000001L1568.02 1000L1600.68 1000L0 239.3400000000001z' fill='rgba(0%2c 0%2c 0%2c .025)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1026'%3e%3crect width='1920' height='1000' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='11.98%25' y1='-23%25' x2='88.02%25' y2='123%25' gradientUnits='userSpaceOnUse' id='SvgjsLinearGradient1027'%3e%3cstop stop-color='%230e2a47' offset='0'%3e%3c/stop%3e%3cstop stop-color='%2300459e' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      ></div>
+  return (
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+      <BackgroundEffect />
       
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -170,14 +166,22 @@ const Dashboard = () => {
 
       <main className="flex-1 container px-4 sm:px-6 md:px-[100px] lg:px-[190px] relative z-0">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-0 px-0 py-[25px]">
-          {dashboardTiles.map((tile, index) => <div key={index} onClick={() => tile.href && navigate(tile.href)} className={`
+          {dashboardTiles.map((tile, index) => (
+            <div 
+              key={index} 
+              onClick={() => tile.href && navigate(tile.href)} 
+              className={`
                 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300
                 ${tile.href ? 'cursor-pointer transform hover:-translate-y-1' : ''}
                 ${tile.colSpan || ''}
-              `}>
-              <div className={`h-48 ${tile.bgColor} relative`} style={{
-            backgroundImage: tile.pattern
-          }}>
+              `}
+            >
+              <div 
+                className={`h-48 ${tile.bgColor} relative`} 
+                style={{
+                  backgroundImage: tile.pattern
+                }}
+              >
                 <div className="absolute inset-0 flex items-center justify-center py-0">
                   {tile.icon}
                 </div>
@@ -186,16 +190,23 @@ const Dashboard = () => {
                 <h3 className="text-xl font-semibold mb-2">{tile.title}</h3>
                 <p className="text-sm text-muted-foreground mb-4">{tile.description}</p>
                 
-                {tile.stats && <div className="grid grid-cols-2 gap-4 mt-4">
-                    {tile.stats.map((stat, statIndex) => <div key={statIndex} className="text-center">
-                        
-                        
-                      </div>)}
-                  </div>}
+                {tile.stats && (
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    {tile.stats.map((stat, statIndex) => (
+                      <div key={statIndex} className="text-center">
+                        <div className="text-2xl font-bold">{stat.value}</div>
+                        <div className="text-xs text-muted-foreground">{stat.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>)}
+            </div>
+          ))}
         </div>
       </main>
-    </div>;
+    </div>
+  );
 };
+
 export default Dashboard;
