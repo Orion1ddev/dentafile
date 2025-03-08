@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
@@ -73,26 +74,6 @@ const Dashboard = () => {
     }
   });
 
-  const {
-    data: pinnedPatients
-  } = useQuery({
-    queryKey: ['pinned-patients'],
-    queryFn: async () => {
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-      const {
-        data,
-        error
-      } = await supabase.from('patients').select('*').eq('user_id', user.id).eq('pinned', true);
-      if (error) throw error;
-      return data;
-    }
-  });
-
   const dashboardTiles = [
     {
       title: t('welcome'),
@@ -104,9 +85,6 @@ const Dashboard = () => {
       stats: [{
         label: t('today_appointments'),
         value: todayAppointments?.length || 0
-      }, {
-        label: t('pinned_patients'),
-        value: pinnedPatients?.length || 0
       }],
       colSpan: "col-span-2"
     },
@@ -130,7 +108,7 @@ const Dashboard = () => {
       title: t('settings'),
       description: t('settings_desc'),
       icon: <Settings className="h-8 w-8 text-white" />,
-      bgColor: "bg-gradient-to-br from-gray-300 to-gray-500",
+      bgColor: "bg-gradient-to-br from-purple-400 to-purple-600",
       pattern: "repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px)",
       href: "/settings"
     },
@@ -190,7 +168,7 @@ const Dashboard = () => {
                 <p className="text-sm text-muted-foreground mb-4">{tile.description}</p>
                 
                 {tile.stats && (
-                  <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="grid grid-cols-1 gap-4 mt-4">
                     {tile.stats.map((stat, statIndex) => (
                       <div key={statIndex} className="text-center">
                         <div className="text-2xl font-bold">{stat.value}</div>
