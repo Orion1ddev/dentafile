@@ -93,7 +93,7 @@ const Auth = () => {
       )}
 
       {/* Right side - Auth forms */}
-      <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col relative bg-gray-50">
+      <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col relative bg-gradient-to-br from-gray-50 to-blue-50">
         {/* Language Toggle */}
         <div className="absolute top-4 right-4">
           <DropdownMenu>

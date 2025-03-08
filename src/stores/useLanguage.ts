@@ -25,6 +25,27 @@ const authPageTranslations: Translation[] = [
   { key: 'record_keeping_desc', en: 'Organize and access comprehensive patient records securely and effortlessly', tr: 'Kapsamlı hasta kayıtlarını güvenli ve zahmetsizce düzenleyin ve erişin' },
   { key: 'photo_storage_title', en: 'Secure Photo Storage', tr: 'Güvenli Fotoğraf Depolama' },
   { key: 'photo_storage_desc', en: 'Store and manage dental images with HIPAA-compliant security', tr: 'Diş görüntülerini HIPAA uyumlu güvenlikle saklayın ve yönetin' },
+  // Auth form translations
+  { key: 'login_title', en: 'Sign in to your account', tr: 'Hesabınıza giriş yapın' },
+  { key: 'login', en: 'Sign in', tr: 'Giriş yap' },
+  { key: 'logging_in', en: 'Signing in...', tr: 'Giriş yapılıyor...' },
+  { key: 'email', en: 'Email', tr: 'E-posta' },
+  { key: 'password', en: 'Password', tr: 'Şifre' },
+  { key: 'create_account', en: 'Create account', tr: 'Hesap oluştur' },
+  { key: 'login_success', en: 'Successfully signed in', tr: 'Başarıyla giriş yapıldı' },
+  { key: 'login_error', en: 'Failed to sign in', tr: 'Giriş yapılamadı' },
+  { key: 'all_fields_required', en: 'All fields are required', tr: 'Tüm alanlar gereklidir' },
+  { key: 'sign_up_title', en: 'Create a new account', tr: 'Yeni hesap oluştur' },
+  { key: 'additional_info', en: 'Additional Information', tr: 'Ek Bilgiler' },
+  { key: 'continue', en: 'Continue', tr: 'Devam et' },
+  { key: 'signing_up', en: 'Creating account...', tr: 'Hesap oluşturuluyor...' },
+  { key: 'complete_signup', en: 'Complete registration', tr: 'Kaydı tamamla' },
+  { key: 'back_to_login', en: 'Back to login', tr: 'Giriş sayfasına dön' },
+  { key: 'back', en: 'Back', tr: 'Geri' },
+  { key: 'first_name', en: 'First Name', tr: 'Ad' },
+  { key: 'last_name', en: 'Last Name', tr: 'Soyad' },
+  { key: 'signup_error', en: 'Failed to create account', tr: 'Hesap oluşturulamadı' },
+  { key: 'check_email_verification', en: 'Please check your email to verify your account', tr: 'Hesabınızı doğrulamak için e-postanızı kontrol edin' },
 ];
 
 const fallbackTranslations: Translation[] = [
