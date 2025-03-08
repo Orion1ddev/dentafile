@@ -1,3 +1,4 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonalInfoSettings } from "@/components/settings/PersonalInfoSettings";
 import { PasswordSettings } from "@/components/settings/PasswordSettings";
@@ -7,11 +8,12 @@ import { NavMenu } from "@/components/NavMenu";
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 const Settings = () => {
-  const {
-    t
-  } = useLanguage();
-  return <div className="min-h-screen bg-background">
+  const { t } = useLanguage();
+  
+  return (
+    <div className="min-h-screen bg-background">
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-[40px]">
           <div className="flex justify-between h-16">
@@ -26,6 +28,9 @@ const Settings = () => {
                   DentaFile
                 </h1>
               </Link>
+            </div>
+            <div className="flex items-center">
+              <NavMenu />
             </div>
           </div>
         </div>
@@ -50,8 +55,9 @@ const Settings = () => {
         <div className="fixed bottom-4 right-4">
           <BuyMeCoffeeButton />
         </div>
-        <NavMenu />
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Settings;
