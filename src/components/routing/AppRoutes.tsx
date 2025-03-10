@@ -1,4 +1,3 @@
-
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import { Loading } from "@/components/ui/loading";
