@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import { Loading } from "@/components/ui/loading";
@@ -8,7 +9,6 @@ const Index = lazy(() => import("@/pages/Index"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const PatientDetails = lazy(() => import("@/pages/PatientDetails"));
-const Calendar = lazy(() => import("@/pages/Calendar"));
 
 // Create skeleton screens for lazy-loaded components
 const DashboardSkeleton = () => (
