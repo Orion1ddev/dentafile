@@ -10,16 +10,10 @@ import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const {
-    t
-  } = useLanguage();
+  const { t } = useLanguage();
   
   useEffect(() => {
-    const {
-      data: {
-        subscription
-      }
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) {
         navigate("/auth");
       }
@@ -27,45 +21,27 @@ const Dashboard = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const {
-    data: userProfile
-  } = useQuery({
+  const { data: userProfile } = useQuery({
     queryKey: ['user-profile'],
     queryFn: async () => {
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
-      const {
-        data,
-        error
-      } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
       if (error) throw error;
       return data;
     }
   });
 
-  const {
-    data: todayAppointments
-  } = useQuery({
+  const { data: todayAppointments, isLoading: appointmentsLoading } = useQuery({
     queryKey: ['today-appointments'],
     queryFn: async () => {
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);
       const endOfDay = new Date();
       endOfDay.setHours(23, 59, 59, 999);
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
-      const {
-        data,
-        error
-      } = await supabase.from('dental_records').select(`
+      const { data, error } = await supabase.from('dental_records').select(`
           *,
           patient:patients(*)
         `).eq('patients.user_id', user.id).gte('visit_date', startOfDay.toISOString()).lte('visit_date', endOfDay.toISOString());
@@ -84,9 +60,10 @@ const Dashboard = () => {
       href: "",
       stats: [{
         label: t('today_appointments'),
-        value: todayAppointments?.length || 0
+        value: todayAppointments?.length || 0,
+        isLoading: appointmentsLoading
       }],
-      colSpan: "col-span-2"
+      colSpan: "col-span-2 md:col-span-2"
     },
     {
       title: t('patient_records'),
@@ -171,7 +148,11 @@ const Dashboard = () => {
                   <div className="grid grid-cols-1 gap-4 mt-4">
                     {tile.stats.map((stat, statIndex) => (
                       <div key={statIndex} className="text-center">
-                        <div className="text-2xl font-bold">{stat.value}</div>
+                        {stat.isLoading ? (
+                          <div className="h-8 w-16 mx-auto bg-gray-200 animate-pulse rounded"></div>
+                        ) : (
+                          <div className="text-2xl font-bold">{stat.value}</div>
+                        )}
                         <div className="text-xs text-muted-foreground">{stat.label}</div>
                       </div>
                     ))}
