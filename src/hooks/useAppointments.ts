@@ -1,8 +1,9 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfDay, endOfDay } from "date-fns";
+import { startOfDay, endOfDay, format } from "date-fns";
 import { toast } from "sonner";
+import { isDemoMode, getDemoAppointments } from "@/utils/demo";
 
 interface DentalRecord {
   id: string;
@@ -27,11 +28,20 @@ interface DentalRecord {
 }
 
 export const useAppointments = (selectedDate: Date) => {
+  const demoMode = isDemoMode();
+
   const { data: appointments, isLoading: appointmentsLoading, error: appointmentsError } = useQuery<DentalRecord[]>({
-    queryKey: ['appointments', selectedDate],
+    queryKey: ['appointments', selectedDate, demoMode],
     queryFn: async () => {
       try {
         console.log('Fetching appointments for date:', selectedDate);
+
+        // If in demo mode, return mock appointments
+        if (demoMode) {
+          console.log('Using demo appointments data');
+          return getDemoAppointments(selectedDate) as DentalRecord[];
+        }
+
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {
@@ -73,10 +83,17 @@ export const useAppointments = (selectedDate: Date) => {
   });
 
   const { data: monthlyAppointments, isLoading: monthlyLoading, error: monthlyError } = useQuery<DentalRecord[]>({
-    queryKey: ['monthly-appointments'],
+    queryKey: ['monthly-appointments', demoMode],
     queryFn: async () => {
       try {
         console.log('Fetching monthly appointments');
+
+        // If in demo mode, return all demo appointments
+        if (demoMode) {
+          console.log('Using demo monthly appointments data');
+          return getDemoAppointments() as DentalRecord[];
+        }
+
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {

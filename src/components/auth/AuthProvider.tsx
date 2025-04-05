@@ -5,7 +5,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/loading";
-import { initDemoData } from "@/utils/demoData";
+import { initDemoData, isDemoMode } from "@/utils/demo";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -27,10 +27,8 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         console.log('Initializing authentication state...');
         
         // Check if demo mode is enabled
-        const demoMode = localStorage.getItem('demoMode') === 'true';
-        
-        if (demoMode) {
-          console.log('Demo mode is enabled, skipping authentication');
+        if (isDemoMode()) {
+          console.log('Demo mode is enabled, initializing demo data');
           // Initialize demo data
           await initDemoData();
           handleAuthenticated();
@@ -91,9 +89,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
 
     const handleUnauthenticated = () => {
       // Check if demo mode is enabled
-      const demoMode = localStorage.getItem('demoMode') === 'true';
-      
-      if (demoMode) {
+      if (isDemoMode()) {
         handleAuthenticated();
         return;
       }
@@ -117,8 +113,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       if (!mounted) return;
       
       // Check if demo mode is enabled
-      const demoMode = localStorage.getItem('demoMode') === 'true';
-      if (demoMode) {
+      if (isDemoMode()) {
         // Don't update auth state for events in demo mode
         return;
       }

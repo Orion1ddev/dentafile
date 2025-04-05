@@ -2,6 +2,7 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import { Loading } from "@/components/ui/loading";
+import { isDemoMode } from "@/utils/demo";
 
 // Lazy load components for code splitting
 const Auth = lazy(() => import("@/pages/Auth"));
@@ -44,7 +45,7 @@ interface AppRoutesProps {
 
 export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
   const location = useLocation();
-  const isDemoMode = localStorage.getItem('demoMode') === 'true';
+  const demoMode = isDemoMode();
 
   // Clear any stuck loading states on route changes
   useEffect(() => {
@@ -66,29 +67,52 @@ export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
   };
 
   // In demo mode or when authenticated, show authenticated routes
-  if (isAuthenticated || isDemoMode) {
+  if (isAuthenticated || demoMode) {
     return (
       <Routes>
-        {[
-          { path: "/", element: <Dashboard />, fallback: <DashboardSkeleton /> },
-          { path: "/patients", element: <Index />, fallback: <DashboardSkeleton /> },
-          { path: "/calendar", element: <Index view="calendar" />, fallback: <DashboardSkeleton /> },
-          { path: "/patient/:id", element: <PatientDetails />, fallback: <PatientDetailsSkeleton /> },
-          { path: "/settings", element: <Settings />, fallback: <DashboardSkeleton /> },
-          // Redirect /auth to dashboard in demo mode
-          { path: "/auth/*", element: <Navigate to="/" replace /> },
-          { path: "*", element: <Navigate to="/" replace /> },
-        ].map(({ path, element, fallback }) => (
-          <Route
-            key={path}
-            path={path}
-            element={
-              <Suspense fallback={fallback || getFallback(path)}>
-                {element}
-              </Suspense>
-            }
-          />
-        ))}
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={<DashboardSkeleton />}>
+              <Dashboard />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/patients"
+          element={
+            <Suspense fallback={<DashboardSkeleton />}>
+              <Index />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <Suspense fallback={<DashboardSkeleton />}>
+              <Index view="calendar" />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/patient/:id"
+          element={
+            <Suspense fallback={<PatientDetailsSkeleton />}>
+              <PatientDetails />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <Suspense fallback={<DashboardSkeleton />}>
+              <Settings />
+            </Suspense>
+          }
+        />
+        {/* Redirect /auth to dashboard in demo mode */}
+        <Route path="/auth/*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
   }

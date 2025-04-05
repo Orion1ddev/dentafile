@@ -4,17 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useEffect, useCallback } from "react";
 import { getCachedOrFetch } from "@/utils/apiCache";
-import { getDemoPatients, DEMO_USER_ID } from "@/utils/demoData";
+import { getDemoPatients, isDemoMode } from "@/utils/demo";
 
 export const usePatients = (searchQuery: string) => {
-  const isDemoMode = localStorage.getItem('demoMode') === 'true';
+  const demoMode = isDemoMode();
 
   const fetchPatients = useCallback(async () => {
     try {
       console.log('Fetching patients data, search query:', searchQuery);
       
       // If in demo mode, return demo patients
-      if (isDemoMode) {
+      if (demoMode) {
         console.log('Using demo patients data');
         let patients = getDemoPatients();
         
@@ -61,11 +61,11 @@ export const usePatients = (searchQuery: string) => {
       console.error('Error in patients query:', error);
       throw error;
     }
-  }, [searchQuery, isDemoMode]);
+  }, [searchQuery, demoMode]);
 
   const getCacheKey = useCallback(() => {
-    return `patients_${searchQuery || 'all'}_${isDemoMode ? 'demo' : 'real'}`;
-  }, [searchQuery, isDemoMode]);
+    return `patients_${searchQuery || 'all'}_${demoMode ? 'demo' : 'real'}`;
+  }, [searchQuery, demoMode]);
 
   // We're still using react-query for memory caching and UI state management
   // but adding localStorage as a persistence layer
@@ -76,10 +76,10 @@ export const usePatients = (searchQuery: string) => {
     isInitialLoading,
     refetch
   } = useQuery({
-    queryKey: ['patients', searchQuery, isDemoMode],
+    queryKey: ['patients', searchQuery, demoMode],
     queryFn: async () => {
       // For demo mode or searches, always fetch fresh data
-      if (isDemoMode || searchQuery) {
+      if (demoMode || searchQuery) {
         return fetchPatients();
       }
       

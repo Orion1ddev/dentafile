@@ -7,7 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { exitDemoMode } from "@/utils/demoData";
+import { exitDemoMode, isDemoMode } from "@/utils/demo";
 
 export const NavMenu = () => {
   const {
@@ -24,9 +24,7 @@ export const NavMenu = () => {
   const handleSignOut = async () => {
     try {
       // Check if in demo mode
-      const isDemoMode = localStorage.getItem('demoMode') === 'true';
-      
-      if (isDemoMode) {
+      if (isDemoMode()) {
         // Exit demo mode instead of signing out
         exitDemoMode();
         return;
@@ -80,7 +78,7 @@ export const NavMenu = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
           <LogOut className="mr-2 h-4 w-4" />
-          {localStorage.getItem('demoMode') === 'true' ? t("exit_demo") : t("sign_out")}
+          {isDemoMode() ? t("exit_demo") : t("sign_out")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>;
