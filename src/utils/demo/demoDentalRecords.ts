@@ -134,9 +134,8 @@ export const getDemoAppointments = (date?: Date) => {
       ...record,
       patient: {
         ...patient,
-        avatar_url: patient.avatar_url || null,
-        medical_history: patient.medical_history || null,
-        pinned: patient.pinned || false
+        avatar_url: null,
+        pinned: false
       }
     };
   };
