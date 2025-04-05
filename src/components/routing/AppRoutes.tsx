@@ -84,7 +84,8 @@ export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
           }
         />
       ))}
-      {/* Redirect all other routes to dashboard */}
+      {/* Redirect auth and any other routes to dashboard */}
+      <Route path="/auth/*" element={<Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
