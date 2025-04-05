@@ -64,7 +64,17 @@ export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
     return <DashboardSkeleton />;
   };
 
-  // Always render the main app routes regardless of authentication state
+  if (!isAuthenticated) {
+    return (
+      <Suspense fallback={<Loading fullScreen text="Preparing your application..." />}>
+        <Routes>
+          <Route path="/auth/*" element={<Auth />} />
+          <Route path="*" element={<Navigate to="/auth" replace />} />
+        </Routes>
+      </Suspense>
+    );
+  }
+
   return (
     <Routes>
       {[
@@ -84,7 +94,6 @@ export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
           }
         />
       ))}
-      {/* Redirect auth and any other routes to dashboard */}
       <Route path="/auth/*" element={<Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { ThemeProvider } from "next-themes";
 import { useLanguage } from "@/stores/useLanguage";
 import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { AppRoutes } from "@/components/routing/AppRoutes";
 import { Loading } from "@/components/ui/loading";
 
@@ -23,8 +24,7 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  // Hardcode isAuthenticated to true to bypass authentication
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [translationsLoaded, setTranslationsLoaded] = useState(false);
   const { fetchTranslations } = useLanguage();
   const languageState = useLanguage();
@@ -60,10 +60,14 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <BrowserRouter>
-            {/* Skip the AuthProvider completely and directly render AppRoutes */}
-            <AppRoutes isAuthenticated={isAuthenticated} />
-            <Toaster />
-            <Sonner />
+            <AuthProvider 
+              queryClient={queryClient}
+              onAuthStateChange={setIsAuthenticated}
+            >
+              <AppRoutes isAuthenticated={isAuthenticated} />
+              <Toaster />
+              <Sonner />
+            </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
