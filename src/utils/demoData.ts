@@ -168,7 +168,7 @@ export const setupDemoInterceptor = () => {
       limit: () => mockQueryBuilder,
       single: () => mockQueryBuilder,
       or: () => mockQueryBuilder,
-      then: (callback: Function) => {
+      then: (callback: (value: any) => any) => {
         let mockData;
         
         if (table === 'patients') {
