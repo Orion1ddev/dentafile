@@ -30,6 +30,14 @@ const App = () => {
   const languageState = useLanguage();
   const translationsLoading = 'isLoading' in languageState ? languageState.isLoading : false;
 
+  // Check if demo mode is enabled
+  useEffect(() => {
+    const demoMode = localStorage.getItem('demoMode') === 'true';
+    if (demoMode) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   useEffect(() => {
     const initTranslations = async () => {
       try {

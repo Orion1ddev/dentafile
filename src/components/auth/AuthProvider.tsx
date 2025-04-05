@@ -5,6 +5,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/loading";
+import { initDemoData } from "@/utils/demoData";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -25,6 +26,17 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       try {
         console.log('Initializing authentication state...');
         
+        // Check if demo mode is enabled
+        const demoMode = localStorage.getItem('demoMode') === 'true';
+        
+        if (demoMode) {
+          console.log('Demo mode is enabled, skipping authentication');
+          // Initialize demo data
+          await initDemoData();
+          handleAuthenticated();
+          return;
+        }
+
         // Add a timeout to prevent infinite loading
         const timeoutId = setTimeout(() => {
           if (mounted && isLoading) {
@@ -74,9 +86,18 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       if (location.pathname.startsWith('/auth')) {
         navigate('/', { replace: true });
       }
+      setIsLoading(false);
     };
 
     const handleUnauthenticated = () => {
+      // Check if demo mode is enabled
+      const demoMode = localStorage.getItem('demoMode') === 'true';
+      
+      if (demoMode) {
+        handleAuthenticated();
+        return;
+      }
+      
       setIsAuthenticated(false);
       onAuthStateChange(false);
       queryClient.clear();
@@ -94,6 +115,13 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       console.log('Auth event:', event);
       
       if (!mounted) return;
+      
+      // Check if demo mode is enabled
+      const demoMode = localStorage.getItem('demoMode') === 'true';
+      if (demoMode) {
+        handleAuthenticated();
+        return;
+      }
       
       if (event === 'SIGNED_IN' && session) {
         handleAuthenticated();
@@ -114,7 +142,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [onAuthStateChange, queryClient, navigate, location.pathname]);
+  }, [onAuthStateChange, queryClient, navigate, location.pathname, isLoading]);
 
   if (isLoading) {
     return (

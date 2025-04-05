@@ -44,6 +44,7 @@ interface AppRoutesProps {
 
 export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
   const location = useLocation();
+  const isDemoMode = localStorage.getItem('demoMode') === 'true';
 
   // Clear any stuck loading states on route changes
   useEffect(() => {
@@ -64,7 +65,12 @@ export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
     return <DashboardSkeleton />;
   };
 
-  if (!isAuthenticated) {
+  // In demo mode, always show authenticated routes
+  if (isDemoMode && location.pathname === '/auth') {
+    return <Navigate to="/" replace />;
+  }
+
+  if (!isAuthenticated && !isDemoMode) {
     return (
       <Suspense fallback={<Loading fullScreen text="Preparing your application..." />}>
         <Routes>
