@@ -1,7 +1,9 @@
 
 import { toast } from "sonner";
 import { setupDemoInterceptor, restoreSupabaseMethods } from "./demoSupabase";
-import { setDemoMode, isDemoMode } from "./demoConfig";
+import { setDemoMode, isDemoMode, getDemoUser } from "./demoConfig";
+import { getDemoPatients } from "./demoPatients";
+import { getDemoAppointments, getDemoDentalRecords, getAllDemoDentalRecords } from "./demoDentalRecords";
 
 // Main demo initialization function
 export const initDemoData = async (): Promise<boolean> => {
@@ -48,6 +50,12 @@ export const exitDemoMode = (): void => {
 };
 
 // Re-export everything from the demo modules
-export * from "./demoConfig";
-export * from "./demoPatients";
-export * from "./demoDentalRecords";
+export {
+  isDemoMode,
+  setDemoMode,
+  getDemoUser,
+  getDemoPatients,
+  getDemoAppointments,
+  getDemoDentalRecords,
+  getAllDemoDentalRecords
+};

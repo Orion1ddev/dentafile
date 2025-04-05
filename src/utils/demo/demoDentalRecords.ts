@@ -1,4 +1,5 @@
 import { format, subDays, addDays } from "date-fns";
+import { getDemoPatients } from "./demoPatients";
 
 // Generate a date in the past (for creating realistic historical data)
 const getPastDate = (daysAgo: number): string => {
@@ -120,15 +121,38 @@ export const getAllDemoDentalRecords = () => {
   return sampleDentalRecords;
 };
 
-// Function to get upcoming appointments
+// Function to get upcoming appointments with full patient data
 export const getDemoAppointments = (date?: Date) => {
+  const patients = getDemoPatients();
+  
+  // Helper function to enhance record with patient data
+  const enhanceRecordWithPatient = (record: any) => {
+    const patient = patients.find(p => p.id === record.patient_id);
+    if (!patient) return null;
+    
+    return {
+      ...record,
+      patient: {
+        ...patient,
+        avatar_url: patient.avatar_url || null,
+        medical_history: patient.medical_history || null,
+        pinned: patient.pinned || false
+      }
+    };
+  };
+  
   // If date is provided, return appointments for that specific date
   if (date) {
     const dateString = format(date, 'yyyy-MM-dd');
     return sampleDentalRecords
-      .filter(record => record.appointment_time && record.visit_date.startsWith(dateString));
+      .filter(record => record.appointment_time && record.visit_date.startsWith(dateString))
+      .map(enhanceRecordWithPatient)
+      .filter(Boolean);
   }
   
   // Otherwise return all appointments (records with appointment_time)
-  return sampleDentalRecords.filter(record => record.appointment_time);
+  return sampleDentalRecords
+    .filter(record => record.appointment_time)
+    .map(enhanceRecordWithPatient)
+    .filter(Boolean);
 };

@@ -3,12 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfDay, endOfDay, format } from "date-fns";
 import { toast } from "sonner";
-import { isDemoMode, getDemoAppointments } from "@/utils/demo";
+import { isDemoMode } from "@/utils/demo/demoConfig";
+import { getDemoAppointments } from "@/utils/demo/demoDentalRecords";
 
 interface DentalRecord {
   id: string;
   visit_date: string;
-  appointment_time: string;
+  appointment_time: string | null;
   operation_type: string | null;
   patient: {
     id: string;
