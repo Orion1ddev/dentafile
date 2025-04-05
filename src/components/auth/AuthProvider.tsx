@@ -107,10 +107,10 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       setIsLoading(false); // Ensure loading is always set to false
     };
 
-    // Initialize auth state
+    // Initialize auth state only once
     initializeAuth();
 
-    // Listen for auth changes
+    // Listen for auth changes, but handle demo mode separately
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event);
       
@@ -119,7 +119,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       // Check if demo mode is enabled
       const demoMode = localStorage.getItem('demoMode') === 'true';
       if (demoMode) {
-        handleAuthenticated();
+        // Don't update auth state for events in demo mode
         return;
       }
       

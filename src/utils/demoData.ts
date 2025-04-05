@@ -192,13 +192,22 @@ export const initDemoData = async () => {
   try {
     console.log('Initializing demo data...');
     
+    // Check if demo was already initialized to prevent multiple toasts
+    if (localStorage.getItem('demoInitialized') === 'true') {
+      console.log('Demo already initialized, skipping');
+      return true;
+    }
+    
     // Setup mock interceptor
     setupDemoInterceptor();
     
     // Mock the authentication
     localStorage.setItem('demoUserId', DEMO_USER_ID);
     
-    // Show a welcome toast
+    // Set flag to prevent multiple initializations
+    localStorage.setItem('demoInitialized', 'true');
+    
+    // Show a welcome toast (only once)
     toast.success("Welcome to the demo version! Browse through sample patient data.");
     
     return true;
@@ -229,4 +238,23 @@ export const getDemoPatients = () => {
 // Override the dental records
 export const getDemoDentalRecords = (patientId: string) => {
   return sampleDentalRecords.filter(record => record.patient_id === patientId);
+};
+
+// Function to exit demo mode
+export const exitDemoMode = () => {
+  localStorage.removeItem('demoMode');
+  localStorage.removeItem('demoInitialized');
+  localStorage.removeItem('demoUserId');
+  
+  // Restore original Supabase from method
+  const originalFrom = (supabase as any)._originalFrom;
+  if (originalFrom) {
+    supabase.from = originalFrom;
+  }
+  
+  // Notify user
+  toast.info("Exited demo mode. You can now log in with your account.");
+  
+  // Force page reload to reset all app state
+  window.location.href = '/auth';
 };

@@ -65,43 +65,41 @@ export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
     return <DashboardSkeleton />;
   };
 
-  // In demo mode, always show authenticated routes
-  if (isDemoMode && location.pathname === '/auth') {
-    return <Navigate to="/" replace />;
-  }
-
-  if (!isAuthenticated && !isDemoMode) {
+  // In demo mode or when authenticated, show authenticated routes
+  if (isAuthenticated || isDemoMode) {
     return (
-      <Suspense fallback={<Loading fullScreen text="Preparing your application..." />}>
-        <Routes>
-          <Route path="/auth/*" element={<Auth />} />
-          <Route path="*" element={<Navigate to="/auth" replace />} />
-        </Routes>
-      </Suspense>
+      <Routes>
+        {[
+          { path: "/", element: <Dashboard />, fallback: <DashboardSkeleton /> },
+          { path: "/patients", element: <Index />, fallback: <DashboardSkeleton /> },
+          { path: "/calendar", element: <Index view="calendar" />, fallback: <DashboardSkeleton /> },
+          { path: "/patient/:id", element: <PatientDetails />, fallback: <PatientDetailsSkeleton /> },
+          { path: "/settings", element: <Settings />, fallback: <DashboardSkeleton /> },
+          // Redirect /auth to dashboard in demo mode
+          { path: "/auth/*", element: <Navigate to="/" replace /> },
+          { path: "*", element: <Navigate to="/" replace /> },
+        ].map(({ path, element, fallback }) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <Suspense fallback={fallback || getFallback(path)}>
+                {element}
+              </Suspense>
+            }
+          />
+        ))}
+      </Routes>
     );
   }
 
+  // Show auth routes when not authenticated and not in demo mode
   return (
-    <Routes>
-      {[
-        { path: "/", element: <Dashboard />, fallback: <DashboardSkeleton /> },
-        { path: "/patients", element: <Index />, fallback: <DashboardSkeleton /> },
-        { path: "/calendar", element: <Index view="calendar" />, fallback: <DashboardSkeleton /> },
-        { path: "/patient/:id", element: <PatientDetails />, fallback: <PatientDetailsSkeleton /> },
-        { path: "/settings", element: <Settings />, fallback: <DashboardSkeleton /> },
-      ].map(({ path, element, fallback }) => (
-        <Route
-          key={path}
-          path={path}
-          element={
-            <Suspense fallback={fallback || getFallback(path)}>
-              {element}
-            </Suspense>
-          }
-        />
-      ))}
-      <Route path="/auth/*" element={<Navigate to="/" replace />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <Suspense fallback={<Loading fullScreen text="Preparing your application..." />}>
+      <Routes>
+        <Route path="/auth/*" element={<Auth />} />
+        <Route path="*" element={<Navigate to="/auth" replace />} />
+      </Routes>
+    </Suspense>
   );
 };
