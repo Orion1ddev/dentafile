@@ -93,16 +93,14 @@ const fallbackTranslations: Translation[] = [
   { key: 'phone', en: 'Phone', tr: 'Telefon' },
   { key: 'save_changes', en: 'Save Changes', tr: 'Değişiklikleri Kaydet' },
   
-  // Dental Record Form translations
-  { key: 'add_dental_record', en: 'Add Dental Record', tr: 'Diş Kaydı Ekle' },
-  { key: 'edit_dental_record', en: 'Edit Dental Record', tr: 'Diş Kaydını Düzenle' },
-  { key: 'add_record', en: 'Add Record', tr: 'Kayıt Ekle' },
-  { key: 'record_added', en: 'Dental record added successfully', tr: 'Diş kaydı başarıyla eklendi' },
+  // Appointment Form translations (updated from Dental Record Form)
+  { key: 'add_dental_record', en: 'Add Appointment', tr: 'Randevu Ekle' },
+  { key: 'edit_dental_record', en: 'Edit Appointment', tr: 'Randevuyu Düzenle' },
+  { key: 'add_record', en: 'Add Appointment', tr: 'Randevu Ekle' },
+  { key: 'record_added', en: 'Appointment added successfully', tr: 'Randevu başarıyla eklendi' },
   { key: 'visit_date', en: 'Visit Date', tr: 'Ziyaret Tarihi' },
   { key: 'time', en: 'Time', tr: 'Zaman' },
   { key: 'operation_type', en: 'Operation Type', tr: 'İşlem Türü' },
-  { key: 'diagnosis', en: 'Diagnosis', tr: 'Teşhis' },
-  { key: 'treatment', en: 'Treatment', tr: 'Tedavi' },
   { key: 'notes', en: 'Notes', tr: 'Notlar' },
   { key: 'images', en: 'Images', tr: 'Resimler' },
   { key: 'appointment_updated', en: 'Appointment updated successfully', tr: 'Randevu başarıyla güncellendi' },
@@ -110,6 +108,12 @@ const fallbackTranslations: Translation[] = [
   { key: 'update_appointment', en: 'Update Appointment', tr: 'Randevuyu Güncelle' },
   { key: 'light_mode', en: 'Light mode', tr: 'Aydınlık mod' },
   { key: 'sign_out_error', en: 'Error signing out', tr: 'Çıkış yaparken hata oluştu' },
+  { key: 'confirm_delete_record', en: 'Are you sure you want to delete this appointment?', tr: 'Bu randevuyu silmek istediğinizden emin misiniz?' },
+  { key: 'delete_record_error', en: 'Error deleting appointment', tr: 'Randevu silinirken hata oluştu' },
+  { key: 'record_deleted', en: 'Appointment deleted successfully', tr: 'Randevu başarıyla silindi' },
+  { key: 'photos', en: 'Photos', tr: 'Fotoğraflar' },
+  { key: 'procedure', en: 'Procedure', tr: 'İşlem' },
+  { key: 'add_appointment', en: 'Add Appointment', tr: 'Randevu Ekle' },
 ];
 
 // Combine auth-specific translations with fallback translations
