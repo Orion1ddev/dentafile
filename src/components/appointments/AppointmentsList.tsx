@@ -1,72 +1,104 @@
 
+import { Button } from "@/components/ui/button";
+import { DentalRecordFormDialog } from "../DentalRecordFormDialog";
 import { format } from "date-fns";
-import { PatientCard } from "../PatientCard";
-import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { CalendarPlus } from "lucide-react";
 import { useLanguage } from "@/stores/useLanguage";
+import { AppointmentCardActions } from "./AppointmentCardActions";
 
-interface DentalRecord {
+interface Patient {
   id: string;
+  first_name: string;
+  last_name: string;
+  avatar_url?: string | null;
+}
+
+interface Appointment {
+  id: string;
+  patient: Patient;
   visit_date: string;
-  appointment_time: string;
+  appointment_time: string | null;
   operation_type: string | null;
-  patient: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    avatar_url: string | null;
-    created_at: string;
-    date_of_birth: string;
-    email: string | null;
-    gender: string;
-    medical_history: string[] | null;
-    phone: string | null;
-    pinned: boolean | null;
-    updated_at: string;
-    user_id: string | null;
-  };
+  diagnosis: string | null;
+  treatment: string | null;
+  notes: string | null;
+  images: string[] | null;
 }
 
 interface AppointmentsListProps {
-  appointments: DentalRecord[] | undefined;
+  appointments?: Appointment[];
   selectedDate: Date;
 }
 
-export const AppointmentsList = ({
-  appointments,
-  selectedDate
-}: AppointmentsListProps) => {
-  const navigate = useNavigate();
+export const AppointmentsList = ({ appointments = [], selectedDate }: AppointmentsListProps) => {
   const { t } = useLanguage();
   
+  const formatTime = (time: string | null) => {
+    if (!time) return "";
+    
+    try {
+      const [hours, minutes] = time.split(":");
+      const date = new Date();
+      date.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+      return format(date, "h:mm a");
+    } catch (error) {
+      console.error("Error formatting time:", error);
+      return time;
+    }
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
-    <div className="flex flex-col h-full">
-      <h3 className="text-lg font-semibold mb-4 p-2 bg-primary/10 rounded-md">
-        {format(selectedDate, 'MMMM d, yyyy')} - {appointments?.length || 0} {t('appointments')}
-      </h3>
+    <div className="h-full flex flex-col">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-xl font-semibold">
+          {format(selectedDate, "MMMM d, yyyy")}
+        </h3>
+        <DentalRecordFormDialog 
+          patientId=""
+          trigger={
+            <Button size="sm" className="gap-1">
+              <CalendarPlus className="h-4 w-4" />
+              {t('add_appointment')}
+            </Button>
+          }
+        />
+      </div>
       
-      <div className="flex-1 overflow-y-auto pr-2">
-        {appointments && appointments.length > 0 ? (
-          <div className="space-y-4">
-            {appointments.map(record => (
-              <div key={record.id} className="bg-card rounded-md p-3 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="text-sm font-medium text-primary">
-                    {record.appointment_time}
-                  </div>
-                  <div className="text-sm text-primary-foreground px-[7px] py-[5px] rounded-full bg-teal-700">
-                    {record.operation_type || t('consultation')}
-                  </div>
-                </div>
-                <PatientCard 
-                  patient={record.patient} 
-                  onClick={() => navigate(`/patient/${record.patient.id}`)} 
-                />
-              </div>
-            ))}
+      <div className="flex-1 overflow-auto">
+        {appointments.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+            <p>{t('no_appointments')}</p>
           </div>
         ) : (
-          <div className="text-center bg-card p-6 rounded-md text-muted-foreground h-32 flex items-center justify-center">
-            {t('no_appointments')}
+          <div className="space-y-3">
+            {appointments.map((appointment) => (
+              <Card key={appointment.id} className="bg-card">
+                <CardHeader className="p-3 pb-0 flex flex-row items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">
+                      {appointment.patient.first_name} {appointment.patient.last_name}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {formatTime(appointment.appointment_time)}
+                    </p>
+                  </div>
+                  <AppointmentCardActions 
+                    appointment={appointment} 
+                    onEditClick={handleEditClick}
+                  />
+                </CardHeader>
+                <CardContent className="p-3 pt-1">
+                  {appointment.operation_type && (
+                    <p className="text-sm"><span className="font-medium">{t('procedure')}: </span>{appointment.operation_type}</p>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
       </div>
