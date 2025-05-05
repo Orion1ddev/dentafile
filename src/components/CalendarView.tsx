@@ -6,7 +6,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { AppointmentsList } from "./appointments/AppointmentsList";
+import { AppointmentsList, Appointment } from "./appointments/AppointmentsList";
 import { addHours, parseISO } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLanguage } from "@/stores/useLanguage";
@@ -19,7 +19,7 @@ export const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDataReady, setIsDataReady] = useState(false);
   const {
-    appointments,
+    appointments: rawAppointments,
     monthlyAppointments,
     isLoading
   } = useAppointments(selectedDate);
@@ -28,6 +28,20 @@ export const CalendarView = () => {
     t,
     language
   } = useLanguage();
+
+  // Map raw appointments to the Appointment type expected by AppointmentsList
+  const appointments: Appointment[] = (rawAppointments || []).map(appointment => ({
+    id: appointment.id,
+    patient: appointment.patient,
+    visit_date: appointment.visit_date,
+    appointment_time: appointment.appointment_time,
+    operation_type: appointment.operation_type,
+    // Add the missing properties with null values
+    diagnosis: appointment.diagnosis || null,
+    treatment: appointment.treatment || null,
+    notes: appointment.notes || null,
+    images: appointment.images || null
+  }));
 
   // Set data ready status after initial loading
   useEffect(() => {

@@ -14,7 +14,7 @@ interface Patient {
   avatar_url?: string | null;
 }
 
-interface Appointment {
+export interface Appointment {
   id: string;
   patient: Patient;
   visit_date: string;
