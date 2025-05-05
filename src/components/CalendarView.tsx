@@ -77,10 +77,10 @@ export const CalendarView = () => {
       {/* Add Appointment Button at the top */}
       
       
-      <div className="w-full h-screen flex flex-col md:flex-row gap-1 p-0">
-        {/* Calendar Section - Left Side - Now 3/5 width */}
-        <div className="w-full md:w-3/5 h-[600px] md:h-[calc(100vh-1rem)]">
-          <Card className="h-full overflow-hidden bg-secondary/50 shadow-md w-full rounded-none md:rounded-lg">
+      <div className="w-full h-screen flex flex-col md:flex-row gap-4 p-2 max-w-[1600px] mx-auto">
+        {/* Calendar Section - Left Side - Now 2/3 width on larger screens */}
+        <div className="w-full md:w-2/3 h-[600px] md:h-[calc(100vh-1rem)]">
+          <Card className="h-full overflow-hidden bg-secondary/50 shadow-md w-full rounded-lg">
             <div className="h-full" style={{
             '--fc-page-bg-color': 'transparent'
           } as React.CSSProperties}>
@@ -105,10 +105,10 @@ export const CalendarView = () => {
           </Card>
         </div>
 
-        {/* Appointments Section - Right Side - Now 2/5 width */}
-        <div className="w-full md:w-2/5 h-auto md:h-[calc(100vh-1rem)]">
-          <Card className="h-full bg-secondary/50 shadow-md rounded-none md:rounded-lg">
-            <div className="p-2 h-full">
+        {/* Appointments Section - Right Side - Now 1/3 width on larger screens */}
+        <div className="w-full md:w-1/3 h-auto md:h-[calc(100vh-1rem)]">
+          <Card className="h-full bg-secondary/50 shadow-md rounded-lg">
+            <div className="p-4 h-full">
               {isLoading && !isDataReady ? <div className="h-full flex items-center justify-center">
                   <Loading text={t('loading_appointments')} size="medium" />
                 </div> : <AppointmentsList appointments={appointments} selectedDate={selectedDate} />}
