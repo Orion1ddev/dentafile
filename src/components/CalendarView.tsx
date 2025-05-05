@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useAppointments } from "@/hooks/useAppointments";
@@ -36,9 +35,6 @@ export const CalendarView = () => {
     visit_date: appointment.visit_date,
     appointment_time: appointment.appointment_time,
     operation_type: appointment.operation_type,
-    // Add the missing properties with null values
-    diagnosis: appointment.diagnosis || null,
-    treatment: appointment.treatment || null,
     notes: appointment.notes || null,
     images: appointment.images || null
   }));

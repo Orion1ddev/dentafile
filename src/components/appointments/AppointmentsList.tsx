@@ -20,8 +20,6 @@ export interface Appointment {
   visit_date: string;
   appointment_time: string | null;
   operation_type: string | null;
-  diagnosis: string | null;
-  treatment: string | null;
   notes: string | null;
   images: string[] | null;
 }

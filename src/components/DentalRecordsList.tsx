@@ -1,3 +1,4 @@
+
 import { useLanguage } from "@/stores/useLanguage";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,8 +8,6 @@ import { DentalRecordCard } from "./dental-records/DentalRecordCard";
 interface DentalRecord {
   id: string;
   visit_date: string;
-  diagnosis: string | null;
-  treatment: string | null;
   notes: string | null;
   images: string[] | null;
   appointment_time: string | null;
