@@ -55,7 +55,6 @@ export const AppointmentCardActions = ({ appointment, onEditClick }: Appointment
     <div className="flex gap-2">
       <AppointmentEditDialog 
         appointment={appointment}
-        onEditClick={handleEditClick}
       />
       <Button
         variant="ghost"
