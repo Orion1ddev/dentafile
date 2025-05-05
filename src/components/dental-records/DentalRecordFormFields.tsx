@@ -1,3 +1,4 @@
+
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,8 +10,6 @@ export const formSchema = z.object({
   visit_date: z.string().min(1, "Visit date is required"),
   appointment_time: z.string().min(1, "Appointment time is required"),
   operation_type: z.string().min(1, "Operation type is required"),
-  diagnosis: z.string().nullable(),
-  treatment: z.string().nullable(),
   notes: z.string().nullable(),
   images: z.array(z.string()).nullable(),
 });
@@ -60,32 +59,6 @@ export const DentalRecordFormFields = ({ form }: DentalRecordFormFieldsProps) =>
             <FormLabel>Operation Type</FormLabel>
             <FormControl>
               <Input {...field} placeholder="e.g., Cleaning, Filling, etc." required />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="diagnosis"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Diagnosis</FormLabel>
-            <FormControl>
-              <Textarea {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="treatment"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Treatment</FormLabel>
-            <FormControl>
-              <Textarea {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>

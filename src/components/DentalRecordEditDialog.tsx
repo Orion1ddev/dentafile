@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -16,8 +17,6 @@ interface DentalRecordFormData {
   visit_date: string;
   appointment_time: string | null;
   operation_type: string | null;
-  diagnosis: string | null;
-  treatment: string | null;
   notes: string | null;
   images: string[] | null;
 }
@@ -28,8 +27,6 @@ interface DentalRecordEditDialogProps {
     visit_date: string;
     appointment_time: string | null;
     operation_type: string | null;
-    diagnosis: string | null;
-    treatment: string | null;
     notes: string | null;
     images: string[] | null;
   };
@@ -46,8 +43,6 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
       visit_date: new Date(record.visit_date).toISOString().split('T')[0],
       appointment_time: record.appointment_time || '',
       operation_type: record.operation_type || '',
-      diagnosis: record.diagnosis || '',
-      treatment: record.treatment || '',
       notes: record.notes || '',
       images: record.images || [],
     },
@@ -61,8 +56,6 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
           visit_date: data.visit_date,
           appointment_time: data.appointment_time || null,
           operation_type: data.operation_type,
-          diagnosis: data.diagnosis,
-          treatment: data.treatment,
           notes: data.notes,
           images: data.images,
         })
@@ -128,32 +121,6 @@ export const DentalRecordEditDialog = ({ record, patientId }: DentalRecordEditDi
                   <FormLabel>{t('operation_type')}</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="e.g., Cleaning, Filling, etc." />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="diagnosis"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('diagnosis')}</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="treatment"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('treatment')}</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

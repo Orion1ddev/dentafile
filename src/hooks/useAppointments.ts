@@ -9,8 +9,6 @@ interface DentalRecord {
   visit_date: string;
   appointment_time: string;
   operation_type: string | null;
-  diagnosis: string | null;
-  treatment: string | null;
   notes: string | null;
   images: string[] | null;
   patient: {
@@ -51,8 +49,6 @@ export const useAppointments = (selectedDate: Date) => {
             visit_date,
             appointment_time,
             operation_type,
-            diagnosis,
-            treatment,
             notes,
             images,
             patient:patients(*)
@@ -99,8 +95,6 @@ export const useAppointments = (selectedDate: Date) => {
             visit_date,
             appointment_time,
             operation_type,
-            diagnosis,
-            treatment,
             notes,
             images,
             patient:patients(*)

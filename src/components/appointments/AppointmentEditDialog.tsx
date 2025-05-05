@@ -22,8 +22,6 @@ interface AppointmentEditDialogProps {
     visit_date: string;
     appointment_time: string | null;
     operation_type: string | null;
-    diagnosis: string | null;
-    treatment: string | null;
     notes: string | null;
     images: string[] | null;
   };
@@ -41,8 +39,6 @@ export const AppointmentEditDialog = ({ appointment }: AppointmentEditDialogProp
       visit_date: appointment.visit_date ? new Date(appointment.visit_date).toISOString().split('T')[0] : '',
       appointment_time: appointment.appointment_time || '',
       operation_type: appointment.operation_type || '',
-      diagnosis: appointment.diagnosis || '',
-      treatment: appointment.treatment || '',
       notes: appointment.notes || '',
       images: appointment.images || []
     }
@@ -56,8 +52,6 @@ export const AppointmentEditDialog = ({ appointment }: AppointmentEditDialogProp
           visit_date: data.visit_date,
           appointment_time: data.appointment_time,
           operation_type: data.operation_type,
-          diagnosis: data.diagnosis,
-          treatment: data.treatment,
           notes: data.notes,
           images: data.images
         })
