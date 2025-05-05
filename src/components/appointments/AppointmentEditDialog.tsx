@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLanguage } from "@/stores/useLanguage";
 import { DentalRecordFormFields, formSchema } from "../dental-records/DentalRecordFormFields";
 import type { z } from "zod";
+import { useParams } from "react-router-dom";
 
 type AppointmentFormData = z.infer<typeof formSchema>;
 
@@ -26,18 +27,18 @@ interface AppointmentEditDialogProps {
     notes: string | null;
     images: string[] | null;
   };
-  onEditClick?: (e: React.MouseEvent) => void;
 }
 
-export const AppointmentEditDialog = ({ appointment, onEditClick }: AppointmentEditDialogProps) => {
+export const AppointmentEditDialog = ({ appointment }: AppointmentEditDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const { t } = useLanguage();
+  const { id: patientId } = useParams();
   
   const form = useForm<AppointmentFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      visit_date: new Date(appointment.visit_date).toISOString().split('T')[0],
+      visit_date: appointment.visit_date ? new Date(appointment.visit_date).toISOString().split('T')[0] : '',
       appointment_time: appointment.appointment_time || '',
       operation_type: appointment.operation_type || '',
       diagnosis: appointment.diagnosis || '',
@@ -65,18 +66,13 @@ export const AppointmentEditDialog = ({ appointment, onEditClick }: AppointmentE
       if (error) throw error;
       
       toast.success(t("appointment_updated"));
+      queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
       queryClient.invalidateQueries({ queryKey: ['monthly-appointments'] });
       setOpen(false);
     } catch (error: any) {
-      console.error('Operation error:', error);
+      console.error('Update error:', error);
       toast.error(error.message);
-    }
-  };
-
-  const handleClick = (e: React.MouseEvent) => {
-    if (onEditClick) {
-      onEditClick(e);
     }
   };
 
@@ -86,7 +82,6 @@ export const AppointmentEditDialog = ({ appointment, onEditClick }: AppointmentE
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleClick}
           className="h-8 w-8"
         >
           <Edit2 className="h-4 w-4" />

@@ -7,6 +7,7 @@ import { DentalNoteEditDialog } from "./DentalNoteEditDialog";
 import { useLanguage } from "@/stores/useLanguage";
 import { useState } from "react";
 import { ImageViewer } from "./ImageViewer";
+import { AppointmentEditDialog } from "../appointments/AppointmentEditDialog";
 
 interface DentalRecord {
   id: string;
@@ -65,8 +66,11 @@ export const DentalRecordCard = ({
           {isAppointment && record.appointment_time && ` - ${formatTime(record.appointment_time)}`}
         </CardTitle>
         <div className="flex items-center gap-2">
-          {/* Only show edit button for notes, not appointments */}
-          {!isAppointment && <DentalNoteEditDialog record={record} patientId={patientId} />}
+          {!isAppointment ? (
+            <DentalNoteEditDialog record={record} patientId={patientId} />
+          ) : (
+            <AppointmentEditDialog appointment={record} />
+          )}
           <Button variant="destructive" size="icon" onClick={() => onDelete(record.id)}>
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -108,8 +112,8 @@ export const DentalRecordCard = ({
       {selectedImage && (
         <ImageViewer 
           isOpen={!!selectedImage} 
-          onClose={closeImageViewer} 
           imageUrl={selectedImage} 
+          onClose={closeImageViewer} 
         />
       )}
     </Card>
