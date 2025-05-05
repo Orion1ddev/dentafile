@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -43,10 +42,6 @@
     --sidebar-accent-foreground: 195 14% 6%;
     --sidebar-border: 190 57% 73%;
     --sidebar-ring: 190 57% 73%;
-    
-    /* Dental friendly blue - New variable */
-    --dental-blue: 207 90% 54%;
-    --dental-blue-dark: 207 90% 30%;
   }
 
   .dark {
@@ -86,10 +81,6 @@
     --sidebar-accent-foreground: 189 43% 94%;
     --sidebar-border: 190 56% 27%;
     --sidebar-ring: 190 56% 27%;
-    
-    /* Dental friendly blue - Dark mode */
-    --dental-blue: 207 90% 45%;
-    --dental-blue-dark: 207 90% 25%;
   }
 }
 
@@ -99,41 +90,9 @@
   }
   body {
     @apply bg-background text-foreground;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  /* GitHub Primer-inspired typography */
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-medium tracking-tight;
-    line-height: 1.25;
-  }
-  
-  h1 {
-    @apply text-3xl;
-  }
-  
-  h2 {
-    @apply text-2xl; 
-  }
-  
-  h3 {
-    @apply text-xl;
-  }
-  
-  /* Optimized tap targets for mobile */
-  button, a {
-    @apply min-h-[44px] min-w-[44px];
-  }
-  
-  /* Fix for mobile Safari zoom on input */
-  input, select, textarea {
-    font-size: 16px;
   }
 }
 
-/* Animation definitions */
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
@@ -149,41 +108,4 @@
 .animate-gradient {
   background-size: 200% 200%;
   animation: gradient 8s ease infinite;
-}
-
-/* Skeleton loading animations */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-.skeleton {
-  @apply bg-gray-200 rounded;
-  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Performance optimizations for animations */
-@media (prefers-reduced-motion: reduce) {
-  .animate-gradient,
-  .skeleton,
-  .hover-scale:hover {
-    animation: none !important;
-    transform: none !important;
-    transition: none !important;
-  }
-}
-
-/* Add content-visibility for better rendering performance */
-.content-visibility-auto {
-  content-visibility: auto;
-}
-
-/* WCAG-compliant focus states */
-:focus-visible {
-  @apply outline-offset-2 outline-primary;
-  outline: 2px solid hsl(var(--primary));
 }

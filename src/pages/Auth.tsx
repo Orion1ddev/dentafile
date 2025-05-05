@@ -49,13 +49,6 @@ const Auth = () => {
     };
   }, [navigate]);
 
-  const handleDemoAccess = () => {
-    // Set demo flag in localStorage
-    localStorage.setItem('demoMode', 'true');
-    // Navigate to the main app
-    navigate('/', { replace: true });
-  };
-
   return (
     <div className="min-h-screen bg-white flex flex-col md:flex-row font-['Roboto'] animate-fade-in">
       {/* Left side - Welcome content */}
@@ -135,27 +128,9 @@ const Auth = () => {
           </div>
         )}
 
-        <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="flex-1 flex items-center justify-center">
           <Routes>
-            <Route path="/" element={
-              <div className="w-full max-w-md space-y-6">
-                <LoginForm />
-                <div className="relative flex items-center py-5">
-                  <div className="flex-grow border-t border-gray-300"></div>
-                  <span className="flex-shrink mx-4 text-gray-600">or</span>
-                  <div className="flex-grow border-t border-gray-300"></div>
-                </div>
-                <Button 
-                  onClick={handleDemoAccess}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
-                >
-                  Try Demo Version
-                </Button>
-                <p className="text-xs text-center text-gray-500 mt-4">
-                  Access a fully functional demo with sample patient data
-                </p>
-              </div>
-            } />
+            <Route path="/" element={<LoginForm />} />
             <Route path="/signup" element={<SignupForm />} />
           </Routes>
         </div>

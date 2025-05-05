@@ -1,15 +1,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfDay, endOfDay, format } from "date-fns";
+import { startOfDay, endOfDay } from "date-fns";
 import { toast } from "sonner";
-import { isDemoMode } from "@/utils/demo/demoConfig";
-import { getDemoAppointments } from "@/utils/demo/demoDentalRecords";
 
 interface DentalRecord {
   id: string;
   visit_date: string;
-  appointment_time: string | null;
+  appointment_time: string;
   operation_type: string | null;
   patient: {
     id: string;
@@ -29,20 +27,11 @@ interface DentalRecord {
 }
 
 export const useAppointments = (selectedDate: Date) => {
-  const demoMode = isDemoMode();
-
   const { data: appointments, isLoading: appointmentsLoading, error: appointmentsError } = useQuery<DentalRecord[]>({
-    queryKey: ['appointments', selectedDate, demoMode],
+    queryKey: ['appointments', selectedDate],
     queryFn: async () => {
       try {
         console.log('Fetching appointments for date:', selectedDate);
-
-        // If in demo mode, return mock appointments
-        if (demoMode) {
-          console.log('Using demo appointments data');
-          return getDemoAppointments(selectedDate) as DentalRecord[];
-        }
-
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {
@@ -84,17 +73,10 @@ export const useAppointments = (selectedDate: Date) => {
   });
 
   const { data: monthlyAppointments, isLoading: monthlyLoading, error: monthlyError } = useQuery<DentalRecord[]>({
-    queryKey: ['monthly-appointments', demoMode],
+    queryKey: ['monthly-appointments'],
     queryFn: async () => {
       try {
         console.log('Fetching monthly appointments');
-
-        // If in demo mode, return all demo appointments
-        if (demoMode) {
-          console.log('Using demo monthly appointments data');
-          return getDemoAppointments() as DentalRecord[];
-        }
-
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {

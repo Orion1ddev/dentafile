@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useLanguage } from "@/stores/useLanguage";
@@ -7,8 +6,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { exitDemoMode, isDemoMode } from "@/utils/demo";
-
 export const NavMenu = () => {
   const {
     theme,
@@ -20,17 +17,8 @@ export const NavMenu = () => {
     t
   } = useLanguage();
   const navigate = useNavigate();
-  
   const handleSignOut = async () => {
     try {
-      // Check if in demo mode
-      if (isDemoMode()) {
-        // Exit demo mode instead of signing out
-        exitDemoMode();
-        return;
-      }
-      
-      // Normal logout flow for authenticated users
       navigate('/auth', {
         replace: true
       });
@@ -49,7 +37,6 @@ export const NavMenu = () => {
       toast.error(t("sign_out_error"));
     }
   };
-  
   return <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/50 backdrop-blur-sm">
@@ -78,7 +65,7 @@ export const NavMenu = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
           <LogOut className="mr-2 h-4 w-4" />
-          {isDemoMode() ? t("exit_demo") : t("sign_out")}
+          {t("sign_out")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>;

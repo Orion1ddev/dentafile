@@ -7,7 +7,6 @@ import { DentalNoteEditDialog } from "./DentalNoteEditDialog";
 import { useLanguage } from "@/stores/useLanguage";
 import { useState } from "react";
 import { ImageViewer } from "./ImageViewer";
-import { getOptimizedImageProps } from "@/utils/imageOptimization";
 
 interface DentalRecord {
   id: string;
@@ -35,7 +34,6 @@ export const DentalRecordCard = ({
 }: DentalRecordCardProps) => {
   const { t } = useLanguage();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [imagesLoaded, setImagesLoaded] = useState<Record<string, boolean>>({});
   
   const formatDisplayDate = (dateString: string) => {
     try {
@@ -57,10 +55,6 @@ export const DentalRecordCard = ({
   
   const closeImageViewer = () => {
     setSelectedImage(null);
-  };
-
-  const handleImageLoad = (imageUrl: string) => {
-    setImagesLoaded(prev => ({ ...prev, [imageUrl]: true }));
   };
 
   return (
@@ -88,35 +82,23 @@ export const DentalRecordCard = ({
             </div>
           )}
           <p className="my-[4px]"><strong>{t('notes')}:</strong> {record.notes || 'N/A'}</p>
-          
           {record.images && record.images.length > 0 && (
             <div>
               <h4 className="font-semibold mb-2">{t('photos')}</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {record.images.map((image, index) => {
-                  const imgProps = getOptimizedImageProps(image, `Dental record ${index + 1}`);
-                  const isLoaded = imagesLoaded[image];
-                  
-                  return (
-                    <div 
-                      key={index} 
-                      className="cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity border border-gray-200 aspect-square"
-                      onClick={() => handleImageClick(image)}
-                    >
-                      {!isLoaded && (
-                        <div className="w-full h-full bg-gray-200 animate-pulse flex items-center justify-center">
-                          <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-                        </div>
-                      )}
-                      <img 
-                        {...imgProps}
-                        onLoad={() => handleImageLoad(image)}
-                        className={`rounded-lg w-full h-full object-contain ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-                        style={{ transition: 'opacity 0.3s ease-in-out' }}
-                      />
-                    </div>
-                  );
-                })}
+                {record.images.map((image, index) => (
+                  <div 
+                    key={index} 
+                    className="cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity border border-gray-200"
+                    onClick={() => handleImageClick(image)}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`Dental record ${index + 1}`} 
+                      className="rounded-lg w-full aspect-square object-contain" 
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           )}

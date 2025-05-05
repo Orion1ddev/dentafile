@@ -5,7 +5,6 @@ import { QueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/loading";
-import { initDemoData, isDemoMode } from "@/utils/demo";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -26,15 +25,6 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       try {
         console.log('Initializing authentication state...');
         
-        // Check if demo mode is enabled
-        if (isDemoMode()) {
-          console.log('Demo mode is enabled, initializing demo data');
-          // Initialize demo data
-          await initDemoData();
-          handleAuthenticated();
-          return;
-        }
-
         // Add a timeout to prevent infinite loading
         const timeoutId = setTimeout(() => {
           if (mounted && isLoading) {
@@ -84,16 +74,9 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       if (location.pathname.startsWith('/auth')) {
         navigate('/', { replace: true });
       }
-      setIsLoading(false);
     };
 
     const handleUnauthenticated = () => {
-      // Check if demo mode is enabled
-      if (isDemoMode()) {
-        handleAuthenticated();
-        return;
-      }
-      
       setIsAuthenticated(false);
       onAuthStateChange(false);
       queryClient.clear();
@@ -103,20 +86,14 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       setIsLoading(false); // Ensure loading is always set to false
     };
 
-    // Initialize auth state only once
+    // Initialize auth state
     initializeAuth();
 
-    // Listen for auth changes, but handle demo mode separately
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event);
       
       if (!mounted) return;
-      
-      // Check if demo mode is enabled
-      if (isDemoMode()) {
-        // Don't update auth state for events in demo mode
-        return;
-      }
       
       if (event === 'SIGNED_IN' && session) {
         handleAuthenticated();
@@ -137,7 +114,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [onAuthStateChange, queryClient, navigate, location.pathname, isLoading]);
+  }, [onAuthStateChange, queryClient, navigate, location.pathname]);
 
   if (isLoading) {
     return (

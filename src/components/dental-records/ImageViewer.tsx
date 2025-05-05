@@ -8,7 +8,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Download, ZoomIn, ZoomOut, X } from "lucide-react";
 import { useLanguage } from "@/stores/useLanguage";
-import { getOptimizedImageProps } from "@/utils/imageOptimization";
 
 interface ImageViewerProps {
   isOpen: boolean;
@@ -19,7 +18,6 @@ interface ImageViewerProps {
 export const ImageViewer = ({ isOpen, onClose, imageUrl }: ImageViewerProps) => {
   const { t } = useLanguage();
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
 
   const handleZoomIn = () => {
     setZoomLevel((prev) => Math.min(prev + 0.25, 3));
@@ -37,8 +35,6 @@ export const ImageViewer = ({ isOpen, onClose, imageUrl }: ImageViewerProps) => 
     link.click();
     document.body.removeChild(link);
   };
-  
-  const imageProps = getOptimizedImageProps(imageUrl, t('dental_image'));
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -61,21 +57,15 @@ export const ImageViewer = ({ isOpen, onClose, imageUrl }: ImageViewerProps) => 
             </DialogClose>
           </div>
           <div className="overflow-auto flex-1 p-4 flex items-center justify-center bg-black/5">
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-              </div>
-            )}
             <div className="overflow-auto max-h-[70vh] flex items-center justify-center">
               <img
-                {...imageProps}
-                onLoad={() => setIsLoading(false)}
+                src={imageUrl}
+                alt={t('dental_image')}
                 className="object-contain transition-all duration-200"
                 style={{
                   transform: `scale(${zoomLevel})`,
                   maxWidth: '100%',
                   maxHeight: '100%',
-                  display: isLoading ? 'none' : 'block'
                 }}
               />
             </div>
