@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -11,22 +10,20 @@ import { DentalRecordFormFields, formSchema } from "./dental-records/DentalRecor
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLanguage } from "@/stores/useLanguage";
 import type { z } from "zod";
-
 type DentalRecordFormData = z.infer<typeof formSchema>;
-
 interface DentalRecordFormDialogProps {
   patientId: string;
   trigger?: React.ReactNode;
 }
-
 export const DentalRecordFormDialog = ({
   patientId,
   trigger
 }: DentalRecordFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { t } = useLanguage();
-  
+  const {
+    t
+  } = useLanguage();
   const form = useForm<DentalRecordFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,10 +34,11 @@ export const DentalRecordFormDialog = ({
       images: []
     }
   });
-
   const onSubmit = async (data: DentalRecordFormData) => {
     try {
-      const { error } = await supabase.from('dental_records').insert([{
+      const {
+        error
+      } = await supabase.from('dental_records').insert([{
         patient_id: patientId,
         visit_date: `${data.visit_date}T${data.appointment_time}:00`,
         appointment_time: data.appointment_time,
@@ -48,9 +46,7 @@ export const DentalRecordFormDialog = ({
         notes: data.notes,
         images: data.images
       }]);
-
       if (error) throw error;
-      
       toast.success(t("record_added"));
       queryClient.invalidateQueries({
         queryKey: ['patient', patientId]
@@ -61,15 +57,13 @@ export const DentalRecordFormDialog = ({
       toast.error(error.message);
     }
   };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
+  return <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || <Button>
             {t('add_dental_record')}
           </Button>}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] py-0 px-[10px] my-0">
+      <DialogContent className="sm:max-w-[425px] px-[10px] my-0 py-[10px]">
         <DialogHeader>
           <DialogTitle>{t('add_dental_record')}</DialogTitle>
         </DialogHeader>
@@ -82,6 +76,5 @@ export const DentalRecordFormDialog = ({
           </form>
         </Form>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 };
