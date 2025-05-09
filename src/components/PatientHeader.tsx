@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -40,7 +39,7 @@ export const PatientHeader = ({
               <DentalRecordFormDialog patientId={patient.id} trigger={<Button>
                     <FileText className="h-4 w-4 mr-2" />
                     {t('add_dental_record')}
-                  </Button>} />
+                  </Button>} className="mx-[9px]" />
               <NavMenu />
             </div>
           </div>
