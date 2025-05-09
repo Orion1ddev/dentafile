@@ -1,31 +1,23 @@
+
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useLanguage } from "@/stores/useLanguage";
-import { Moon, Sun, Languages, LogOut, Menu } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Moon, Sun, Languages, LogOut, Menu, Calendar, Users, Settings, Heart } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, DropdownMenuGroup, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+
 export const NavMenu = () => {
-  const {
-    theme,
-    setTheme
-  } = useTheme();
-  const {
-    language,
-    setLanguage,
-    t
-  } = useLanguage();
+  const { theme, setTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
+  
   const handleSignOut = async () => {
     try {
-      navigate('/auth', {
-        replace: true
-      });
+      navigate('/auth', { replace: true });
       localStorage.clear();
-      const {
-        error
-      } = await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Sign out error:', error);
         toast.error(t("sign_out_error"));
@@ -37,13 +29,51 @@ export const NavMenu = () => {
       toast.error(t("sign_out_error"));
     }
   };
-  return <DropdownMenu>
+
+  // Navigation handler for quick access items
+  const handleNavigation = (href: string) => {
+    if (href.startsWith('http')) {
+      window.open(href, '_blank');
+    } else {
+      navigate(href);
+    }
+  };
+
+  return (
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/50 backdrop-blur-sm">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-8 w-8 bg-background/50 backdrop-blur-sm rounded-full"
+          aria-label={t('open_menu')}
+        >
           <Menu className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48 px-0 my-[17px] mx-0">
+      <DropdownMenuContent align="end" className="w-56 px-0 my-[17px] mx-0">
+        <DropdownMenuLabel className="px-2">{t('quick_access')}</DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuItem onClick={() => handleNavigation('/patients')}>
+            <Users className="mr-2 h-4 w-4" />
+            {t('patient_records')}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleNavigation('/calendar')}>
+            <Calendar className="mr-2 h-4 w-4" />
+            {t('calendar')}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleNavigation('/settings')}>
+            <Settings className="mr-2 h-4 w-4" />
+            {t('settings')}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleNavigation('https://buymeacoffee.com/dentafile')}>
+            <Heart className="mr-2 h-4 w-4" />
+            {t('support_us')}
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        
+        <DropdownMenuSeparator />
+        
         <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
           {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
           {theme === "dark" ? t("light_mode") : t("dark_mode")}
@@ -68,5 +98,6 @@ export const NavMenu = () => {
           {t("sign_out")}
         </DropdownMenuItem>
       </DropdownMenuContent>
-    </DropdownMenu>;
+    </DropdownMenu>
+  );
 };
