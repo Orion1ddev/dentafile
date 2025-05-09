@@ -12,6 +12,8 @@ interface DentalRecord {
   images: string[] | null;
   appointment_time: string | null;
   operation_type: string | null;
+  diagnosis: string | null;  // Added this property
+  treatment: string | null;  // Added this property
 }
 
 interface DentalRecordsListProps {
