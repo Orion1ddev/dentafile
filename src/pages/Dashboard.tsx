@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
@@ -99,7 +98,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
       <BackgroundEffect />
       
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
@@ -117,7 +116,7 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      <main className="flex-1 container px-4 sm:px-6 lg:px-8 py-8 relative z-0">
+      <main className="container mx-auto py-8 px-2 sm:px-4 lg:px-6 relative z-0">
         <div className="max-w-5xl mx-auto">
           {/* Hero section */}
           <section className="mb-8">

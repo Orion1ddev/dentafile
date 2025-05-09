@@ -8,12 +8,14 @@ import { NavMenu } from "@/components/NavMenu";
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
 
 const Settings = () => {
   const { t } = useLanguage();
   
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
+      <BackgroundEffect />
       <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-[40px]">
           <div className="flex justify-between h-16">
@@ -36,7 +38,7 @@ const Settings = () => {
         </div>
       </nav>
 
-      <div className="container mx-auto p-6">        
+      <div className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">        
         <Tabs defaultValue="personal" className="w-full max-w-3xl mx-auto">
           <TabsList className="w-full">
             <TabsTrigger value="personal">{t('personal_info')}</TabsTrigger>
