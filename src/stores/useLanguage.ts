@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -114,6 +113,13 @@ const fallbackTranslations: Translation[] = [
   { key: 'photos', en: 'Photos', tr: 'Fotoğraflar' },
   { key: 'procedure', en: 'Procedure', tr: 'İşlem' },
   { key: 'add_appointment', en: 'Add Appointment', tr: 'Randevu Ekle' },
+  // Add new translation keys for dashboard
+  { key: 'quick_access', en: 'Quick Access', tr: 'Hızlı Erişim' },
+  { key: 'total_patients', en: 'Total Patients', tr: 'Toplam Hasta' },
+  { key: 'next_appointment', en: 'Next Appointment', tr: 'Sonraki Randevu' },
+  { key: 'today', en: 'Today', tr: 'Bugün' },
+  { key: 'at', en: 'at', tr: 'saat' },
+  { key: 'appointments_last_7_days', en: 'Last 7 days', tr: 'Son 7 gün' },
 ];
 
 // Combine auth-specific translations with fallback translations

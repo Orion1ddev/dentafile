@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/stores/useLanguage";
 
@@ -18,15 +19,15 @@ export const WelcomeCard = ({ userProfile, appointmentCount, pinnedPatientsCount
   };
 
   return (
-    <div className="mb-4">
+    <div className="mb-6">
       <div className="space-y-3">
-        <p className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-gradient">
+        <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-gradient">
           {getGreeting()}, Dr. {userProfile?.first_name}.{' '}
         </p>
-        <p className="text-lg text-foreground/80">
+        <p className="text-xl text-foreground/80">
           {appointmentCount ? (
             <span>
-              {t('you_have')} {appointmentCount} {t('appointments_today')}.
+              {t('you_have')} <span className="font-semibold">{appointmentCount}</span> {t('appointments_today')}.
             </span>
           ) : (
             <span>{t('no_appointments_today')}.</span>

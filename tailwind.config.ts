@@ -93,12 +93,24 @@ export default {
 						transform: 'translateY(100vh) rotate(360deg)',
 						opacity: '0'
 					}
+				},
+				gradient: {
+					'0%': { 
+						backgroundPosition: '0% 50%'
+					},
+					'50%': {
+						backgroundPosition: '100% 50%'
+					},
+					'100%': {
+						backgroundPosition: '0% 50%'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fall': 'fall linear'
+				'fall': 'fall linear',
+				'gradient': 'gradient 8s ease infinite'
 			}
 		}
 	},
