@@ -12,50 +12,48 @@ import { ImageUploadField } from "./ImageUploadField";
 import { useLanguage } from "@/stores/useLanguage";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 const formSchema = z.object({
   notes: z.string().min(1, "Notes are required"),
-  images: z.array(z.string()).nullable(),
+  images: z.array(z.string()).nullable()
 });
-
 type DentalNoteFormData = z.infer<typeof formSchema>;
-
 interface DentalNoteFormDialogProps {
   patientId: string;
 }
-
-export const DentalNoteFormDialog = ({ patientId }: DentalNoteFormDialogProps) => {
+export const DentalNoteFormDialog = ({
+  patientId
+}: DentalNoteFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { t } = useLanguage();
-  
+  const {
+    t
+  } = useLanguage();
   const form = useForm<DentalNoteFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       notes: '',
-      images: [],
-    },
+      images: []
+    }
   });
-
   const onSubmit = async (data: DentalNoteFormData) => {
     try {
-      const { error } = await supabase
-        .from('dental_records')
-        .insert({
-          patient_id: patientId,
-          notes: data.notes,
-          images: data.images,
-          visit_date: new Date().toISOString(),
-          appointment_time: null,
-          operation_type: null,
-          diagnosis: null,
-          treatment: null,
-        });
-
+      const {
+        error
+      } = await supabase.from('dental_records').insert({
+        patient_id: patientId,
+        notes: data.notes,
+        images: data.images,
+        visit_date: new Date().toISOString(),
+        appointment_time: null,
+        operation_type: null,
+        diagnosis: null,
+        treatment: null
+      });
       if (error) throw error;
-      
       toast.success(t("note_added"));
-      queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
+      queryClient.invalidateQueries({
+        queryKey: ['patient', patientId]
+      });
       setOpen(false);
       form.reset();
     } catch (error: any) {
@@ -63,34 +61,28 @@ export const DentalNoteFormDialog = ({ patientId }: DentalNoteFormDialogProps) =
       toast.error(error.message);
     }
   };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
+  return <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
           <StickyNote className="h-4 w-4 mr-2" />
           {t('add_note')}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] py-[10px]">
         <DialogHeader>
           <DialogTitle>{t('add_note')}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
+            <FormField control={form.control} name="notes" render={({
+            field
+          }) => <FormItem>
                   <FormLabel>{t('notes')}</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
                   <FormMessage />
-                </FormItem>
-              )}
-            />
+                </FormItem>} />
             <ImageUploadField form={form} />
             <Button type="submit" className="w-full">
               {t('save_note')}
@@ -98,6 +90,5 @@ export const DentalNoteFormDialog = ({ patientId }: DentalNoteFormDialogProps) =
           </form>
         </Form>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 };
