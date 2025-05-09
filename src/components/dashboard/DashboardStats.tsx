@@ -48,13 +48,21 @@ export const DashboardStats = () => {
         });
       }
       
+      // Determine the trend based on the appointment count
+      let trend: "up" | "down" | "neutral" = "neutral";
+      if (data.length > 3) {
+        trend = "up";
+      } else if (data.length < 2) {
+        trend = "down";
+      }
+      
       return {
         chartData,
         total: data.length,
-        trend: data.length > 3 ? "up" : "neutral"
+        trend
       };
     },
-    placeholderData: { chartData: Array(7).fill({ date: "", value: 0 }), total: 0, trend: "neutral" }
+    placeholderData: { chartData: Array(7).fill({ date: "", value: 0 }), total: 0, trend: "neutral" as const }
   });
 
   // Query to get total patients count

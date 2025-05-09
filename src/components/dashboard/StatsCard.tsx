@@ -1,6 +1,5 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StaticImageData } from "next/image";
 import { ChartContainer } from "@/components/ui/chart";
 import { LineChart, Line, ResponsiveContainer, AreaChart, Area, YAxis } from "recharts";
 
