@@ -25,11 +25,7 @@ export const AppHeader = ({
         <div className="flex flex-col py-4">
           <div className="grid grid-cols-3 items-center w-full px-[20px] md:px-[40px]">
             {/* Left section - Quick Access Menu */}
-            <div className="flex items-center justify-start">
-              {isMobile ? <QuickAccessDrawer open={drawerOpen} onOpenChange={setDrawerOpen} /> : <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="hover:bg-accent/50 rounded-full" aria-label={t('dashboard')}>
-                  <Menu className="h-5 w-5" />
-                </Button>}
-            </div>
+            
             
             {/* Center section - Logo */}
             <div className="flex justify-center">
