@@ -55,9 +55,7 @@ export const AppHeader = ({
           {/* Desktop action buttons */}
           <div className="hidden md:flex items-center justify-center mt-4">
             {view === "list" && <PatientFormDialog mode="create" />}
-            {view === "calendar" && <DentalRecordFormDialog patientId="" trigger={<Button>
-                    {t('add_appointment')}
-                  </Button>} />}
+            {view === "calendar"}
           </div>
         </div>
       </div>
