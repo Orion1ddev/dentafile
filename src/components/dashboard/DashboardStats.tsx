@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { StatsCard } from "./StatsCard";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, Users, Activity, Star } from "lucide-react";
+import { format } from "date-fns";
 
 export const DashboardStats = () => {
   const { t } = useLanguage();
@@ -82,6 +83,48 @@ export const DashboardStats = () => {
     }
   });
 
+  // Query to get the next appointment
+  const { data: nextAppointment } = useQuery({
+    queryKey: ['next-appointment'],
+    queryFn: async () => {
+      const today = new Date();
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+      
+      const { data, error } = await supabase
+        .from('dental_records')
+        .select(`
+          id,
+          visit_date,
+          appointment_time,
+          patient:patients(first_name, last_name)
+        `)
+        .gte('visit_date', today.toISOString())
+        .order('visit_date', { ascending: true })
+        .order('appointment_time', { ascending: true })
+        .limit(1);
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        const appointment = data[0];
+        // Format the date and time
+        const visitDate = new Date(appointment.visit_date);
+        const isToday = visitDate.toDateString() === today.toDateString();
+        
+        return {
+          exists: true,
+          isToday,
+          time: appointment.appointment_time,
+          date: visitDate
+        };
+      }
+      
+      return { exists: false };
+    }
+  });
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <StatsCard
@@ -100,8 +143,12 @@ export const DashboardStats = () => {
       />
       <StatsCard
         title={t('next_appointment')}
-        value={t('today')}
-        description={t('at') + " 14:30"}
+        value={nextAppointment?.exists 
+          ? (nextAppointment.isToday ? t('today') : format(nextAppointment.date, 'MMM dd'))
+          : t('none')}
+        description={nextAppointment?.exists 
+          ? (t('at') + " " + nextAppointment.time) 
+          : t('no_future_appointments')}
         icon={<Activity />}
       />
     </div>
