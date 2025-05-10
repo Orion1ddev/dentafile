@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +34,7 @@ export const AppHeader = ({
           {/* Right section - User Menu */}
           <div className="flex items-center gap-2">
             {view === "list" && !isMobile && <PatientFormDialog mode="create" />}
-            {view === "calendar" && !isMobile && <DentalRecordFormDialog patientId="" trigger={<Button className="mx-[14px]">{t('add_appointment')}</Button>} />}
+            {view === "calendar" && !isMobile && <DentalRecordFormDialog patientId="" includePatientSelect={true} trigger={<Button className="mx-[14px]">{t('add_appointment')}</Button>} />}
             <NavMenu />
           </div>
         </div>
