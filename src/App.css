@@ -1,3 +1,4 @@
+
 #root {
   margin: 0 auto;
   text-align: center;
@@ -39,10 +40,4 @@
 
 .read-the-docs {
   color: #888;
-}
-
-/* Add gradient background styles */
-.app-background {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-  backdrop-filter: blur(10px);
 }
