@@ -1,9 +1,6 @@
 
-import { Button } from "@/components/ui/button";
-import { DentalRecordFormDialog } from "../DentalRecordFormDialog";
 import { format } from "date-fns";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { CalendarPlus } from "lucide-react";
 import { useLanguage } from "@/stores/useLanguage";
 import { AppointmentCardActions } from "./AppointmentCardActions";
 
@@ -56,15 +53,6 @@ export const AppointmentsList = ({ appointments = [], selectedDate }: Appointmen
         <h3 className="text-xl font-semibold">
           {format(selectedDate, "MMMM d, yyyy")}
         </h3>
-        <DentalRecordFormDialog 
-          patientId=""
-          trigger={
-            <Button size="sm" className="gap-1">
-              <CalendarPlus className="h-4 w-4" />
-              {t('add_appointment')}
-            </Button>
-          }
-        />
       </div>
       
       <div className="flex-1 overflow-auto">
