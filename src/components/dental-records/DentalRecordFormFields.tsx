@@ -14,10 +14,10 @@ export const formSchema = z.object({
   images: z.array(z.string()).nullable(),
 });
 
-type DentalRecordFormData = z.infer<typeof formSchema>;
+export type DentalRecordFormData = z.infer<typeof formSchema>;
 
 interface DentalRecordFormFieldsProps {
-  form: UseFormReturn<DentalRecordFormData>;
+  form: UseFormReturn<any>;
 }
 
 export const DentalRecordFormFields = ({ form }: DentalRecordFormFieldsProps) => {

@@ -9,8 +9,8 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { DentalRecordFormFields, formSchema } from "./dental-records/DentalRecordFormFields";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod"; // Change from type import to regular import
 import { useLanguage } from "@/stores/useLanguage";
-import type { z } from "zod";
 import { usePatients } from "@/hooks/usePatients";
 import { 
   FormField, 
@@ -154,7 +154,7 @@ export const DentalRecordFormDialog = ({
                 )}
               />
             )}
-            <DentalRecordFormFields form={form} />
+            <DentalRecordFormFields form={form as any} />
             <Button type="submit" className="w-full">
               {t('add_record')}
             </Button>
