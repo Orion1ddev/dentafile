@@ -1,7 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, FileText } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { FileText } from "lucide-react";
 import { DentalRecordFormDialog } from "@/components/DentalRecordFormDialog";
 import { NavMenu } from "@/components/NavMenu";
 import { useLanguage } from "@/stores/useLanguage";
@@ -15,7 +14,6 @@ interface PatientHeaderProps {
 }
 
 export const PatientHeader = ({ patient }: PatientHeaderProps) => {
-  const navigate = useNavigate();
   const { t } = useLanguage();
   
   return (

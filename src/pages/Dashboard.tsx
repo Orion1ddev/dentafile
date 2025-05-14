@@ -14,145 +14,98 @@ import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
-  
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        navigate("/auth");
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+  const { t, language } = useLanguage();
 
-  const { data: userProfile } = useQuery({
-    queryKey: ['user-profile'],
+  const { data: patientCount, isLoading } = useQuery({
+    queryKey: ['patient-count'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-      const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  const { data: todayAppointments } = useQuery({
-    queryKey: ['today-appointments'],
-    queryFn: async () => {
-      const startOfDay = new Date();
-      startOfDay.setHours(0, 0, 0, 0);
-      const endOfDay = new Date();
-      endOfDay.setHours(23, 59, 59, 999);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-      const { data, error } = await supabase.from('dental_records').select(`
-          *,
-          patient:patients(*)
-        `).eq('patients.user_id', user.id).gte('visit_date', startOfDay.toISOString()).lte('visit_date', endOfDay.toISOString());
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  const { data: pinnedPatients } = useQuery({
-    queryKey: ['pinned-patients'],
-    queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-      const { data, error } = await supabase
+      const { count, error } = await supabase
         .from('patients')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_pinned', true);
+        .select('*', { count: 'exact', head: true });
+      
       if (error) throw error;
-      return data;
+      return count || 0;
     },
-    placeholderData: []
+    retry: 1
   });
-  
-  const featureCards = [
+
+  const appFeatures = [
     {
-      title: t('patient_records'),
-      description: t('manage_patients'),
-      icon: <Users />,
-      path: "/patients"
+      icon: <Users className="h-6 w-6 text-primary" />,
+      title: t('patients'),
+      description: t('patient_management_description'),
+      action: () => navigate('/patients')
     },
     {
+      icon: <Calendar className="h-6 w-6 text-primary" />,
       title: t('calendar'),
-      description: t('manage_calendar'),
-      icon: <Calendar />,
-      path: "/calendar"
+      description: t('calendar_description'),
+      action: () => navigate('/calendar')
     },
     {
+      icon: <FileText className="h-6 w-6 text-primary" />,
+      title: t('dental_records'),
+      description: t('dental_records_description'),
+      action: () => navigate('/patients')
+    },
+    {
+      icon: <Settings className="h-6 w-6 text-primary" />,
       title: t('settings'),
-      description: t('settings_desc'),
-      icon: <Settings />,
-      path: "/settings"
-    },
-    {
-      title: "Support DentaFile",
-      description: "Help us improve DentaFile by supporting our development.",
-      icon: <Heart />,
-      path: "https://buymeacoffee.com/dentafile"
+      description: t('settings_description'),
+      action: () => navigate('/settings')
     }
   ];
 
+  useEffect(() => {
+    document.title = "DentaFile - " + t('dashboard');
+  }, [language, t]);
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
-      <BackgroundEffect />
-      
-      <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b">
+    <div className="relative min-h-screen">
+      <BackgroundEffect className="absolute inset-0 z-0" />
+      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 px-[40px]">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                DentaFile
-              </h1>
-            </div>
-            <div className="flex items-center">
-              <NavMenu />
-            </div>
+          <div className="flex items-center justify-between h-16">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              DentaFile
+            </h1>
+            <NavMenu />
           </div>
         </div>
-      </nav>
-
-      <main className="container mx-auto py-8 px-2 sm:px-4 lg:px-6 relative z-0">
-        <div className="max-w-5xl mx-auto">
-          {/* Hero section */}
-          <section className="mb-8">
-            <WelcomeCard 
-              userProfile={userProfile} 
-              appointmentCount={todayAppointments?.length || 0}
-              pinnedPatientsCount={pinnedPatients?.length || 0}
-            />
-            <DashboardStats />
-          </section>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        <div className="grid gap-6">
+          <WelcomeCard patientCount={patientCount || 0} isLoading={isLoading} />
           
-          {/* Feature cards */}
-          <section>
-            <h2 className="text-xl font-semibold mb-4 text-foreground/90">
-              {t('quick_access')}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featureCards.map((card, index) => (
-                <FeatureCard
-                  key={index}
-                  title={card.title}
-                  description={card.description}
-                  icon={card.icon}
-                  onClick={() => {
-                    if (card.path.startsWith('http')) {
-                      window.open(card.path, '_blank');
-                    } else {
-                      navigate(card.path);
-                    }
-                  }}
-                />
-              ))}
-            </div>
-          </section>
+          <DashboardStats />
+          
+          <h2 className="text-2xl font-bold mt-4">{t('quick_access')}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {appFeatures.map((feature, index) => (
+              <FeatureCard
+                key={index}
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+                onClick={feature.action}
+              />
+            ))}
+          </div>
+          
+          <div className="mt-8 text-center">
+            <Link 
+              to="https://pinklastgirl.gumroad.com/l/dentafile"
+              className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Heart className="h-4 w-4 mr-1" />
+              {t('support_this_project')}
+            </Link>
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };
