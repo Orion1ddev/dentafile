@@ -8,9 +8,9 @@ interface PageLayoutProps {
 
 export const PageLayout = ({ children }: PageLayoutProps) => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
       <BackgroundEffect />
-      <main className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">
+      <main className="container mx-auto py-8 px-2 sm:px-4 lg:px-6 relative z-10">
         <div className="max-w-4xl mx-auto">
           {children}
         </div>
