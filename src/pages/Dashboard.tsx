@@ -1,8 +1,9 @@
+
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
-import { FileText, Calendar, Settings, Heart, User, Users, ChevronLeft } from "lucide-react";
+import { FileText, Calendar, Settings, Heart, User, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
@@ -10,7 +11,6 @@ import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
 import { FeatureCard } from "@/components/dashboard/FeatureCard";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const navigate = useNavigate();
