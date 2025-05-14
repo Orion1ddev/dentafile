@@ -88,7 +88,7 @@ export const CalendarView = () => {
   }
   
   return (
-    <div className="w-full h-screen flex flex-col md:flex-row gap-6 p-4 max-w-[1800px] mx-auto">
+    <div className="w-full h-screen flex flex-col md:flex-row gap-4 p-2 max-w-[1920px] mx-auto">
       {/* Calendar Section - Left Side - Now 2/3 width on larger screens */}
       <div className="w-full md:w-2/3 h-[600px] md:h-[calc(100vh-2rem)]">
         <Card className="h-full overflow-hidden bg-secondary/50 shadow-md w-full rounded-lg">
