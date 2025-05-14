@@ -6,6 +6,7 @@ import { DentalRecordFormDialog } from "@/components/DentalRecordFormDialog";
 import { NavMenu } from "@/components/NavMenu";
 import { useLanguage } from "@/stores/useLanguage";
 import { DentalNoteFormDialog } from "./dental-records/DentalNoteFormDialog";
+import { BackButton } from "./navigation/BackButton";
 
 interface PatientHeaderProps {
   patient: {
@@ -17,19 +18,13 @@ export const PatientHeader = ({ patient }: PatientHeaderProps) => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   
-  const handleBack = () => {
-    navigate("/patients");
-  };
-  
   return (
     <nav className="bg-background/80 backdrop-blur-sm shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col py-4 px-[40px]">
           <div className="flex items-center justify-between w-full mb-4">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="text-foreground hover:text-foreground/80" onClick={handleBack} aria-label={t('patient_list')}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
+              <BackButton to="/patients" />
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 DentaFile
               </h1>
