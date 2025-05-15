@@ -1,0 +1,11 @@
+.git
+.github
+.vscode
+dist
+node_modules
+*.log
+.DS_Store
+.env*
+.cloudflare
+wrangler.toml
+bun.lockb 
