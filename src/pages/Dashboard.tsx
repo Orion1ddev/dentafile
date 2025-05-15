@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
-import { FileText, Calendar, Settings, Heart, User, Users } from "lucide-react";
+import { FileText, Calendar, Settings, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
@@ -62,7 +62,7 @@ const Dashboard = () => {
   
   return (
     <div className="relative min-h-screen">
-      <BackgroundEffect className="absolute inset-0 z-0" />
+      <BackgroundEffect />
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -76,7 +76,11 @@ const Dashboard = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         <div className="grid gap-6">
-          <WelcomeCard patientCount={patientCount || 0} isLoading={isLoading} />
+          <WelcomeCard 
+            userProfile={{ first_name: "Doctor" }}
+            appointmentCount={0}
+            pinnedPatientsCount={0}
+          />
           
           <DashboardStats />
           
@@ -100,7 +104,6 @@ const Dashboard = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Heart className="h-4 w-4 mr-1" />
               {t('support_this_project')}
             </Link>
           </div>

@@ -1,5 +1,5 @@
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/stores/useLanguage";
 
 interface WelcomeCardProps {
