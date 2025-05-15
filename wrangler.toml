@@ -8,17 +8,16 @@ bucket = "./dist"
 command = "npm run build"
 output_dir = "dist"
 
-# Configure caching rules
-[site.cache]
-pattern = "**/*.{js,css,html}"
-strategy = "bypass_cache"
-
 # Configure routes for SPA
 [[routes]]
 pattern = "/*"
-script = ""
 dest = "/index.html"
 
 # Environment variables (if needed)
 [env.production]
 NODE_ENV = "production"
+
+# Configure caching rules
+[site.cache]
+pattern = "**/*.{js,css,html,ico,jpg,png,svg,webp,woff,woff2}"
+strategy = "bypass_cache"
