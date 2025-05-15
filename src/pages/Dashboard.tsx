@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { NavMenu } from "@/components/NavMenu";
-import { FileText, Calendar, Settings, Users } from "lucide-react";
+import { Calendar, Settings, Users, Heart } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
@@ -43,16 +43,16 @@ const Dashboard = () => {
       action: () => navigate('/calendar')
     },
     {
-      icon: <FileText className="h-6 w-6 text-primary" />,
-      title: t('dental_records'),
-      description: t('dental_records_description'),
-      action: () => navigate('/patients')
-    },
-    {
       icon: <Settings className="h-6 w-6 text-primary" />,
       title: t('settings'),
       description: t('settings_description'),
       action: () => navigate('/settings')
+    },
+    {
+      icon: <Heart className="h-6 w-6 text-primary" />,
+      title: t('support_us'),
+      description: t('support_description'),
+      action: () => window.open('https://pinklastgirl.gumroad.com/l/dentafile', '_blank')
     }
   ];
 
@@ -104,6 +104,7 @@ const Dashboard = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
+              <Heart className="h-4 w-4 mr-1" />
               {t('support_this_project')}
             </Link>
           </div>
