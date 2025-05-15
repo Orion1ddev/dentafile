@@ -1,6 +1,9 @@
+/// <reference types="node" />
+/// <reference path="./src/global.d.ts" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+// @ts-ignore - ignore the missing type for lovable-tagger
 import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({

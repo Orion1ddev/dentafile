@@ -1,69 +1,57 @@
-# Welcome to your Lovable project
+# Dentafile
 
-## Project info
+A modern dental file management system.
 
-**URL**: https://lovable.dev/projects/76e384ae-967b-438d-aa48-fdf2bb1e4d1d
+## Development
 
-## How can I edit this code?
+### Prerequisites
+- Node.js 18.18.0 or higher
+- npm 9.x or higher
 
-There are several ways of editing your application.
+### Setup
+```bash
+# Install dependencies
+npm install
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/76e384ae-967b-438d-aa48-fdf2bb1e4d1d) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Deployment
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Cloudflare Pages
 
-**Use GitHub Codespaces**
+This project is configured for deployment on Cloudflare Pages.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+#### Deployment Settings
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Node.js version: 18.18.0 or higher
 
-## What technologies are used for this project?
+#### Custom Domain Setup
+1. Go to Cloudflare Pages dashboard
+2. Select the project
+3. Go to Custom domains
+4. Add your domain: dentafile.com
+5. Follow the DNS configuration steps
 
-This project is built with .
+## Project Structure
+- `/src` - Source code
+- `/public` - Static assets
+- `/dist` - Build output (not committed to repo)
 
-- Vite
-- TypeScript
+## Technologies
 - React
-- shadcn-ui
+- TypeScript
+- Vite
 - Tailwind CSS
+- shadcn/ui
+- Supabase
 
-## How can I deploy this project?
+## Environment Variables
+Copy `.env.example` to `.env` and fill in the required values:
 
-Simply open [Lovable](https://lovable.dev/projects/76e384ae-967b-438d-aa48-fdf2bb1e4d1d) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+```
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
