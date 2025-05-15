@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
@@ -10,6 +11,9 @@ import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
 import { FeatureCard } from "@/components/dashboard/FeatureCard";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { Link } from "react-router-dom";
+import { PageTransition } from "@/components/effects/PageTransition";
+import { Loading } from "@/components/ui/loading";
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const {
@@ -58,7 +62,13 @@ const Dashboard = () => {
   useEffect(() => {
     document.title = "DentaFile - " + t('dashboard');
   }, [language, t]);
-  return <div className="relative min-h-screen">
+  
+  if (isLoading) {
+    return <Loading fullScreen text={t('loading_dashboard')} />;
+  }
+
+  return (
+    <div className="relative min-h-screen">
       <BackgroundEffect />
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,24 +81,35 @@ const Dashboard = () => {
         </div>
       </div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-        <div className="grid gap-6">
-          <WelcomeCard userProfile={{
-          first_name: "Doctor"
-        }} appointmentCount={0} pinnedPatientsCount={0} />
-          
-          <DashboardStats />
-          
-          <h2 className="text-2xl font-bold mt-4">{t('quick_access')}</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {appFeatures.map((feature, index) => <FeatureCard key={index} icon={feature.icon} title={feature.title} description={feature.description} onClick={feature.action} />)}
-          </div>
-          
-          <div className="mt-8 text-center">
+      <PageTransition>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+          <div className="grid gap-6">
+            <WelcomeCard 
+              userProfile={{
+                first_name: "Doctor"
+              }} 
+              appointmentCount={0} 
+              pinnedPatientsCount={0} 
+            />
             
+            <DashboardStats />
+            
+            <h2 className="text-2xl font-bold mt-4">{t('quick_access')}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {appFeatures.map((feature, index) => (
+                <FeatureCard 
+                  key={index} 
+                  icon={feature.icon} 
+                  title={feature.title} 
+                  description={feature.description} 
+                  onClick={feature.action} 
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </div>;
+      </PageTransition>
+    </div>
+  );
 };
 export default Dashboard;
