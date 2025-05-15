@@ -1,0 +1,13 @@
+{
+  "build": {
+    "command": "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && \\. \"$NVM_DIR/nvm.sh\" && nvm install 18 && npm install && npm run build",
+    "directory": "dist",
+    "environment": {
+      "NODE_VERSION": "18.17.1",
+      "NPM_VERSION": "9.6.7"
+    }
+  },
+  "routes": [
+    { "pattern": "/*", "dest": "/index.html" }
+  ]
+} 
