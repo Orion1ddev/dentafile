@@ -9,6 +9,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { AppRoutes } from "@/components/routing/AppRoutes";
 import { Loading } from "@/components/ui/loading";
+import { PageTransition } from "@/components/effects/PageTransition";
 
 // Configure query client with optimized settings
 const queryClient = new QueryClient({
@@ -58,11 +59,21 @@ const App = () => {
   }, [fetchTranslations]);
 
   if (!translationsLoaded && translationsLoading) {
-    return <Loading text="Loading Translations" fullScreen />;
+    return (
+      <PageTransition mode="fade">
+        <Loading text="Loading Translations" fullScreen />
+      </PageTransition>
+    );
   }
 
   return (
-    <Suspense fallback={<Loading text="Loading Application" fullScreen />}>
+    <Suspense 
+      fallback={
+        <PageTransition mode="fade">
+          <Loading text="Loading Application" fullScreen />
+        </PageTransition>
+      }
+    >
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
