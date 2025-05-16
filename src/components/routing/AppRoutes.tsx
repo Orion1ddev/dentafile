@@ -74,32 +74,30 @@ export const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => {
     return () => clearTimeout(timeoutId);
   }, [location.pathname]);
 
-  if (!isAuthenticated) {
-    return (
-      <Suspense fallback={<RouteLoadingScreen message="Preparing your application..." />}>
-        <AnimatePresence mode="wait">
+  console.log("Auth state:", isAuthenticated, "Current path:", location.pathname);
+
+  return (
+    <AnimatePresence mode="wait">
+      {!isAuthenticated ? (
+        <Suspense fallback={<RouteLoadingScreen message="Preparing your application..." />}>
           <Routes location={location} key={location.pathname}>
             <Route path="/auth/*" element={<Auth />} />
             <Route path="*" element={<Navigate to="/auth" replace />} />
           </Routes>
-        </AnimatePresence>
-      </Suspense>
-    );
-  }
-
-  return (
-    <Suspense fallback={<RouteLoadingScreen message="Loading your dashboard..." />}>
-      <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/patients" element={<Index />} />
-          <Route path="/calendar" element={<Index view="calendar" />} />
-          <Route path="/patient/:id" element={<PatientDetails />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/auth/*" element={<Navigate to="/" replace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </AnimatePresence>
-    </Suspense>
+        </Suspense>
+      ) : (
+        <Suspense fallback={<RouteLoadingScreen message="Loading your dashboard..." />}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/patients" element={<Index />} />
+            <Route path="/calendar" element={<Index view="calendar" />} />
+            <Route path="/patient/:id" element={<PatientDetails />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/auth/*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      )}
+    </AnimatePresence>
   );
 };
