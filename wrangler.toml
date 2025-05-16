@@ -20,3 +20,8 @@ NODE_ENV = "production"
 [site.cache]
 pattern = "**/*.{js,css,html,ico,jpg,png,svg,webp,woff,woff2}"
 strategy = "bypass_cache"
+
+# Note: Add your environment variables in the Cloudflare Pages dashboard
+# under Settings > Environment variables:
+# VITE_SUPABASE_URL
+# VITE_SUPABASE_ANON_KEY
