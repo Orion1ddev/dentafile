@@ -52,6 +52,7 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         (event, newSession) => {
           console.log("Auth state change:", event);
           
+          // Fix: Use a string type check instead of comparing to specific enum values
           if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
             // Clear any cached data in React Query
             queryClient.clear();
