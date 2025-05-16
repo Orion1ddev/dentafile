@@ -1,12 +1,13 @@
 
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const LoginForm = () => {
   const { t } = useLanguage();
@@ -14,10 +15,11 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const supabaseConfigured = isSupabaseConfigured();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLoading) return;
+    if (isLoading || !supabaseConfigured) return;
     
     if (!email || !password) {
       toast.error(t('all_fields_required'));
@@ -50,6 +52,16 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
+
+  if (!supabaseConfigured) {
+    return (
+      <Alert variant="destructive" className="max-w-md">
+        <AlertDescription>
+          Supabase configuration is missing. Authentication is unavailable.
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div className="w-full max-w-md">

@@ -4,17 +4,16 @@ import { ReactNode } from "react";
 
 interface PageLayoutProps {
   children: ReactNode;
+  withBackground?: boolean;
 }
 
-export const PageLayout = ({ children }: PageLayoutProps) => {
+export const PageLayout = ({ children, withBackground = true }: PageLayoutProps) => {
   return (
-    <div className="min-h-screen relative">
-      <BackgroundEffect />
-      <main className="container mx-auto py-4 px-1 sm:px-2 lg:px-3 relative z-10">
-        <div className="max-w-full mx-auto">
-          {children}
-        </div>
-      </main>
+    <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm relative">
+      {withBackground && <BackgroundEffect />}
+      <div className="relative z-10 w-full">
+        {children}
+      </div>
     </div>
   );
 };
