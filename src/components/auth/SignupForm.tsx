@@ -1,12 +1,13 @@
 
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const SignupForm = () => {
   const { t } = useLanguage();
@@ -17,6 +18,7 @@ const SignupForm = () => {
   const [lastName, setLastName] = useState("");
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const supabaseConfigured = isSupabaseConfigured();
 
   const handleInitialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +31,8 @@ const SignupForm = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!supabaseConfigured) return;
+    
     setIsLoading(true);
 
     if (!email || !password || !firstName || !lastName) {
@@ -70,6 +74,16 @@ const SignupForm = () => {
       setIsLoading(false);
     }
   };
+
+  if (!supabaseConfigured) {
+    return (
+      <Alert variant="destructive" className="max-w-md">
+        <AlertDescription>
+          Supabase configuration is missing. Registration is unavailable.
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div className="w-full max-w-md">

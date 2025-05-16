@@ -1,7 +1,6 @@
-
 import { useEffect } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,37 +16,67 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const Auth = () => {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const isMobile = useIsMobile();
   const { setTheme } = useTheme();
+  const supabaseConfigured = isSupabaseConfigured();
 
   useEffect(() => {
     setTheme('light');
   }, [setTheme]);
 
   useEffect(() => {
+    if (!supabaseConfigured) {
+      console.error("Supabase is not configured properly");
+      return;
+    }
+
     const checkSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (session && !error) {
-        navigate("/", { replace: true });
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (session && !error) {
+          navigate("/", { replace: true });
+        }
+      } catch (error) {
+        console.error("Error checking session:", error);
       }
     };
     
     checkSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        navigate("/", { replace: true });
-      }
-    });
+    if (supabaseConfigured) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          navigate("/", { replace: true });
+        }
+      });
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [navigate]);
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [navigate, supabaseConfigured]);
+
+  // Show an error message if Supabase is not configured
+  if (!supabaseConfigured) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <Alert variant="destructive" className="max-w-md mb-4">
+          <AlertTitle>Configuration Error</AlertTitle>
+          <AlertDescription>
+            Supabase environment variables are missing. Please check your configuration.
+          </AlertDescription>
+        </Alert>
+        <p className="text-muted-foreground text-sm max-w-md text-center">
+          Make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your environment.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col md:flex-row font-['Roboto'] animate-fade-in">
