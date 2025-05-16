@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -81,7 +80,7 @@ const PatientDetails = () => {
   return (
     <PageLayout>
       <PatientHeader patient={patient} />
-      <PageTransition className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <PageTransition mode="slide" className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div>
           <PatientInfo patient={patient} />
           <CardContent className="p-0">

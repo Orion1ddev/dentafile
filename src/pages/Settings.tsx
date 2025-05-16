@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonalInfoSettings } from "@/components/settings/PersonalInfoSettings";
 import { PasswordSettings } from "@/components/settings/PasswordSettings";
@@ -35,7 +34,7 @@ const Settings = () => {
         </div>
       </nav>
 
-      <PageTransition className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">        
+      <PageTransition mode="slide" className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">        
         <Tabs defaultValue="personal" className="w-full max-w-3xl mx-auto">
           <TabsList className="w-full">
             <TabsTrigger value="personal">{t('personal_info')}</TabsTrigger>

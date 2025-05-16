@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
@@ -87,7 +86,7 @@ const Dashboard = () => {
         </div>
       </div>
       
-      <PageTransition className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+      <PageTransition mode="slide" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         <div className="grid gap-6">
           <WelcomeCard 
             userProfile={{

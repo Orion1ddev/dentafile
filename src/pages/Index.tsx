@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -100,7 +99,7 @@ const Index = ({
     <PageLayout>
       <AppHeader view={view} />
       
-      <PageTransition className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">
+      <PageTransition mode="slide" className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">
         <div className="max-w-4xl mx-auto">
           {view === "list" && (
             <PatientsListView 
