@@ -11,6 +11,8 @@ import { PatientsListView } from "@/components/patients/PatientsListView";
 import { ErrorDisplay } from "@/components/ui/ErrorDisplay";
 import { usePatients } from "@/hooks/usePatients";
 import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
+import { PageTransition } from "@/components/effects/PageTransition";
+import { PageLayout } from "@/components/layout/PageLayout";
 
 interface IndexProps {
   view?: "list" | "calendar";
@@ -57,10 +59,15 @@ const Index = ({
   // Verify auth state on component mount
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        console.log('No session found in Index page, redirecting to auth');
-        navigate("/auth");
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          console.log('No session found in Index page, redirecting to auth');
+          navigate("/auth");
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+        toast.error("Authentication error occurred");
       }
     };
     
@@ -81,7 +88,7 @@ const Index = ({
 
   // Show loading state only when page is first loading
   if (!pageReady || isInitialLoading) {
-    return <Loading text={view === "list" ? "Loading patients..." : "Loading calendar..."} />;
+    return <Loading text={view === "list" ? t('loading_patients') : t('loading_calendar')} />;
   }
 
   // If there's an error, show an error message with a retry button
@@ -90,11 +97,10 @@ const Index = ({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
-      <BackgroundEffect />
+    <PageLayout>
       <AppHeader view={view} />
-
-      <main className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">
+      
+      <PageTransition className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">
         <div className="max-w-4xl mx-auto">
           {view === "list" && (
             <PatientsListView 
@@ -107,8 +113,8 @@ const Index = ({
 
           {view === "calendar" && <CalendarView />}
         </div>
-      </main>
-    </div>
+      </PageTransition>
+    </PageLayout>
   );
 };
 

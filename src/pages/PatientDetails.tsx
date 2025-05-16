@@ -10,7 +10,10 @@ import { PatientHeader } from "@/components/PatientHeader";
 import { PatientInfo } from "@/components/PatientInfo";
 import { DentalRecordsList } from "@/components/DentalRecordsList";
 import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
-import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { PageTransition } from "@/components/effects/PageTransition";
+import { Loading } from "@/components/ui/loading";
+import { ErrorDisplay } from "@/components/ui/ErrorDisplay";
 
 type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
   dental_records: Database['public']['Tables']['dental_records']['Row'][];
@@ -30,7 +33,7 @@ const PatientDetails = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
   
-  const { data: patient, isLoading } = useQuery({
+  const { data: patient, isLoading, error, refetch } = useQuery({
     queryKey: ['patient', id],
     queryFn: async () => {
       if (!id) throw new Error("No patient ID provided");
@@ -54,28 +57,31 @@ const PatientDetails = () => {
       return data as PatientWithRecords;
     }
   });
+
+  const handleRetry = () => {
+    refetch();
+  };
   
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">{t('loading')}</div>
-      </div>
-    );
+    return <Loading text={t('loading_patient_details')} />;
+  }
+
+  if (error) {
+    return <ErrorDisplay onRetry={handleRetry} message={t('patient_load_error')} />;
   }
   
   if (!patient) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">{t('patient_not_found')}</div>
-      </div>
-    );
+    return <ErrorDisplay 
+      onRetry={handleRetry} 
+      message={t('patient_not_found')} 
+      description={t('patient_not_found_description')} 
+    />;
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
-      <BackgroundEffect />
+    <PageLayout>
       <PatientHeader patient={patient} />
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <PageTransition className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div>
           <PatientInfo patient={patient} />
           <CardContent className="p-0">
@@ -84,11 +90,11 @@ const PatientDetails = () => {
             </div>
           </CardContent>
         </div>
-      </main>
+      </PageTransition>
       <div className="fixed bottom-4 right-4">
         <BuyMeCoffeeButton />
       </div>
-    </div>
+    </PageLayout>
   );
 };
 

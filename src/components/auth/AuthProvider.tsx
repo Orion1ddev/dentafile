@@ -124,12 +124,12 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.4 }}
       >
         <motion.div 
           className="flex flex-col items-center p-8 rounded-lg bg-card/30 backdrop-blur-md shadow-lg"
-          initial={{ opacity: 0, y: 30, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ 
             duration: 0.6,
             type: "spring",
