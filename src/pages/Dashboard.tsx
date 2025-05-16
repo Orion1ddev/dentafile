@@ -11,7 +11,6 @@ import { FeatureCard } from "@/components/dashboard/FeatureCard";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { Link } from "react-router-dom";
 import { PageTransition } from "@/components/effects/PageTransition";
-import { Loading } from "@/components/ui/loading";
 import { ErrorDisplay } from "@/components/ui/ErrorDisplay";
 
 const Dashboard = () => {
@@ -19,7 +18,6 @@ const Dashboard = () => {
   const { t, language } = useLanguage();
   const {
     data: patientCount,
-    isLoading,
     error,
     refetch
   } = useQuery({
@@ -64,10 +62,6 @@ const Dashboard = () => {
   const handleRetry = () => {
     refetch();
   };
-  
-  if (isLoading) {
-    return <Loading fullScreen text={t('loading_dashboard')} />;
-  }
 
   if (error) {
     return <ErrorDisplay onRetry={handleRetry} />;

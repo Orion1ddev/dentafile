@@ -11,7 +11,6 @@ import { DentalRecordsList } from "@/components/DentalRecordsList";
 import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { PageTransition } from "@/components/effects/PageTransition";
-import { Loading } from "@/components/ui/loading";
 import { ErrorDisplay } from "@/components/ui/ErrorDisplay";
 
 type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
@@ -32,7 +31,7 @@ const PatientDetails = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
   
-  const { data: patient, isLoading, error, refetch } = useQuery({
+  const { data: patient, error, refetch } = useQuery({
     queryKey: ['patient', id],
     queryFn: async () => {
       if (!id) throw new Error("No patient ID provided");
@@ -60,10 +59,6 @@ const PatientDetails = () => {
   const handleRetry = () => {
     refetch();
   };
-  
-  if (isLoading) {
-    return <Loading text={t('loading_patient_details')} />;
-  }
 
   if (error) {
     return <ErrorDisplay onRetry={handleRetry} message={t('patient_load_error')} />;

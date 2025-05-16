@@ -1,23 +1,29 @@
-
+import { useLanguage } from "@/stores/useLanguage";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 import { PatientCard } from "@/components/PatientCard";
 import { PatientFilter } from "@/components/PatientFilter";
-import { useLanguage } from "@/stores/useLanguage";
+import type { Database } from "@/integrations/supabase/types";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "@/components/ui/loading";
 import { useState, useEffect } from "react";
 
+type Patient = Database['public']['Tables']['patients']['Row'] & {
+  dental_records: Database['public']['Tables']['dental_records']['Row'][];
+};
+
 interface PatientsListViewProps {
-  patients: any[] | undefined;
-  isLoading: boolean;
+  patients: Patient[];
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  isLoading?: boolean;
 }
 
-export const PatientsListView = ({
-  patients,
-  isLoading,
-  searchQuery,
-  onSearchChange
+export const PatientsListView = ({ 
+  patients, 
+  searchQuery, 
+  onSearchChange,
+  isLoading = false 
 }: PatientsListViewProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();

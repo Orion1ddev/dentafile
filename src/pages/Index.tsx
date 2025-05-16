@@ -4,12 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/stores/useLanguage";
 import { CalendarView } from "@/components/CalendarView";
-import { Loading } from "@/components/ui/loading";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { PatientsListView } from "@/components/patients/PatientsListView";
 import { ErrorDisplay } from "@/components/ui/ErrorDisplay";
 import { usePatients } from "@/hooks/usePatients";
-import { BackgroundEffect } from "@/components/effects/BackgroundEffect";
 import { PageTransition } from "@/components/effects/PageTransition";
 import { PageLayout } from "@/components/layout/PageLayout";
 
@@ -24,33 +22,23 @@ const Index = ({
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const { t } = useLanguage();
-  const [pageReady, setPageReady] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
   const {
     patients,
-    isLoading,
     error,
-    isInitialLoading,
     refetch
   } = usePatients(searchQuery);
 
   useEffect(() => {
-    // Set page as ready after a small delay to prevent flash of loading state
-    const timer = setTimeout(() => {
-      setPageReady(true);
-    }, 300);
-
     // Cleanup auth subscription
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state change in Index page:', event);
       if (!session) {
         navigate("/auth");
       }
     });
 
     return () => {
-      clearTimeout(timer);
       subscription.unsubscribe();
     };
   }, [navigate]);
@@ -61,7 +49,6 @@ const Index = ({
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-          console.log('No session found in Index page, redirecting to auth');
           navigate("/auth");
         }
       } catch (error) {
@@ -85,11 +72,6 @@ const Index = ({
     refetch();
   };
 
-  // Show loading state only when page is first loading
-  if (!pageReady || isInitialLoading) {
-    return <Loading text={view === "list" ? t('loading_patients') : t('loading_calendar')} />;
-  }
-
   // If there's an error, show an error message with a retry button
   if (error) {
     return <ErrorDisplay onRetry={handleRetry} />;
@@ -104,7 +86,6 @@ const Index = ({
           {view === "list" && (
             <PatientsListView 
               patients={patients}
-              isLoading={isLoading}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
             />
