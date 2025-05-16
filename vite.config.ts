@@ -4,11 +4,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
-// @ts-ignore
-const componentTagger = process.env.NODE_ENV === 'development' 
-  ? require('lovable-tagger').componentTagger 
-  : null;
-
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
@@ -17,8 +12,7 @@ export default defineConfig(({ mode }) => ({
   base: "/",
   plugins: [
     react(),
-    mode === 'development' && componentTagger && componentTagger(),
-  ].filter(Boolean),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

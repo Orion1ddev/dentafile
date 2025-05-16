@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
@@ -21,55 +20,10 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
 
   useEffect(() => {
     let mounted = true;
+    let authTimeout: NodeJS.Timeout;
     
-    const initializeAuth = async () => {
-      try {
-        console.log('Initializing authentication state...');
-        
-        // Add a timeout to prevent infinite loading
-        const timeoutId = setTimeout(() => {
-          if (mounted && isLoading) {
-            console.log('Auth initialization timed out, proceeding as unauthenticated');
-            handleUnauthenticated();
-          }
-        }, 3000);
-
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        // Clear timeout as we got a response
-        clearTimeout(timeoutId);
-        
-        if (!mounted) return;
-        
-        if (error) {
-          console.error('Error getting session:', error);
-          toast.error('Failed to authenticate. Please try again.');
-          handleUnauthenticated();
-          return;
-        }
-        
-        if (session) {
-          console.log('Session found, user is authenticated');
-          handleAuthenticated();
-        } else {
-          console.log('No session found, user is unauthenticated');
-          handleUnauthenticated();
-        }
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        if (mounted) {
-          toast.error('Authentication error. Please reload the page.');
-          handleUnauthenticated();
-        }
-      } finally {
-        if (mounted) {
-          // Always ensure loading state is set to false
-          setIsLoading(false);
-        }
-      }
-    };
-
     const handleAuthenticated = () => {
+      if (!mounted) return;
       setIsAuthenticated(true);
       onAuthStateChange(true);
       if (location.pathname.startsWith('/auth')) {
@@ -78,13 +32,54 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
     };
 
     const handleUnauthenticated = () => {
+      if (!mounted) return;
       setIsAuthenticated(false);
       onAuthStateChange(false);
       queryClient.clear();
       if (!location.pathname.startsWith('/auth')) {
         navigate('/auth', { replace: true });
       }
-      setIsLoading(false); // Ensure loading is always set to false
+      setIsLoading(false);
+    };
+    
+    const initializeAuth = async () => {
+      try {
+        // Add a timeout to prevent infinite loading
+        authTimeout = setTimeout(() => {
+          if (mounted && isLoading) {
+            console.warn('Auth initialization timed out');
+            handleUnauthenticated();
+          }
+        }, 5000); // 5 seconds timeout
+
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
+        
+        if (error) {
+          console.error('Auth initialization error:', error);
+          toast.error('Authentication error. Please try again.');
+          handleUnauthenticated();
+          return;
+        }
+        
+        if (session) {
+          handleAuthenticated();
+        } else {
+          handleUnauthenticated();
+        }
+      } catch (error) {
+        console.error('Unexpected auth error:', error);
+        if (mounted) {
+          toast.error('Unexpected error. Please refresh the page.');
+          handleUnauthenticated();
+        }
+      } finally {
+        if (mounted) {
+          clearTimeout(authTimeout);
+          setIsLoading(false);
+        }
+      }
     };
 
     // Initialize auth state
@@ -92,27 +87,29 @@ export const AuthProvider = ({ children, queryClient, onAuthStateChange }: AuthP
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth event:', event);
-      
       if (!mounted) return;
       
-      if (event === 'SIGNED_IN' && session) {
-        handleAuthenticated();
-      } else if (event === 'SIGNED_OUT') {
-        handleUnauthenticated();
-      } else if (event === 'TOKEN_REFRESHED') {
-        // Check session after token refresh
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        if (currentSession) {
-          handleAuthenticated();
-        } else {
+      switch (event) {
+        case 'SIGNED_IN':
+          if (session) handleAuthenticated();
+          break;
+        case 'SIGNED_OUT':
           handleUnauthenticated();
-        }
+          break;
+        case 'TOKEN_REFRESHED':
+          const { data: { session: currentSession } } = await supabase.auth.getSession();
+          if (currentSession) {
+            handleAuthenticated();
+          } else {
+            handleUnauthenticated();
+          }
+          break;
       }
     });
 
     return () => {
       mounted = false;
+      clearTimeout(authTimeout);
       subscription.unsubscribe();
     };
   }, [onAuthStateChange, queryClient, navigate, location.pathname]);
