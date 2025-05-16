@@ -1,25 +1,24 @@
 name = "dentafile"
 compatibility_date = "2024-01-10"
-pages_build_output_dir = "dist"
 
+# Build configuration
 [build]
 command = "npm ci && npm run build"
-output_dir = "dist"
 
-# Configure routes for SPA
-[[routes]]
-pattern = "/*"
-dest = "/index.html"
+# Site configuration
+[site]
+bucket = "./dist"
 
-# Environment variables (if needed)
+# Environment variables
 [env.production]
 NODE_VERSION = "18.17.1"
 NODE_ENV = "production"
 
-# Configure caching rules
-[site.cache]
-pattern = "**/*.{js,css,html,ico,jpg,png,svg,webp,woff,woff2}"
-strategy = "bypass_cache"
+# Routes for SPA
+[[routes]]
+pattern = "/*"
+zone_name = "dentafile.pages.dev"
+custom_domain = false
 
 # Note: Add your environment variables in the Cloudflare Pages dashboard
 # under Settings > Environment variables:
