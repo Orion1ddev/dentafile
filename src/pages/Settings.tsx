@@ -1,3 +1,4 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonalInfoSettings } from "@/components/settings/PersonalInfoSettings";
 import { PasswordSettings } from "@/components/settings/PasswordSettings";
@@ -8,7 +9,6 @@ import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageLayout } from "@/components/layout/PageLayout";
-import { PageTransition } from "@/components/effects/PageTransition";
 import { BackButton } from "@/components/navigation/BackButton";
 
 const Settings = () => {
@@ -34,7 +34,7 @@ const Settings = () => {
         </div>
       </nav>
 
-      <PageTransition mode="slide" className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">        
+      <div className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">        
         <Tabs defaultValue="personal" className="w-full max-w-3xl mx-auto">
           <TabsList className="w-full">
             <TabsTrigger value="personal">{t('personal_info')}</TabsTrigger>
@@ -53,7 +53,7 @@ const Settings = () => {
         <div className="fixed bottom-4 right-4">
           <BuyMeCoffeeButton />
         </div>
-      </PageTransition>
+      </div>
     </PageLayout>
   );
 };

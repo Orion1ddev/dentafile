@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +9,6 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { PatientsListView } from "@/components/patients/PatientsListView";
 import { ErrorDisplay } from "@/components/ui/ErrorDisplay";
 import { usePatients } from "@/hooks/usePatients";
-import { PageTransition } from "@/components/effects/PageTransition";
 import { PageLayout } from "@/components/layout/PageLayout";
 
 interface IndexProps {
@@ -81,7 +81,7 @@ const Index = ({
     <PageLayout>
       <AppHeader view={view} />
       
-      <PageTransition mode="slide" className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">
+      <div className="container mx-auto py-8 px-2 sm:px-4 lg:px-6">
         <div className="max-w-4xl mx-auto">
           {view === "list" && (
             <PatientsListView 
@@ -93,7 +93,7 @@ const Index = ({
 
           {view === "calendar" && <CalendarView />}
         </div>
-      </PageTransition>
+      </div>
     </PageLayout>
   );
 };

@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,7 +11,6 @@ import { PatientInfo } from "@/components/PatientInfo";
 import { DentalRecordsList } from "@/components/DentalRecordsList";
 import BuyMeCoffeeButton from "@/components/BuyMeCoffeeButton";
 import { PageLayout } from "@/components/layout/PageLayout";
-import { PageTransition } from "@/components/effects/PageTransition";
 import { ErrorDisplay } from "@/components/ui/ErrorDisplay";
 
 type PatientWithRecords = Database['public']['Tables']['patients']['Row'] & {
@@ -75,7 +75,7 @@ const PatientDetails = () => {
   return (
     <PageLayout>
       <PatientHeader patient={patient} />
-      <PageTransition mode="slide" className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div>
           <PatientInfo patient={patient} />
           <CardContent className="p-0">
@@ -84,7 +84,7 @@ const PatientDetails = () => {
             </div>
           </CardContent>
         </div>
-      </PageTransition>
+      </div>
       <div className="fixed bottom-4 right-4">
         <BuyMeCoffeeButton />
       </div>

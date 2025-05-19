@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/stores/useLanguage";
@@ -10,7 +11,6 @@ import { WelcomeCard } from "@/components/dashboard/WelcomeCard";
 import { FeatureCard } from "@/components/dashboard/FeatureCard";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { Link } from "react-router-dom";
-import { PageTransition } from "@/components/effects/PageTransition";
 import { ErrorDisplay } from "@/components/ui/ErrorDisplay";
 
 const Dashboard = () => {
@@ -80,7 +80,7 @@ const Dashboard = () => {
         </div>
       </div>
       
-      <PageTransition mode="slide" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         <div className="grid gap-6">
           <WelcomeCard 
             userProfile={{
@@ -105,7 +105,7 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-      </PageTransition>
+      </div>
     </PageLayout>
   );
 };

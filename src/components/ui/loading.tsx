@@ -1,5 +1,5 @@
+
 import { Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface LoadingProps {
@@ -22,41 +22,22 @@ export const Loading = ({
   className
 }: LoadingProps) => {
   const containerClasses = fullScreen 
-    ? "min-h-screen flex items-center justify-center bg-background/50 backdrop-blur-sm fixed inset-0 z-50" 
+    ? "min-h-screen flex items-center justify-center bg-background/50 fixed inset-0 z-50" 
     : "flex items-center justify-center py-4";
 
   return (
     <div className={cn(containerClasses, className)}>
-      <motion.div 
-        className="flex flex-col items-center gap-3"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        <motion.div 
-          className="relative"
-          animate={{ rotate: 360 }}
-          transition={{ 
-            duration: 1, 
-            repeat: Infinity, 
-            ease: "linear",
-            repeatDelay: 0 
-          }}
-        >
-          <Loader2 className={cn(sizeMap[size], "text-primary animate-pulse")} />
-        </motion.div>
+      <div className="flex flex-col items-center gap-3">
+        <div className="relative">
+          <Loader2 className={cn(sizeMap[size], "text-primary")} />
+        </div>
         
         {text && (
-          <motion.p 
-            className="text-sm text-muted-foreground"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
-          >
+          <p className="text-sm text-muted-foreground">
             {text}
-          </motion.p>
+          </p>
         )}
-      </motion.div>
+      </div>
     </div>
   );
 };

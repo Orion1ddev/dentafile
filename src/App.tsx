@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,7 +10,6 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { AppRoutes } from "@/components/routing/AppRoutes";
 import { Loading } from "@/components/ui/loading";
-import { PageTransition } from "@/components/effects/PageTransition";
 
 // Configure query client with optimized settings
 const queryClient = new QueryClient({
@@ -59,20 +59,12 @@ const App = () => {
   }, [fetchTranslations]);
 
   if (!translationsLoaded && translationsLoading) {
-    return (
-      <PageTransition mode="fade">
-        <Loading text="Loading Translations" fullScreen />
-      </PageTransition>
-    );
+    return <Loading text="Loading Translations" fullScreen />;
   }
 
   return (
     <Suspense 
-      fallback={
-        <PageTransition mode="fade">
-          <Loading text="Loading Application" fullScreen />
-        </PageTransition>
-      }
+      fallback={<Loading text="Loading Application" fullScreen />}
     >
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <QueryClientProvider client={queryClient}>
